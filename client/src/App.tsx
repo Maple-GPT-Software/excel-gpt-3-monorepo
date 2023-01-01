@@ -1,20 +1,47 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
 import "./App.css";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Chat from "./pages/Chat";
+import {
+  ThemeOptions,
+  ThemeProvider,
+  createTheme,
+  Typography,
+} from "@mui/material";
+import AppBar from "@mui/material/AppBar";
+
+const lightTheme: ThemeOptions = {
+  palette: {
+    primary: {
+      light: "#66BB6A",
+      main: "#388E3C",
+      dark: "#1B5E20",
+    },
+    secondary: {
+      main: "#373F47",
+    },
+    mode: "light",
+  },
+};
 
 function App() {
-  const [count, setCount] = useState(0);
-  const notify = () => toast("Wow so easy!");
-
   return (
     <>
-      <h1 className="text-green text-3xl font-bold underline">Hello world!</h1>
-      <div>
-        <button onClick={notify}>Notify!</button>
-        <ToastContainer />
-      </div>
+      <ThemeProvider theme={createTheme(lightTheme)}>
+        <AppBar
+          sx={{
+            height: 60,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#388E3C",
+          }}
+        >
+          <Typography style={{ fontWeight: "bold" }}>Formula Mode</Typography>
+        </AppBar>
+        <div style={{ paddingTop: "60px" }} className="main-content">
+          <Chat />
+        </div>
+      </ThemeProvider>
     </>
   );
 }
