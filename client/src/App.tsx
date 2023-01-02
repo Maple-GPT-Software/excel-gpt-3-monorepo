@@ -38,7 +38,7 @@ function App() {
         >
           <Typography style={{ fontWeight: "bold" }}>Formula Mode</Typography>
         </AppBar>
-        <div style={{ paddingTop: "60px" }} className="main-content">
+        <div style={{ paddingTop: "60px", height: '100vh' }} className="main-content">
           <Chat />
         </div>
       </ThemeProvider>

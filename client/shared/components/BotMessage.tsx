@@ -1,13 +1,13 @@
 import Grid from "@mui/material/Unstable_Grid2";
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
 import { useTheme } from "@mui/system";
-import {GPTCompetion} from '../types';
+import { GPTCompletion } from "../types";
 
 interface BotMessageProps {
   completion: GPTCompletion;
 }
 
-function BotMessage({completion} : BotMessageProps) {
+function BotMessage({ completion }: BotMessageProps) {
   const theme = useTheme();
   return (
     <Grid container padding={2}>
@@ -31,9 +31,15 @@ function BotMessage({completion} : BotMessageProps) {
         }}
         style={{ borderBottomLeftRadius: 0 }}
       >
-        <div dangerouslySetInnerHTML={{
-            __html: completion?.choices[0].text.replaceAll("\n", "<br>"),
-          }}/>
+        {completion.choices.length ? (
+          <div
+            dangerouslySetInnerHTML={{
+              __html: completion?.choices[0].text.replaceAll("\n", "<br>"),
+            }}
+          />
+        ) : (
+          <p>loading...</p>
+        )}
       </Grid>
       <Grid xs={1} />
     </Grid>

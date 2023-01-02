@@ -1,19 +1,21 @@
-import {useRef} from 'react';
+import { useRef } from "react";
 import { useImmerReducer } from "use-immer";
 import { Box } from "@mui/system";
+import TextField from "@mui/material/TextField";
 import UserMessage from "../../shared/components/UserMessage";
 import BotMessage from "../../shared/components/BotMessage";
-import {GPTCompetion} from '../../shared/types';
-
+import { ChatModes, GPTCompletion } from "../../shared/types";
+import useChatMode from "../../shared/hooks/useChatMode";
+import settings from "../settings";
 interface ChatState {
   status: "FETCHING" | "SUCCESS" | "FAIL";
-  messages: (GPTCompetion | string)[];
+  messages: (GPTCompletion | string)[];
 }
 
 type ChatActions =
   | { type: "ADD_USER_PROMPT"; payload: string }
-  | { type: "ADD_GPT_COMPLETION_SUCCESS"; payload: GPTCompetion }
-  | { type: "ADD_GPT_COMPLETION_FAIL"; payload: GPTCompetion };
+  | { type: "ADD_GPT_COMPLETION_SUCCESS"; payload: GPTCompletion }
+  | { type: "ADD_GPT_COMPLETION_FAIL"; payload: GPTCompletion };
 
 const chatReducer = (draft: ChatState, action: ChatActions) => {
   switch (action.type) {
@@ -59,13 +61,16 @@ const chatReducer = (draft: ChatState, action: ChatActions) => {
   }
 };
 
-async function getFormulaCompletion(prompt: string): Promise<GPTCompletion> {
-  return await fetch("http://127.0.0.1:5000/prompt", {
+async function getFormulaCompletion(
+  prompt: string,
+  mode: ChatModes
+): Promise<GPTCompletion> {
+  return await fetch(`${settings.promptBaseUrl}/prompt`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ prompt: prompt }),
+    body: JSON.stringify({ prompt, mode }),
   })
     .then((response) => {
       return response.json();
@@ -73,7 +78,9 @@ async function getFormulaCompletion(prompt: string): Promise<GPTCompletion> {
     .then((data) => data);
 }
 
+// TODO: for conversations we'll pass in a messages array
 function Chat(props) {
+  const chatMode = useChatMode();
   const inputRef = useRef<HTMLInputElement>(null);
   const [chatState, dispatch] = useImmerReducer<ChatState, ChatActions>(
     chatReducer,
@@ -83,18 +90,20 @@ function Chat(props) {
     }
   );
 
-async function handleSubmit() {
+  async function handleSubmit() {
     if (!inputRef.current?.value) return;
 
-    dispatch({type: "ADD_USER_PROMPT", payload: inputRef.current?.value});
-    // const completion = getFormulaCompletion(inputRef.current?.value);
+    dispatch({ type: "ADD_USER_PROMPT", payload: inputRef.current?.value });
+
+    getFormulaCompletion(inputRef.current?.value, chatMode).then(
+      (completion) => {
+        dispatch({ type: "ADD_GPT_COMPLETION_SUCCESS", payload: completion });
+      }
+    );
 
     // reset user input
     inputRef.current.value = "";
-
-    dispatch({type: "ADD_GPT_COMPLETION_SUCCESS"})
   }
-
 
   function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter" && !e.shiftKey && inputRef.current) {
@@ -104,30 +113,30 @@ async function handleSubmit() {
   }
 
   return (
-    <Box className="chat-container">
-      <Box className="chat-container" sx={{ height: "calc(100% - 120px)" }}>
-        {!!chatState.messages.length && (
+    <Box className="chat-parent-container" sx={{ height: "100%" }}>
+      <Box className="chat-container" sx={{ height: "calc(100% - 60px)" }}>
+        {!!chatState.messages.length &&
           chatState.messages.map((message, index) => {
             if (typeof message === "string") {
               return <UserMessage key={index} prompt={message} />;
             } else {
-              return (
-                <BotMessage key={index} completion={message} />
-            );
+              return <BotMessage key={index} completion={message} />;
             }
-          })
-        )}
+          })}
       </Box>
-      <Box className="user-input-container">
+      <Box
+        className="user-input-container"
+        sx={{ boxShadow: "0px -14px 32px 0px rgba(163,163,163,0.59)" }}
+      >
         <label htmlFor="user-input" style={{ display: "none" }}>
           user
         </label>
-        <input
-            id="user-input"
-            type="text-area"
-            ref={inputRef}
-            onKeyDown={handleInputKeyDown}
-          />
+        <TextField
+          id="user-input"
+          variant="outlined"
+          inputRef={inputRef}
+          onKeyDown={handleInputKeyDown}
+        />
       </Box>
     </Box>
   );
