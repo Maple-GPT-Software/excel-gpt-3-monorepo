@@ -65,7 +65,7 @@ async function getFormulaCompletion(
   prompt: string,
   mode: ChatModes
 ): Promise<GPTCompletion> {
-  return await fetch(`${settings.promptBaseUrl}/prompt`, {
+  return await fetch(`${settings.promptBaseUrl}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
