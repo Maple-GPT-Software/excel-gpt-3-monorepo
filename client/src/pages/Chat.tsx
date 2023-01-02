@@ -2,11 +2,11 @@ import { useRef } from "react";
 import { useImmerReducer } from "use-immer";
 import { Box } from "@mui/system";
 import TextField from "@mui/material/TextField";
-import UserMessage from "../../shared/components/UserMessage";
-import BotMessage from "../../shared/components/BotMessage";
-import { ChatModes, GPTCompletion } from "../../shared/types";
-import useChatMode from "../../shared/hooks/useChatMode";
-import settings from "../settings";
+import UserMessage from "@shared/components/UserMessage";
+import BotMessage from "@shared/components/BotMessage";
+import { ChatModes, GPTCompletion } from "@shared/types";
+import useChatMode from "@shared/hooks/useChatMode";
+import settings from "@src/settings";
 interface ChatState {
   status: "FETCHING" | "SUCCESS" | "FAIL";
   messages: (GPTCompletion | string)[];
@@ -79,7 +79,7 @@ async function getFormulaCompletion(
 }
 
 // TODO: for conversations we'll pass in a messages array
-function Chat(props) {
+function Chat() {
   const chatMode = useChatMode();
   const inputRef = useRef<HTMLInputElement>(null);
   const [chatState, dispatch] = useImmerReducer<ChatState, ChatActions>(

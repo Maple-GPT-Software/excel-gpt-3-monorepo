@@ -3,8 +3,8 @@ import {
   CHAT_BASE_URL,
   CHAT_FORMULA_MODE,
   CHAT_MODE_URL_PARAM,
-} from "../constants";
-import { ChatModes } from "../types";
+} from "@shared/constants";
+import { ChatModes } from "@shared/types";
 
 /**
  * this hook returns the current chat mode, e.g formula, knowledge

@@ -1,7 +1,7 @@
 import Grid from "@mui/material/Unstable_Grid2";
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
 import { useTheme } from "@mui/system";
-import { GPTCompletion } from "../types";
+import { GPTCompletion } from "@shared/types";
 
 interface BotMessageProps {
   completion: GPTCompletion;
