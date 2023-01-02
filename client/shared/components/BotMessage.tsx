@@ -1,7 +1,7 @@
-import Grid from "@mui/material/Unstable_Grid2";
-import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
-import { useTheme } from "@mui/system";
-import { GPTCompletion } from "@shared/types";
+import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
+import Grid from '@mui/material/Unstable_Grid2';
+import { useTheme } from '@mui/system';
+import { GPTCompletion } from '~shared/types';
 
 interface BotMessageProps {
   completion: GPTCompletion;
@@ -14,9 +14,9 @@ function BotMessage({ completion }: BotMessageProps) {
       <Grid
         xs={1}
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "flex-end",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-end',
         }}
       >
         <PrecisionManufacturingIcon color="secondary" />
@@ -27,14 +27,14 @@ function BotMessage({ completion }: BotMessageProps) {
           py: 2,
           borderRadius: 2,
           borderRight: 0,
-          backgroundColor: "#e0e0e0",
+          backgroundColor: '#e0e0e0',
         }}
         style={{ borderBottomLeftRadius: 0 }}
       >
         {completion.choices.length ? (
           <div
             dangerouslySetInnerHTML={{
-              __html: completion?.choices[0].text.replaceAll("\n", "<br>"),
+              __html: completion?.choices[0].text.replaceAll('\n', '<br>'),
             }}
           />
         ) : (

@@ -1,10 +1,10 @@
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from 'react-router-dom';
 import {
   CHAT_BASE_URL,
   CHAT_FORMULA_MODE,
   CHAT_MODE_URL_PARAM,
-} from "@shared/constants";
-import { ChatModes } from "@shared/types";
+} from '~shared/constants';
+import { ChatModes } from '~shared/types';
 
 /**
  * this hook returns the current chat mode, e.g formula, knowledge
