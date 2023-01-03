@@ -153,6 +153,7 @@ function Chat() {
             multiline
           />
           <SendIcon
+            fontSize="small"
             onClick={handleSubmit}
             color="primary"
             sx={{ position: 'absolute', bottom: '16px', right: '10px' }}
