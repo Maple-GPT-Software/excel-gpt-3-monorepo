@@ -1,3 +1,4 @@
+import SendIcon from '@mui/icons-material/Send';
 import TextField from '@mui/material/TextField';
 import { Box } from '@mui/system';
 import { useRef } from 'react';
@@ -115,7 +116,10 @@ function Chat() {
 
   return (
     <Box className="chat-parent-container" sx={{ height: '100%' }}>
-      <Box className="chat-container" sx={{ height: 'calc(100% - 60px)' }}>
+      <Box
+        className="chat-container"
+        sx={{ height: 'calc(100% - 60px)', overflow: 'scroll' }}
+      >
         {!!chatState.messages.length &&
           chatState.messages.map((message, index) => {
             if (typeof message === 'string') {
@@ -127,17 +131,33 @@ function Chat() {
       </Box>
       <Box
         className="user-input-container"
-        sx={{ boxShadow: '0px -14px 32px 0px rgba(163,163,163,0.59)' }}
+        sx={{
+          width: '350px',
+          position: 'fixed',
+          bottom: '10px',
+          left: '25px',
+          backgroundColor: 'white',
+          boxShadow: '0px -14px 32px 0px rgba(163,163,163,0.59)',
+        }}
       >
-        <label htmlFor="user-input" style={{ display: 'none' }}>
-          user
-        </label>
-        <TextField
-          id="user-input"
-          variant="outlined"
-          inputRef={inputRef}
-          onKeyDown={handleInputKeyDown}
-        />
+        <div style={{ position: 'relative' }}>
+          <label htmlFor="user-input" style={{ display: 'none' }}>
+            user
+          </label>
+          <TextField
+            sx={{ width: '100%' }}
+            id="user-input"
+            variant="outlined"
+            inputRef={inputRef}
+            onKeyDown={handleInputKeyDown}
+            multiline
+          />
+          <SendIcon
+            onClick={handleSubmit}
+            color="primary"
+            sx={{ position: 'absolute', bottom: '16px', right: '10px' }}
+          />
+        </div>
       </Box>
     </Box>
   );

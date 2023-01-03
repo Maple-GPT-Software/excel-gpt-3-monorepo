@@ -10,6 +10,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '~shared': path.resolve('./shared'),
+      '~src': path.resolve('./src'),
     },
   },
   build: {
