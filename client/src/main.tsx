@@ -23,7 +23,7 @@ const lightTheme: ThemeOptions = {
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ThemeProvider theme={createTheme(lightTheme)}>
-      <BrowserRouter basename="/">
+      <BrowserRouter basename="/app">
         <AppRoutes />
       </BrowserRouter>
     </ThemeProvider>
