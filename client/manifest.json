@@ -3,8 +3,6 @@
   "name": "Excel Simplify",
   "version": "1.0.0",
   "action": {
-    "default_popup": "index.html",
-    "default_area": "bottom",
-    "left": 0
+    "default_popup": "index.html"
   }
 }

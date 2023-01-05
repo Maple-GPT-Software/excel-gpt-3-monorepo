@@ -2,9 +2,9 @@ import SendIcon from '@mui/icons-material/Send';
 import TextField from '@mui/material/TextField';
 import { Box } from '@mui/system';
 import { useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useImmerReducer } from 'use-immer';
-import BotMessage from '~shared/components/BotMessage';
-import UserMessage from '~shared/components/UserMessage';
+import { BotMessage, UserMessage } from '~shared/components/Message';
 import useChatMode from '~shared/hooks/useChatMode';
 import { ChatModes, GPTCompletion } from '~shared/types';
 import settings from '~src/settings';
@@ -82,6 +82,7 @@ async function getFormulaCompletion(
 
 // TODO: for conversations we'll pass in a messages array
 function Chat() {
+  const loation = useLocation();
   const chatMode = useChatMode();
   const inputRef = useRef<HTMLInputElement>(null);
   const [chatState, dispatch] = useImmerReducer<ChatState, ChatActions>(
@@ -91,6 +92,8 @@ function Chat() {
       messages: [],
     }
   );
+
+  console.log(location);
 
   async function handleSubmit() {
     if (!inputRef.current?.value) return;
