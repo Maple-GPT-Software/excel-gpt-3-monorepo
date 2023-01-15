@@ -1,0 +1,43 @@
+.chat-wrapper {
+    height: 100vh;
+}
+
+.messages-wrapper {
+    height: calc(100% - 50px);
+    overflow: scroll;
+}
+
+.prompt-wrapper {
+    padding: 0px 16px;
+    width: 100vw;
+    position: fixed;
+    bottom: 12px;
+    box-sizing: border-box;
+}
+
+.prompt-wrapper > textarea {
+    padding: 8px 20px 8px 8px;
+    width: 100%;
+    min-height: 32px;
+    box-sizing: border-box;
+    resize: none;
+    overflow: hidden;
+    outline: none;
+    border: solid thin gainsboro;
+    border-radius: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 100;
+}
+
+.prompt-wrapper .prompt-submit {
+    width: 0; 
+    height: 0; 
+    cursor: pointer;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 10px solid var(--primary-main);
+
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+}
