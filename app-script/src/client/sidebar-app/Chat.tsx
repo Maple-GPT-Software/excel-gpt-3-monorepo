@@ -3,11 +3,14 @@ import React, { useRef, useState, useCallback } from 'react';
 import { useImmerReducer } from 'use-immer';
 // CUSTOM HOOKS
 import useAutosizeTextArea from './hooks/useAutosizeTextArea';
+import useOnClickOutside from './hooks/useOnClickOutside';
 // TYPES
 import { GPTCompletion } from './types';
 // COMPONENTS
 import UserMessage from './components/UserMessage';
 import BotMessage from './components/BotMessage';
+// UTILS
+import { serverFunctions } from '../utils/serverFunctions';
 
 import './Chat.style.css';
 import ExamplePrompts from './components/ExamplePrompts';
@@ -99,7 +102,6 @@ function scrollToBottom(element: HTMLElement) {
 function Chat() {
   //   const inputRef = useRef<HTMLInputElement>(null);
   const [userInput, setUserInput] = useState('');
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const promptWrapperRef = useRef<HTMLDivElement>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
   const [chatState, dispatch] = useImmerReducer<ChatState, ChatActions>(
@@ -110,13 +112,14 @@ function Chat() {
     }
   );
 
-  useAutosizeTextArea(textAreaRef.current, userInput);
+  //   useAutosizeTextArea(textAreaRef.current, userInput);
 
   const handleScrollToChatBottom = useCallback(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
   async function handleSubmit() {
+    if (!userInput) return;
     dispatch({ type: 'ADD_USER_PROMPT', payload: userInput });
     // scroll to bottom of chat container after user's prompt is added
     setTimeout(() => {
@@ -158,8 +161,25 @@ function Chat() {
     setUserInput(value);
   }
 
+  /**
+   * this function is passed down to ChatInput,
+   * when the user clicks on one of the options menu items
+   * the returned string will be added to the userInput
+   * as an enhancement to the user's prompt
+   */
+  function userInputModifier(enhancement: string) {
+    setUserInput(`${userInput} ${enhancement}`);
+  }
+
   return (
     <div className="chat-wrapper">
+      <button
+        onClick={() =>
+          serverFunctions
+            .getActiveSheetRange()
+            .then((range) => console.log(range))
+        }
+      ></button>
       <section className="messages-wrapper">
         {!chatState.messages.length && <ExamplePrompts />}
         {!!chatState.messages.length &&
@@ -173,17 +193,89 @@ function Chat() {
         <div ref={chatBottomRef} />
       </section>
       <section className="prompt-wrapper" ref={promptWrapperRef}>
-        <textarea
+        <ChatInput
+          value={userInput}
+          chatState={chatState.status}
+          onKeyDownHandler={handleInputKeyDown}
+          changeHandler={ønChangeHandler}
+          submitHandler={handleSubmit}
+          userInputModifier={userInputModifier}
+        />
+        {/* <textarea
           ref={textAreaRef}
           value={userInput}
           aria-label="user-prompt"
           onKeyDown={handleInputKeyDown}
           onChange={ønChangeHandler}
+          disabled={chatState.status === 'FETCHING'}
         />
-        <div className="prompt-submit" onClick={handleSubmit} />
+        <div className="prompt-submit" onClick={handleSubmit} /> */}
       </section>
     </div>
   );
 }
 
 export default Chat;
+
+interface ChatInputProps {
+  value: string;
+  chatState: ChatState['status'];
+  onKeyDownHandler: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  changeHandler: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  submitHandler: () => Promise<void>;
+  userInputModifier: (enhancement: string) => void;
+}
+
+const ChatInput = (props: ChatInputProps) => {
+  const {
+    value,
+    chatState,
+    onKeyDownHandler,
+    changeHandler,
+    submitHandler,
+    userInputModifier,
+  } = props;
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const propMenuWrapperRef = useRef<HTMLDivElement>(null);
+
+  useAutosizeTextArea(textAreaRef?.current, value);
+  useOnClickOutside(propMenuWrapperRef, () => setIsMenuOpen(false));
+
+  async function getSelectedFormulaHandler() {
+    try {
+      const formula = await serverFunctions.getSelectedCellFormula();
+      if (formula) {
+        userInputModifier(formula);
+      }
+      setIsMenuOpen(false);
+    } catch {}
+  }
+
+  return (
+    <>
+      <textarea
+        ref={textAreaRef}
+        value={value}
+        aria-label="user-prompt"
+        onKeyDown={onKeyDownHandler}
+        onChange={changeHandler}
+        disabled={chatState === 'FETCHING'}
+      />
+      <div className="prompt-menu-wrapper" onClick={() => setIsMenuOpen(true)}>
+        <div className="prompt-menu">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+      {isMenuOpen && (
+        <div className="prompt-options-menu">
+          <p onClick={getSelectedFormulaHandler}>Insert selected formula </p>
+          <p>Insert selected range </p>
+        </div>
+      )}
+      <div className="prompt-submit" onClick={submitHandler} />
+    </>
+  );
+};

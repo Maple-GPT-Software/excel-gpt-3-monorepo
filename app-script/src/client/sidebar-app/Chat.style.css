@@ -7,6 +7,8 @@
     overflow: scroll;
 }
 
+/* USER PROMPT */
+
 .prompt-wrapper {
     padding: 0px 16px;
     width: 100vw;
@@ -16,7 +18,7 @@
 }
 
 .prompt-wrapper > textarea {
-    padding: 8px 20px 8px 8px;
+    padding: 8px 20px;
     width: 100%;
     min-height: 32px;
     box-sizing: border-box;
@@ -27,6 +29,64 @@
     border-radius: 6px;
     font-family: 'Montserrat', sans-serif;
     font-weight: 100;
+}
+
+/* PROMPT MENU */
+.prompt-menu-wrapper {
+    position: fixed;
+    bottom: 20px;
+    left: 23px;
+    cursor: pointer;
+}
+
+.prompt-menu {
+    display: inline-block;
+    position: relative;
+}
+
+.prompt-menu div {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--primary-main);
+}
+
+.prompt-menu div:nth-child(1) {
+    bottom: 0px
+}
+
+.prompt-menu div:nth-child(2) {
+    bottom: 5px
+}
+
+.prompt-menu div:nth-child(3) {
+    bottom: 10px
+}
+
+/* PROMPT MENU OPTIONS */
+.prompt-options-menu {
+    position: fixed;
+    bottom: 40px;
+    padding: 16px;
+    width: calc(100vw - 66px);
+    border: solid thin grey;
+    border-radius: 6px;
+    background-color: white;
+}
+
+.prompt-options-menu > p {
+    text-transform: uppercase;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.prompt-options-menu > p:hover {
+    color: var(--primary-main)
+}
+
+.prompt-options-menu > p:first-child {
+    margin-bottom: 12px;
 }
 
 .prompt-wrapper .prompt-submit {
