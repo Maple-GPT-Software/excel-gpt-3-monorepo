@@ -164,8 +164,7 @@ function Chat() {
   /**
    * this function is passed down to ChatInput,
    * when the user clicks on one of the options menu items
-   * the returned string will be added to the userInput
-   * as an enhancement to the user's prompt
+   * the returned string is appended to the user's input
    */
   function userInputModifier(enhancement: string) {
     setUserInput(`${userInput} ${enhancement}`);
@@ -173,13 +172,6 @@ function Chat() {
 
   return (
     <div className="chat-wrapper">
-      <button
-        onClick={() =>
-          serverFunctions
-            .getActiveSheetRange()
-            .then((range) => console.log(range))
-        }
-      ></button>
       <section className="messages-wrapper">
         {!chatState.messages.length && <ExamplePrompts />}
         {!!chatState.messages.length &&
@@ -201,15 +193,6 @@ function Chat() {
           submitHandler={handleSubmit}
           userInputModifier={userInputModifier}
         />
-        {/* <textarea
-          ref={textAreaRef}
-          value={userInput}
-          aria-label="user-prompt"
-          onKeyDown={handleInputKeyDown}
-          onChange={ønChangeHandler}
-          disabled={chatState.status === 'FETCHING'}
-        />
-        <div className="prompt-submit" onClick={handleSubmit} /> */}
       </section>
     </div>
   );
@@ -246,10 +229,24 @@ const ChatInput = (props: ChatInputProps) => {
     try {
       const formula = await serverFunctions.getSelectedCellFormula();
       if (formula) {
-        userInputModifier(formula);
+        userInputModifier('\n' + formula);
       }
-      setIsMenuOpen(false);
-    } catch {}
+      setTimeout(() => {
+        setIsMenuOpen(false);
+      }, 100);
+    } catch (error) {}
+  }
+
+  async function getSelectedRangeValuesHandler() {
+    try {
+      const rangeValueObj = await serverFunctions.getSelectedRangeValues();
+      if (rangeValueObj) {
+        userInputModifier(
+          `\nRange: ${rangeValueObj.range}\n\nData table:${rangeValueObj.values}\n`
+        );
+        setIsMenuOpen(false);
+      }
+    } catch (error) {}
   }
 
   return (
@@ -270,9 +267,9 @@ const ChatInput = (props: ChatInputProps) => {
         </div>
       </div>
       {isMenuOpen && (
-        <div className="prompt-options-menu">
+        <div ref={propMenuWrapperRef} className="prompt-options-menu">
           <p onClick={getSelectedFormulaHandler}>Insert selected formula </p>
-          <p>Insert selected range </p>
+          <p onClick={getSelectedRangeValuesHandler}>Insert selected range </p>
         </div>
       )}
       <div className="prompt-submit" onClick={submitHandler} />

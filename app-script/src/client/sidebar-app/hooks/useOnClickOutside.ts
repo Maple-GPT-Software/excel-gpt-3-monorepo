@@ -5,6 +5,7 @@ export default function useOnClickOutside(ref: any, handler: any) {
       () => {
         const listener = (event: any) => {
           // Do nothing if clicking ref's element or descendent elements
+          // console.log('is click element contained, ', ref.current.contains(event.target))
           if (!ref.current || ref.current.contains(event.target)) {
             return;
           }

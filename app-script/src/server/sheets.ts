@@ -28,7 +28,29 @@ export const writeFormulaToCell = () => {
  */
 export const getSelectedCellFormula = () => {
   const activeCellFormula = getActiveSheet().getActiveCell().getFormula();
+  
   return activeCellFormula;
+}
+
+interface ValueRangeObj {
+  range: string,
+  values: string
+}
+
+/**
+ * get selected range in as a concatenated string
+ */
+export const getSelectedRangeValues = () : ValueRangeObj | null => {
+  const activeRange = getActiveSheet().getActiveRange();
+  const activeRangeValues = activeRange.getValues();
+
+  if (!activeRangeValues.length) null;
+
+  // format values in string format
+  return {
+    range: activeRange.getA1Notation(),
+    values: convertRangeValuesToCSV(activeRangeValues)
+  };
 }
 
 export const getActiveSheetRange = () => {
@@ -66,3 +88,23 @@ export const setActiveSheet = (sheetName: string) => {
   SpreadsheetApp.getActive().getSheetByName(sheetName).activate();
   return getSheetsData();
 };
+
+
+// UTILITY FUNCTIONS
+
+/**
+ * takes in values, an array of nested arrays where each nested array
+ * is a row. We convert this into CSV format.
+ */
+function convertRangeValuesToCSV(values: Array<string | number>[]) {
+  return values.reduce((csv, row) => {
+    const rowWithFixedDecimals = row.map((el) => {
+      if (typeof el === 'number') {
+        return el.toFixed(2);
+      } else {
+        return el;
+      }
+    });
+    return csv + `\n` + rowWithFixedDecimals.join(',');
+  }, '').concat('\n')
+}
