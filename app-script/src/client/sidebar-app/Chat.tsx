@@ -14,6 +14,7 @@ import { serverFunctions } from '../utils/serverFunctions';
 
 import './Chat.style.css';
 import ExamplePrompts from './components/ExamplePrompts';
+import Icon from './components/Icon';
 
 interface ChatState {
   status: 'FETCHING' | 'SUCCESS' | 'FAIL';
@@ -268,8 +269,14 @@ const ChatInput = (props: ChatInputProps) => {
       </div>
       {isMenuOpen && (
         <div ref={propMenuWrapperRef} className="prompt-options-menu">
-          <p onClick={getSelectedFormulaHandler}>Insert selected formula </p>
-          <p onClick={getSelectedRangeValuesHandler}>Insert selected range </p>
+          <div onClick={getSelectedFormulaHandler}>
+            <Icon pathName="ARROW_RIGHT_ON_RECT" width={18} height={18} />
+            <p>Insert selected formula</p>
+          </div>
+          <div onClick={getSelectedRangeValuesHandler}>
+            <Icon pathName="ARROW_RIGHT_ON_RECT" width={18} height={18} />
+            <p>Insert selected range</p>
+          </div>
         </div>
       )}
       <div className="prompt-submit" onClick={submitHandler} />

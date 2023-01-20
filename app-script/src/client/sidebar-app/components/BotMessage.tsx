@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GPTCompletion } from '../types.d';
 import LoadingEllipsis from './LoadingEllipsis';
+import Icon from './Icon';
 import { serverFunctions } from '../../utils/serverFunctions';
 
 import './BotMessage.style.css';
@@ -12,10 +13,16 @@ interface BotMessageProps {
 }
 
 function BotMessage({ completion }: BotMessageProps) {
+  if (!completion.choices.length) {
+    return (
+      <div className="bot-message-wrapper">
+        <LoadingEllipsis />
+      </div>
+    );
+  }
+
   return (
     <div className="bot-message-wrapper">
-      {!completion.choices.length && <LoadingEllipsis />}
-
       {/* text block when completion is a formula, start with CODE_BLOCK */}
       {!!completion.choices.length &&
         completion?.choices[0].text.includes(CODE_BLOCK) && (
@@ -31,13 +38,18 @@ function BotMessage({ completion }: BotMessageProps) {
             }}
           ></p>
         )}
+
+      <RateCompletion completion={completion} />
     </div>
   );
 }
 
 export default BotMessage;
 
-// pre-prend code with CODE_BLOCK to insert it into a code block???
+/**
+ * This render the code completion in a IDE-like UI element
+ * and includes element for inserting formula into the UI
+ */
 function BotCodeMessage({ formula }: { formula: string }) {
   function handleInsertIntoCell() {
     console.log('handling insert');
@@ -47,7 +59,6 @@ function BotCodeMessage({ formula }: { formula: string }) {
   return (
     <div className="bot-message-code-wrapper">
       <div className="bot-message-code-header">
-        {/* TODO: insert into cell */}
         <button onClick={handleInsertIntoCell}>Insert into cell </button>
       </div>
       <div className="bot-message-code-container">
@@ -60,3 +71,21 @@ function BotCodeMessage({ formula }: { formula: string }) {
     </div>
   );
 }
+
+interface RateCompletionFormProps {
+  completion: GPTCompletion;
+}
+
+const RateCompletion: React.FC<RateCompletionFormProps> = (props) => {
+  const { completion } = props;
+
+  // TODO: get user from AuthProvider
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    <div className="like-dislike-container">
+      <Icon pathName="THUMB_DOWN" width={16} height={16} onClick={() => {}} />
+      <Icon pathName="THUMB_UP" width={16} height={16} onClick={() => {}} />
+    </div>
+  );
+};

@@ -32,3 +32,13 @@
 .bot-message-code-wrapper .bot-message-code-container {
     padding: 12px 6px;
 }
+
+.like-dislike-container {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.like-dislike-container .icon:first-child {
+    margin-right: 12px;
+}

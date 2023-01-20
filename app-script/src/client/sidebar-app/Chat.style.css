@@ -71,19 +71,26 @@
     box-shadow: 0px 0px 28px -8px #b8b8b8;
 }
 
-.prompt-options-menu > p {
+.prompt-options-menu > div {
+    margin-bottom: 12px;
     text-transform: uppercase;
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
+    display: flex;
+    align-items: center;
 }
 
-.prompt-options-menu > p:hover {
-    color: var(--primary-main)
+.prompt-options-menu > div:hover {
+    color: var(--primary-main);
 }
 
-.prompt-options-menu > p:first-child {
-    margin-bottom: 12px;
+.prompt-options-menu > div:hover svg{
+    stroke: var(--primary-main);
+}
+
+.prompt-options-menu .icon {
+    margin-right: 6px;
 }
 
 .prompt-wrapper .prompt-submit {
