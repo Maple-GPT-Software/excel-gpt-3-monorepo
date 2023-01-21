@@ -9,6 +9,7 @@ import { GPTCompletion } from './types';
 // COMPONENTS
 import UserMessage from './components/UserMessage';
 import BotMessage from './components/BotMessage';
+import LoadingEllipsis from './components/LoadingEllipsis';
 // UTILS
 import { serverFunctions } from '../utils/serverFunctions';
 
@@ -220,6 +221,9 @@ const ChatInput = (props: ChatInputProps) => {
     userInputModifier,
   } = props;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // this flag is true when either of the two chat menu options are clicked to show
+  // a loading state for the API call
+  const [isAppsheetFetching, setIsAppsheetFetching] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const propMenuWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -228,24 +232,26 @@ const ChatInput = (props: ChatInputProps) => {
 
   async function getSelectedFormulaHandler() {
     try {
+      setIsAppsheetFetching(true);
       const formula = await serverFunctions.getSelectedCellFormula();
       if (formula) {
         userInputModifier('\n' + formula);
       }
-      setTimeout(() => {
-        setIsMenuOpen(false);
-      }, 100);
+      setIsMenuOpen(false);
+      setIsAppsheetFetching(false);
     } catch (error) {}
   }
 
   async function getSelectedRangeValuesHandler() {
     try {
+      setIsAppsheetFetching(true);
       const rangeValueObj = await serverFunctions.getSelectedRangeValues();
       if (rangeValueObj) {
         userInputModifier(
           `\nRange: ${rangeValueObj.range}\n\nData table:${rangeValueObj.values}\n`
         );
         setIsMenuOpen(false);
+        setIsAppsheetFetching(false);
       }
     } catch (error) {}
   }
@@ -253,6 +259,7 @@ const ChatInput = (props: ChatInputProps) => {
   return (
     <>
       <textarea
+        rows={1}
         ref={textAreaRef}
         value={value}
         aria-label="user-prompt"
@@ -269,14 +276,22 @@ const ChatInput = (props: ChatInputProps) => {
       </div>
       {isMenuOpen && (
         <div ref={propMenuWrapperRef} className="prompt-options-menu">
-          <div onClick={getSelectedFormulaHandler}>
-            <Icon pathName="ARROW_RIGHT_ON_RECT" width={18} height={18} />
-            <p>Insert selected formula</p>
-          </div>
-          <div onClick={getSelectedRangeValuesHandler}>
-            <Icon pathName="ARROW_RIGHT_ON_RECT" width={18} height={18} />
-            <p>Insert selected range</p>
-          </div>
+          {isAppsheetFetching ? (
+            <div className="prompt-options-menu-loader">
+              <LoadingEllipsis />
+            </div>
+          ) : (
+            <>
+              <div onClick={getSelectedFormulaHandler}>
+                <Icon pathName="ARROW_RIGHT_ON_RECT" width={18} height={18} />
+                <p>Insert selected formula</p>
+              </div>
+              <div onClick={getSelectedRangeValuesHandler}>
+                <Icon pathName="ARROW_RIGHT_ON_RECT" width={18} height={18} />
+                <p>Insert selected range</p>
+              </div>
+            </>
+          )}
         </div>
       )}
       <div className="prompt-submit" onClick={submitHandler} />

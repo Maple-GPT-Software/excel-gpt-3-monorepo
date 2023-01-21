@@ -10,11 +10,9 @@ function ExamplePrompts() {
         "I have a column of numbers, how do I calculate the average?"
       </p>
       <p className="example-prompt-element">
-        "How do I sort a column of names?"
+        "How do I sort a column of names in descending order?"
       </p>
-      <p className="example-prompt-element">
-        "Explain the paramters of VLOOKUP?"
-      </p>
+      <p className="example-prompt-element">"Explain how VLOOKUP works"</p>
     </div>
   );
 }
