@@ -5,6 +5,7 @@ import Icon from './Icon';
 import { serverFunctions } from '../../utils/serverFunctions';
 
 import './BotMessage.style.css';
+import Modal from './Modal';
 
 const CODE_BLOCK = 'CODE_BLOCK';
 
@@ -59,7 +60,7 @@ function BotCodeMessage({ formula }: { formula: string }) {
   return (
     <div className="bot-message-code-wrapper">
       <div className="bot-message-code-header">
-        <button onClick={handleInsertIntoCell}>Insert into cell </button>
+        <button onClick={handleInsertIntoCell}>INSERT INTO CELL</button>
       </div>
       <div className="bot-message-code-container">
         <code
@@ -72,20 +73,52 @@ function BotCodeMessage({ formula }: { formula: string }) {
   );
 }
 
+// ======================= RATE COMPLETION
+
 interface RateCompletionFormProps {
   completion: GPTCompletion;
 }
+
+type RatingTypes = 'DISLIKE' | 'LIKE';
 
 const RateCompletion: React.FC<RateCompletionFormProps> = (props) => {
   const { completion } = props;
 
   // TODO: get user from AuthProvider
   const [showModal, setShowModal] = useState(false);
+  const [ratingType, setRatingType] = useState<RatingTypes | undefined>();
+  const [userFeedback, setUserFeedback] = useState('');
+
+  function iconClickHandler(type: RatingTypes) {
+    // setShowModal(true);
+    setRatingType(type);
+  }
 
   return (
-    <div className="like-dislike-container">
-      <Icon pathName="THUMB_DOWN" width={16} height={16} onClick={() => {}} />
-      <Icon pathName="THUMB_UP" width={16} height={16} onClick={() => {}} />
-    </div>
+    <>
+      <div className="like-dislike-container">
+        <Modal
+          // open={showModal}
+          trigger={
+            <div>
+              <Icon
+                pathName="THUMB_DOWN"
+                width={16}
+                height={16}
+                onClick={() => iconClickHandler('DISLIKE')}
+              />
+              <Icon
+                pathName="THUMB_UP"
+                width={16}
+                height={16}
+                onClick={() => iconClickHandler('LIKE')}
+              />
+            </div>
+          }
+        >
+          <h1>{ratingType}</h1>
+        </Modal>
+      </div>
+    </>
   );
 };
