@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { GPTCompletion } from '../types.d';
 import LoadingEllipsis from './LoadingEllipsis';
 import Icon from './Icon';
@@ -87,10 +87,9 @@ const RateCompletion: React.FC<RateCompletionFormProps> = (props) => {
   // TODO: get user from AuthProvider
   const [showModal, setShowModal] = useState(false);
   const [ratingType, setRatingType] = useState<RatingTypes | undefined>();
-  const [userFeedback, setUserFeedback] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   function iconClickHandler(type: RatingTypes) {
-    // setShowModal(true);
     setRatingType(type);
   }
 
@@ -98,8 +97,11 @@ const RateCompletion: React.FC<RateCompletionFormProps> = (props) => {
     <>
       <div className="like-dislike-container">
         <Modal
-          // open={showModal}
+          open={showModal}
+          setOpen={setShowModal}
+          title="Feedback"
           trigger={
+            // TODO: after they've clicked only render one icon
             <div>
               <Icon
                 pathName="THUMB_DOWN"
@@ -116,7 +118,15 @@ const RateCompletion: React.FC<RateCompletionFormProps> = (props) => {
             </div>
           }
         >
-          <h1>{ratingType}</h1>
+          <textarea
+            className="user-feedback"
+            rows={10}
+            ref={textareaRef}
+            aria-label="user-feedback"
+          />
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <button className="button green">save</button>
+          </div>
         </Modal>
       </div>
     </>
