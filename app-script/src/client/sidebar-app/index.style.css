@@ -169,6 +169,11 @@ table {
   /* box-shadow: 0 0 0 2px var(--green7); */
 }
 
+.button.green:disabled {
+  color: #818181;
+  cursor: not-allowed;
+}
+
 .icon-button {
   font-family: inherit;
   border-radius: 100%;

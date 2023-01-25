@@ -1,27 +1,18 @@
 export const onOpen = () => {
   const menu = SpreadsheetApp.getUi()
     .createMenu('ExcelSimp') // edit me!
-    .addItem('Sheet Editor', 'openDialog')
-    .addItem('Sheet Editor (Bootstrap)', 'openDialogBootstrap')
-    .addItem('Open Application', 'openAboutSidebar');
+    .addItem('Help', 'openHelpDialog')
+    .addItem('Launch Application', 'openAboutSidebar');
 
   menu.addToUi();
 };
 
-export const openDialog = () => {
-  const html = HtmlService.createHtmlOutputFromFile('dist/dialog-demo')
+export const openHelpDialog = () => {
+  const html = HtmlService.createHtmlOutputFromFile('dist/help-dialog')
     .setWidth(600)
     .setHeight(600);
-  SpreadsheetApp.getUi().showModalDialog(html, 'Sheet Editor');
+  SpreadsheetApp.getUi().showModalDialog(html, 'ExcelSimplify Feedback');
 };
-
-export const openDialogBootstrap = () => {
-  const html = HtmlService.createHtmlOutputFromFile('dist/dialog-demo-bootstrap')
-    .setWidth(600)
-    .setHeight(600);
-  SpreadsheetApp.getUi().showModalDialog(html, 'Sheet Editor (Bootstrap)');
-};
-
 
 export const openAboutSidebar = () => {
   const html = HtmlService.createHtmlOutputFromFile('dist/sidebar-app').setTitle('ExcelSimplify');

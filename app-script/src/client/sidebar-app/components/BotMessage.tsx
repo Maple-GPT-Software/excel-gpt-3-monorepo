@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, ChangeEvent } from 'react';
 import { GPTCompletion } from '../types.d';
 import LoadingEllipsis from './LoadingEllipsis';
 import Icon from './Icon';
@@ -81,16 +81,48 @@ interface RateCompletionFormProps {
 
 type RatingTypes = 'DISLIKE' | 'LIKE';
 
+const MAX_FEEDBACK_CHARACTERS = 280;
+/**
+ * This componnt renders two icons (like and dislike). When the icons are clicked
+ * an API call is made to mutate the `rating` property on the completion document
+ * The user is then shown a modal for providing additional feedback (optional)
+ */
 const RateCompletion: React.FC<RateCompletionFormProps> = (props) => {
   const { completion } = props;
 
   // TODO: get user from AuthProvider
+  // TODO: use immerReducer to coordinate things such as
+  // 1. closing modal also resets userInput
+  // 2. when rating is sumittted, show loading state, reset textInput etc...
   const [showModal, setShowModal] = useState(false);
   const [ratingType, setRatingType] = useState<RatingTypes | undefined>();
+  const [userInput, setUserInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   function iconClickHandler(type: RatingTypes) {
     setRatingType(type);
+    // TODO: update rating on completion
+  }
+
+  function ønChangeHandler(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    const value = e.target?.value;
+    if (value.length > MAX_FEEDBACK_CHARACTERS) {
+      return;
+    }
+
+    setUserInput(value);
+  }
+
+  function onPasteHandler(e: any) {
+    const value = e.clipboardData.getData('text');
+
+    if (!value) {
+      return;
+    }
+
+    setUserInput((prevValue) => {
+      return (prevValue += value);
+    });
   }
 
   return (
@@ -101,7 +133,7 @@ const RateCompletion: React.FC<RateCompletionFormProps> = (props) => {
           setOpen={setShowModal}
           title="Feedback"
           trigger={
-            // TODO: after they've clicked only render one icon
+            // TODO: after they've don't render any icons
             <div>
               <Icon
                 pathName="THUMB_DOWN"
@@ -121,11 +153,19 @@ const RateCompletion: React.FC<RateCompletionFormProps> = (props) => {
           <textarea
             className="user-feedback"
             rows={10}
-            ref={textareaRef}
+            // ref={textareaRef}
+            onChange={ønChangeHandler}
+            onPaste={onPasteHandler}
             aria-label="user-feedback"
           />
+          <p>{`${userInput.length}/${MAX_FEEDBACK_CHARACTERS}`}</p>
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <button className="button green">save</button>
+            <button
+              className="button green"
+              disabled={userInput.length > MAX_FEEDBACK_CHARACTERS}
+            >
+              save
+            </button>
           </div>
         </Modal>
       </div>

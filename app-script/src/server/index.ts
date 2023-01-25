@@ -1,7 +1,6 @@
 import {
   onOpen,
-  openDialog,
-  openDialogBootstrap,
+  openHelpDialog,
   openAboutSidebar,
 } from './ui';
 
@@ -19,8 +18,7 @@ import {
 // Public functions must be exported as named exports
 export {
   onOpen,
-  openDialog,
-  openDialogBootstrap,
+  openHelpDialog,
   openAboutSidebar,
   getSheetsData,
   addSheet,
