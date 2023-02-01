@@ -1,45 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import Chat from './Chat';
-import Login from './Login';
+import React, { useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import AppRoutes from './AppRoutes';
 
 // when there is an error we'll show a modal before login out the user and returning them
 // to signed_out state
 type AUTHENTICATION_STATES =
-  | 'SIGNED_OUT'
-  | 'REFRESHING_TOKEN'
-  | 'SIGNED_IN'
+  | 'CHECKING_TOKEN'
+  | 'AUTHENTICATED'
   | 'ERROR'
-  | 'SIGNING_UP';
+  | 'SIGN_IN_ROUTE'
+  | 'SIGN_UP_ROUTE';
 
 function App() {
   const [authState, setAuthState] =
-    useState<AUTHENTICATION_STATES>('SIGNED_OUT');
+    useState<AUTHENTICATION_STATES>('SIGN_IN_ROUTE');
+  const [user, setUser] = useState<any>(null);
 
   function signUpRouteHandler() {
-    setAuthState('SIGNING_UP');
+    setAuthState('SIGN_UP_ROUTE');
+  }
+
+  function signInRouteHandler() {
+    setAuthState('SIGN_IN_ROUTE');
   }
 
   // useEffect(() => {
   //   // check auth token here and check whether or not to show chat application
-  //   setTimeout(() => {
-  //     setIsLoading(false);
-  //     setIsAuthenticated(true);
-  //   }, 500);
+  //   setAuthState("CHECKING_TOKEN");
+
+  //   // check token here
   // });
 
-  if (authState === 'REFRESHING_TOKEN') {
-    return <h1>Loading...</h1>;
-  }
+  // if (authState === 'CHECKING_TOKEN') {
+  //   return <h1>Loading...</h1>;
+  // }
 
-  if (authState === 'SIGNED_OUT') {
-    return <Login signUpRouteHandler={signUpRouteHandler} />;
-  }
+  // if (authState === 'SIGN_IN_ROUTE') {
+  //   return <Login />;
+  // }
 
-  if (authState === 'SIGNING_UP') {
-    return <h1>SIGNING UP </h1>;
-  }
+  // if (authState === 'SIGN_UP_ROUTE') {
+  //   return <h1>SIGNING UP </h1>;
+  // }
 
-  return <Chat />;
+  // if (authState === 'AUTHENTICATED') {
+  //   return <Chat />;
+  // }
+  return (
+    // weird naming convention that app-scripts use
+    // instead of index.html
+    <BrowserRouter basename="userCodeAppPanel">
+      <AppRoutes />
+    </BrowserRouter>
+  );
 }
 
 export default App;

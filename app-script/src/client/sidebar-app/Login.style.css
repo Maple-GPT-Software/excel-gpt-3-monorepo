@@ -1,0 +1,35 @@
+.auth-wrapper {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-rows: 25% 50% 25%;
+    grid-template-columns: 100%;
+}
+
+.auth-wrapper > h1 {
+    text-align: center;
+    align-self: center;
+    font-size: 24px;
+}
+
+.auth-wrapper .auth-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.auth-wrapper .auth-button {
+    margin-bottom: 2rem;
+    max-width: 200px;
+}
+
+.auth-wrapper .auth-link {
+    text-decoration: none;
+    color: unset;
+}
+
+.auth-wrapper .auth-link > span {
+    color: var(--primary-dark);
+    font-weight: 500;
+}
+

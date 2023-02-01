@@ -144,6 +144,12 @@ table {
   border-spacing: 0;
 }
 
+html, body, #index {
+  width: 100vw;
+  height: 100vh;
+}
+
+
 /* ============== BUTTON ============== */
 .button {
   display: inline-flex;
