@@ -1,16 +1,21 @@
+import json
+import os
+
 import openai
 from django.http import HttpResponse
 
 
 def completion(request):
     if request.method == "POST":
+        req_prompt = json.loads(request.body.decode("utf-8"))["body"]
         response = openai.Completion.create(
             model="text-davinci-003",
-            prompt=request.body.decode("utf-8"),
+            prompt=req_prompt,
             max_tokens=50
         )
 
         #print(response.choices[0].text.split("=", 1)[1])
+
         return HttpResponse("FORMULA=" + response.choices[0].text.split("=", 1)[1] + "%END%")
 
 
