@@ -10,7 +10,7 @@ def completion(request):
         req_prompt = json.loads(request.body.decode("utf-8"))["body"]
         response = openai.Completion.create(
             model="text-davinci-003",
-            prompt=req_prompt,
+            prompt=provide_context() + req_prompt,
             max_tokens=50
         )
 
@@ -32,4 +32,4 @@ def generate_prompt():
 
 
 def provide_context(verbose: bool):
-    return "In the context of Google Sheets, can you provide me with just the formula that I have to insert for the following?"
+    return "In the context of Google Sheets, can you provide me with just the formula that I have to insert for the following?\n"
