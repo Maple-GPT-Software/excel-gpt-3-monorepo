@@ -1,20 +1,16 @@
-import os
-
 import openai
 from django.http import HttpResponse
 
-openai.api_key = "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"
-#openai.api_key = os.getenv("OPENAI_API_KEY")
-
 
 def completion(request):
-    if request.method == "GET":
+    if request.method == "POST":
         response = openai.Completion.create(
             model="text-davinci-003",
-            prompt=generate_prompt(),
+            prompt=request.body.decode("utf-8"),
             max_tokens=50
         )
-        print(response.choices[0].text.split("=", 1)[1])
+
+        #print(response.choices[0].text.split("=", 1)[1])
         return HttpResponse("FORMULA=" + response.choices[0].text.split("=", 1)[1] + "%END%")
 
 
