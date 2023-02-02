@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import AppRoutes from './AppRoutes';
+import Login from './Login';
+// import Chat from './Chat';
+import SignUp from './SignUp';
 
 // when there is an error we'll show a modal before login out the user and returning them
 // to signed_out state
@@ -8,20 +9,19 @@ type AUTHENTICATION_STATES =
   | 'CHECKING_TOKEN'
   | 'AUTHENTICATED'
   | 'ERROR'
-  | 'SIGN_IN_ROUTE'
-  | 'SIGN_UP_ROUTE';
+  | 'SIGN_IN'
+  | 'SIGN_UP';
 
 function App() {
-  const [authState, setAuthState] =
-    useState<AUTHENTICATION_STATES>('SIGN_IN_ROUTE');
+  const [route, setRoute] = useState<AUTHENTICATION_STATES>('SIGN_IN');
   const [user, setUser] = useState<any>(null);
 
-  function signUpRouteHandler() {
-    setAuthState('SIGN_UP_ROUTE');
+  function onRedirectToSignUp() {
+    setRoute('SIGN_UP');
   }
 
-  function signInRouteHandler() {
-    setAuthState('SIGN_IN_ROUTE');
+  function onRedirectToSignIn() {
+    setRoute('SIGN_IN');
   }
 
   // useEffect(() => {
@@ -31,28 +31,21 @@ function App() {
   //   // check token here
   // });
 
-  // if (authState === 'CHECKING_TOKEN') {
-  //   return <h1>Loading...</h1>;
-  // }
+  if (route === 'CHECKING_TOKEN') {
+    return <h1>Loading...</h1>;
+  }
 
-  // if (authState === 'SIGN_IN_ROUTE') {
-  //   return <Login />;
-  // }
+  if (route === 'SIGN_IN') {
+    return <Login onRedirectToSignUp={onRedirectToSignUp} />;
+  }
 
-  // if (authState === 'SIGN_UP_ROUTE') {
-  //   return <h1>SIGNING UP </h1>;
-  // }
+  if (route === 'SIGN_UP') {
+    return <SignUp onRedirectToSignIn={onRedirectToSignIn} />;
+  }
 
-  // if (authState === 'AUTHENTICATED') {
+  // if (route === 'AUTHENTICATED') {
   //   return <Chat />;
   // }
-  return (
-    // weird naming convention that app-scripts use
-    // instead of index.html
-    <BrowserRouter basename="userCodeAppPanel">
-      <AppRoutes />
-    </BrowserRouter>
-  );
 }
 
 export default App;

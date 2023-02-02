@@ -1,6 +1,6 @@
 export const onOpen = () => {
   const menu = SpreadsheetApp.getUi()
-    .createMenu('ExcelSimp') // edit me!
+    .createMenu('ExcelSimpify') // edit me!
     .addItem('Help', 'openHelpDialog')
     .addItem('Launch Application', 'openAboutSidebar');
 
