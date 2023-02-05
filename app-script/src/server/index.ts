@@ -12,7 +12,7 @@ import {
   writeFormulaToCell,
   getActiveSheetRange,
   getSelectedCellFormula,
-  getSelectedRangeValues
+  getSelectedRangeValues,
 } from './sheets';
 
 // Public functions must be exported as named exports
@@ -27,5 +27,5 @@ export {
   writeFormulaToCell,
   getActiveSheetRange,
   getSelectedCellFormula,
-  getSelectedRangeValues
+  getSelectedRangeValues,
 };

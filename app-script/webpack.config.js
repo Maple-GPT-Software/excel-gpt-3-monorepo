@@ -211,13 +211,6 @@ const DynamicCdnWebpackPluginConfig = {
           version: packageVersion,
           url: `https://unpkg.com/@types/react@${packageVersion}/index.d.ts`,
         };
-      case 'firebase':
-        return {
-          name: packageName,
-          var: 'firebase',
-          version: packageVersion,
-          url: `https://cdnjs.cloudflare.com/ajax/libs/firebase/${packageVersion}/firebase-analytics-compat.min.js`
-        }
       // return defaults/null depending if Dynamic CDN plugin finds package
       default:
         return moduleDetails;

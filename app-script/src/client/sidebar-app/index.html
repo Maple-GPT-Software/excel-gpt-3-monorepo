@@ -5,14 +5,60 @@
     <!-- <script src="http://localhost:8097"></script> -->
     <base target="_top" />
     <title>ExcelSimplify</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&display=swap"
+      rel="stylesheet"
+    />
     <!-- Add any external scripts and stylesheets here -->
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js';
+      // TODO: analytics???
+      import {
+        getAuth,
+        GoogleAuthProvider,
+        signInWithPopup,
+      } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js';
+
+      const firebaseConfig = {
+        apiKey: 'AIzaSyD-HGaNIlqTjZiRQAA6wvKOBjQVUyFwBQQ',
+        authDomain: 'excel-simplify.firebaseapp.com',
+        projectId: 'excel-simplify',
+        storageBucket: 'excel-simplify.appspot.com',
+        messagingSenderId: '357936409669',
+        appId: '1:357936409669:web:c0b89f9d8f1b13fdf9072c',
+        measurementId: 'G-NDF54XDW0L',
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const googleProvider = new GoogleAuthProvider();
+
+      const firebaseStateDiv = document.getElementById("FIREBASE_STATE");
+      firebaseStateDiv.setAttribute('data-is-ready', 'TRUE');
+
+      window.googleAuthPopUp = async function googleAuthPopUp() {
+        try {
+          const res = await signInWithPopup(auth, googleProvider);
+          return res.user;
+        } catch (error) {
+          console.error(error);
+          return null;
+        }
+      };
+
+      window.getAuth = function getAuth() {
+        return auth;
+      };
+    </script>
   </head>
+
   <body>
+    <div id="FIREBASE_STATE" style="position: absolute; top: 0; left: 0; color: red; background-color: transparent;">LOADING</div>
     <section id="index">
       <!-- bundled js and css will get inlined here during build -->
     </section>
+    <!-- Firebase Auth -->
   </body>
 </html>

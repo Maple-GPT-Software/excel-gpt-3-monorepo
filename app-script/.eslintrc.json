@@ -15,5 +15,8 @@
     "babelOptions": {
       "configFile": "./dev/.babelrc"
     }
+  },
+  "globals": {
+    "process.env": true
   }
 }

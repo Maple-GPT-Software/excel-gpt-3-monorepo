@@ -36,14 +36,14 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.2",
     "@radix-ui/react-icons": "^1.1.1",
-    "firebase": "^9.16.0",
     "immer": "^9.0.17",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
     "react-dom": "^18.2.0",
     "react-transition-group": "^4.4.2",
-    "use-immer": "^0.8.1"
+    "use-immer": "^0.8.1",
+    "wouter": "^2.9.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.6",
@@ -58,10 +58,13 @@
     "@babel/preset-react": "^7.17.12",
     "@effortlessmotion/dynamic-cdn-webpack-plugin": "^5.0.1",
     "@effortlessmotion/html-webpack-inline-source-plugin": "^1.0.3",
+    "@firebase/app-types": "^0.9.0",
+    "@firebase/auth-types": "^0.12.0",
     "@google/clasp": "^2.4.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@types/expect-puppeteer": "^5.0.0",
     "@types/jest-environment-puppeteer": "^5.0.2",
+    "@types/node": "^18.11.18",
     "@types/puppeteer": "^5.4.6",
     "@types/react": "^18.0.14",
     "autoprefixer": "10.4.5",
@@ -101,6 +104,7 @@
     "postcss-loader": "^7.0.1",
     "postcss-preset-env": "^7.7.2",
     "prettier": "^2.7.0",
+    "process": "^0.11.10",
     "puppeteer": "^14.3.0",
     "puppeteer-extra": "^3.2.3",
     "puppeteer-extra-plugin-stealth": "^2.9.0",
