@@ -1,11 +1,7 @@
 import React from 'react';
-import { Link } from 'wouter';
+import { Link } from 'react-router-dom';
 
 import './Login.style.css';
-
-// interface SignUpProps {
-//   onRedirectToSignIn: () => void;
-// }
 
 function SignUp() {
   return (
@@ -13,7 +9,7 @@ function SignUp() {
       <h1>Join Excel Simplify</h1>
       <div className="auth-main">
         <button className="button auth-button">Sign up with Google</button>
-        <Link className="auth-link" href="/">
+        <Link className="auth-link" to="/login">
           Already have an account? <span>Sign in</span>
         </Link>
       </div>

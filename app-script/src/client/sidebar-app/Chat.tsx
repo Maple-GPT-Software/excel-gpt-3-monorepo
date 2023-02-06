@@ -16,6 +16,7 @@ import { serverFunctions } from '../utils/serverFunctions';
 import './Chat.style.css';
 import ExamplePrompts from './components/ExamplePrompts';
 import Icon from './components/Icon';
+import { useAuthContext } from './AuthProvider';
 
 interface ChatState {
   status: 'FETCHING' | 'SUCCESS' | 'FAIL';
@@ -102,7 +103,7 @@ function scrollToBottom(element: HTMLElement) {
 }
 
 function Chat() {
-  //   const inputRef = useRef<HTMLInputElement>(null);
+  const { signOut } = useAuthContext();
   const [userInput, setUserInput] = useState('');
   const promptWrapperRef = useRef<HTMLDivElement>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
@@ -174,6 +175,9 @@ function Chat() {
 
   return (
     <div className="chat-wrapper">
+      <button onClick={signOut} style={{ position: 'absolute' }}>
+        Logout
+      </button>
       <section className="messages-wrapper">
         {!chatState.messages.length && <ExamplePrompts />}
         {!!chatState.messages.length &&

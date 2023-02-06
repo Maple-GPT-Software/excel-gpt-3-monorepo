@@ -6,11 +6,10 @@ import React, {
   useState,
 } from 'react';
 import { User } from './types';
-import { Route, Router, useLocation, useRouter, Link } from 'wouter';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import Login from './Login';
 import SignUp from './SignUp';
 import Chat from './Chat';
-import { isProd } from './settings';
 import Refresh from './Refresh';
 
 const AuthContext = createContext<
@@ -44,7 +43,8 @@ interface AuthProviderProps {
  */
 function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | undefined>(undefined);
-  const [location, setLocation] = useLocation();
+  //   const [location, setLocation] = useLocation();
+  const navgiate = useNavigate();
 
   async function loginWithGoogle() {
     const user = await window.googleAuthPopUp();
@@ -63,54 +63,36 @@ function AuthProvider({ children }: AuthProviderProps) {
   async function signOut() {
     const auth = await window.getAuth();
     auth.signOut();
+    setUser(undefined);
   }
 
   useEffect(() => {
+    // https://medium.com/geekculture/firebase-auth-with-react-and-typescript-abeebcd7940a
+    // TODO: unsubscribe from onAuthStateChanged
     window.getAuth().onAuthStateChanged((user) => {
       if (user) {
         // TODO: verify user and refresh token
         // we can also schedule a refrehs of the user's id token
         // using getIdToken()
         console.log('logged in user is: ', user);
-        setLocation('/sidebar-app-impl.html/chat');
+        navgiate('/chat');
       } else {
         console.log('no one logged in');
+        navgiate('/login');
       }
     });
   }, []);
-
-  //   let defaultChildren: ReactNode;
-
-  //   if (user) {
-  //     defaultChildren = children;
-  //   } else {
-  //     defaultChildren = <Login />;
-  //   }
 
   return (
     <AuthContext.Provider
       value={{ user, signUpWithGoogle, loginWithGoogle, signOut }}
     >
-      <Router base={isProd ? '/userCodeAppPanel' : '/sidebar-app-impl.html'}>
-        <Route path="/">
-          <Refresh />
-        </Route>
-        <Route path="/login">
-          <Login />
-        </Route>
-        <Route path="/signup">
-          <SignUp />
-        </Route>
-        <Route path="/chat">
-          <Chat />
-        </Route>
-        {/* <button onClick={() => setLocation('/sidebar-app-impl.html/')}>
-          login page
-        </button>
-        <Link href="/">login</Link> */}
-        {/* <Route path="/refresh">
-      </Route> */}
-      </Router>
+      <Routes>
+        <Route path="/" element={<Refresh />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/chat" element={<Chat />} />
+      </Routes>
     </AuthContext.Provider>
   );
 }

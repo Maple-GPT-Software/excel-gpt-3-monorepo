@@ -173,7 +173,7 @@ const DynamicCdnWebpackPluginConfig = {
 
     // don't externalize react during development due to issue with react-refresh
     // https://github.com/pmmmwh/react-refresh-webpack-plugin/issues/334
-    if (!isProd && packageName === 'react') {
+    if (packageName === 'react') {
       return null;
     }
 
@@ -211,6 +211,20 @@ const DynamicCdnWebpackPluginConfig = {
           version: packageVersion,
           url: `https://unpkg.com/@types/react@${packageVersion}/index.d.ts`,
         };
+      case 'react-router-dom':
+        return {
+          name: packageName,
+          var: 'react-router-dom',
+          version: packageVersion,
+          url: `https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/${packageVersion}/react-router-dom.production.min.js`,
+        };
+      case 'react':
+        return {
+          name: packageName,
+          var: 'react',
+          version: packageVersion,
+          url: `https://cdnjs.cloudflare.com/ajax/libs/react/${packageVersion}/umd/react.production.min.js`,
+        };
       // return defaults/null depending if Dynamic CDN plugin finds package
       default:
         return moduleDetails;
@@ -225,6 +239,7 @@ const clientConfigs = clientEntrypoints.map((clientEntrypoint) => {
     ...clientConfig({ isDevClientWrapper }),
     name: clientEntrypoint.name,
     entry: clientEntrypoint.entry,
+    target: "web",
     plugins: [
       !isProd && new ReactRefreshWebpackPlugin(),
       new webpack.DefinePlugin({
@@ -247,7 +262,7 @@ const clientConfigs = clientEntrypoints.map((clientEntrypoint) => {
 
 // webpack settings for devServer https://webpack.js.org/configuration/dev-server/
 const devServer = {
-  hot: true,
+  // hot: true,
   port: PORT,
   server: 'https',
 };

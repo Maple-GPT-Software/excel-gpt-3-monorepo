@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Login from './Login';
 import Chat from './Chat';
 import SignUp from './SignUp';
-import { Route, Router, useLocation } from 'wouter';
+// import { Route, Router, useLocation } from 'wouter';
 
 import { isProd } from './settings';
 import AuthProvider from './AuthProvider';

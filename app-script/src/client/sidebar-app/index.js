@@ -1,7 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App';
-import { Router, useRouter } from 'wouter';
+import { BrowserRouter } from 'react-router-dom';
 
 import { isProd } from './settings';
 
@@ -24,9 +23,12 @@ const observer = new MutationObserver((mutationList) => {
     for (const mutation of mutationList) {
         if (mutation.type === "attributes") {
             console.log('attribute changed', firebaseStateDiv.attributes);
+            firebaseStateDiv.innerHTML = "";
+            firebaseStateDiv.style = "";
             root.render(
-                <AuthProvider>
-                </AuthProvider>
+                <BrowserRouter basename={isProd ? '/userCodeAppPanel' : '/sidebar-app-impl.html'}>
+                    <AuthProvider />
+                </BrowserRouter>
             );
         }
 
@@ -35,13 +37,3 @@ const observer = new MutationObserver((mutationList) => {
 });
 
 observer.observe(firebaseStateDiv, {attributes: true, childList: false, subtree: false});
-
-
-
-// function AppWraper() {
-//     const router = useRouter();
-
-//     router.base = '/sidebar-app-impl.html';
-
-//     return <App />
-// }
