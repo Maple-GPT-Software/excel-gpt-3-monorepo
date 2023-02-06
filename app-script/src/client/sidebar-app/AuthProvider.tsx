@@ -11,6 +11,7 @@ import Login from './Login';
 import SignUp from './SignUp';
 import Chat from './Chat';
 import Refresh from './Refresh';
+import { CHAT_ROUTE, LOGIN_ROUTE, SIGNUP_ROUTE } from './constants';
 
 const AuthContext = createContext<
   | {
@@ -47,6 +48,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   const navgiate = useNavigate();
 
   async function loginWithGoogle() {
+    navgiate('/');
     const user = await window.googleAuthPopUp();
 
     // TODO: get actual user profile from API and set it as user state
@@ -54,6 +56,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   }
 
   async function signUpWithGoogle() {
+    navgiate('/');
     const user = await window.googleAuthPopUp();
 
     // TODO:
@@ -64,6 +67,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     const auth = await window.getAuth();
     auth.signOut();
     setUser(undefined);
+    navgiate(LOGIN_ROUTE);
   }
 
   useEffect(() => {
@@ -75,10 +79,9 @@ function AuthProvider({ children }: AuthProviderProps) {
         // we can also schedule a refrehs of the user's id token
         // using getIdToken()
         console.log('logged in user is: ', user);
-        navgiate('/chat');
+        navgiate(CHAT_ROUTE);
       } else {
-        console.log('no one logged in');
-        navgiate('/login');
+        navgiate(LOGIN_ROUTE);
       }
     });
   }, []);
@@ -89,9 +92,9 @@ function AuthProvider({ children }: AuthProviderProps) {
     >
       <Routes>
         <Route path="/" element={<Refresh />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/chat" element={<Chat />} />
+        <Route path={LOGIN_ROUTE} element={<Login />} />
+        <Route path={SIGNUP_ROUTE} element={<SignUp />} />
+        <Route path={CHAT_ROUTE} element={<Chat />} />
       </Routes>
     </AuthContext.Provider>
   );
