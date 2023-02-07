@@ -40,6 +40,7 @@ function BotMessage({ completion }: BotMessageProps) {
           ></p>
         )}
 
+      {/* TODO: conditionally render this based on rating property on completion */}
       <RateCompletion completion={completion} />
     </div>
   );
@@ -125,6 +126,8 @@ const RateCompletion: React.FC<RateCompletionFormProps> = (props) => {
     });
   }
 
+  // TODO: After a rating has been submitted don't render the thumb-up and thumb-down
+
   return (
     <>
       <div className="like-dislike-container">
@@ -133,7 +136,6 @@ const RateCompletion: React.FC<RateCompletionFormProps> = (props) => {
           setOpen={setShowModal}
           title="Feedback"
           trigger={
-            // TODO: after they've don't render any icons
             <div>
               <Icon
                 pathName="THUMB_DOWN"

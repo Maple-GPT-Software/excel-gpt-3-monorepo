@@ -6,9 +6,6 @@ import {
 
 import {
   getSheetsData,
-  addSheet,
-  deleteSheet,
-  setActiveSheet,
   writeFormulaToCell,
   getActiveSheetRange,
   getSelectedCellFormula,
@@ -21,9 +18,6 @@ export {
   openHelpDialog,
   openAboutSidebar,
   getSheetsData,
-  addSheet,
-  deleteSheet,
-  setActiveSheet,
   writeFormulaToCell,
   getActiveSheetRange,
   getSelectedCellFormula,

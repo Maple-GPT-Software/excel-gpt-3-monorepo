@@ -39,19 +39,27 @@ interface ValueRangeObj {
 
 /**
  * get selected range in as a concatenated string
+ * [["2/1/2023","hello,world","1:00:00 AM","2.335"]]
+ * we only get display (text values) because
+ * something like "1:00:00 AM" in a cell returns "1899-12-30T06:00:00.000Z" with getValues()
  */
 export const getSelectedRangeValues = () : ValueRangeObj | null => {
   const activeRange = getActiveSheet().getActiveRange();
-  const activeRangeValues = activeRange.getValues();
+  const activeRangeValues = activeRange.getDisplayValues();
 
   if (!activeRangeValues.length) null;
 
   // format values in string format
   return {
     range: activeRange.getA1Notation(),
-    values: convertRangeValuesToCSV(activeRangeValues)
+    values: JSON.stringify(activeRangeValues)
+    // values: convertRangeValuesToCSV(activeRangeValues)
   };
 }
+
+/**
+ * 
+ */
 
 export const getActiveSheetRange = () => {
   console.log('get active range start: ')
@@ -73,22 +81,6 @@ export const getSheetsData = () => {
   });
 };
 
-export const addSheet = (sheetTitle: string) => {
-  SpreadsheetApp.getActive().insertSheet(sheetTitle);
-  return getSheetsData();
-};
-
-export const deleteSheet = (sheetIndex: number) => {
-  const sheets = getSheets();
-  SpreadsheetApp.getActive().deleteSheet(sheets[sheetIndex]);
-  return getSheetsData();
-};
-
-export const setActiveSheet = (sheetName: string) => {
-  SpreadsheetApp.getActive().getSheetByName(sheetName).activate();
-  return getSheetsData();
-};
-
 
 // UTILITY FUNCTIONS
 
@@ -108,3 +100,39 @@ function convertRangeValuesToCSV(values: Array<string | number>[]) {
     return csv + `\n` + rowWithFixedDecimals.join(',');
   }, '').concat('\n')
 }
+
+/**
+ * Convert any spreadsheet value to a date.
+ * Assumes that numbers are using Epoch (days since 1 Jan 1900, e.g. Excel, Sheets).
+ * 
+ * @param {object}  value  (optional) Cell value; a date, a number or a date-string 
+ *                         will be converted to a JavaScript date. If missing or
+ *                         an unknown type, will be treated as "today".
+ *
+ * @return {date}          JavaScript Date object representation of input value.
+ */
+// function convert2jsDate( value : Number | Boolean | Object 
+//   | String ) {
+//   let jsDate;  // default to now
+//   if (value) {
+//     // If we were given a date object, use it as-is
+//     if (typeof value === 'object') {
+//       jsDate = new Date(value);
+//     }
+//     else {
+//       if (typeof value === 'number') {
+//         // Assume this is spreadsheet "serial number" date
+//         var daysSince01Jan1900 = value;
+//         var daysSince01Jan1970 = daysSince01Jan1900 - 25569 // 25569 = days TO Unix Time Reference
+//         var msSince01Jan1970 = daysSince01Jan1970 * 24 * 60 * 60 * 1000; // Convert to numeric unix time
+//         var timezoneOffsetInMs = jsDate.getTimezoneOffset() * 60 * 1000;
+//         jsDate = new Date( msSince01Jan1970 + timezoneOffsetInMs );
+//       }
+//       else if (typeof value === 'string') {
+//         // Hope the string is formatted as a date string
+//         jsDate = new Date( value );
+//       }
+//     }
+//   }
+//   return jsDate;
+// }

@@ -34,3 +34,9 @@ export interface GPTCompletion {
   model: string;
   object: string;
 }
+
+// Object returns by getSelectedRangeValues
+export interface ValueRangeObj {
+  range: string,
+  values: string
+}
