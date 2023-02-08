@@ -159,6 +159,7 @@ const clientConfig = ({ isDevClientWrapper }) => ({
       },
     ],
   },
+  devtool : isProd ? 'source-map' : 'cheap-module-source-map'
 });
 
 // DynamicCdnWebpackPlugin settings
@@ -353,7 +354,7 @@ const serverConfig = {
     ],
   },
   optimization: {
-    minimize: true,
+    minimize: isProd,
     minimizer: [
       new TerserPlugin({
         terserOptions: {

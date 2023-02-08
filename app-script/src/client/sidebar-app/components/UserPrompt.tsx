@@ -14,11 +14,12 @@ import { ValueRangeObj } from '../types';
 import useAutosizeTextArea from '../hooks/useAutosizeTextArea';
 import useOnClickOutside from '../hooks/useOnClickOutside';
 // COMPONENTS
+import DataTable from './DataTable';
+import CodeBlockMessage from './CodeBlockMessage';
 import Icon from './Icon';
 import LoadingEllipsis from './LoadingEllipsis';
 
 import './UserPrompt.style.css';
-import DataTable from './DataTable';
 
 interface ChatInputProps {
   shouldDisableTextarea: boolean;
@@ -47,13 +48,14 @@ const UserPrompt = (props: ChatInputProps) => {
     dispatch({
       type: 'ADD_USER_PROMPT',
       // TODO: format data table and formula
-      payload: 'hello world',
+      payload: formatUserInputs(input, dataTable, formula),
     });
 
     // scroll to bottom of chat container after user's prompt is added
     setTimeout(() => {
       //   handleScrollToChatBottom();
     });
+
     // TODO: call API here
 
     // ONLY FOR TESTING
@@ -128,9 +130,13 @@ const UserPrompt = (props: ChatInputProps) => {
     setDataTable('');
   }
 
+  function removeFormula() {
+    setFormula('');
+  }
+
   return (
     <div className="prompt-wrapper">
-      <div>
+      <div className="text-area-wrapper" style={{ position: 'relative' }}>
         <textarea
           rows={1}
           ref={textAreaRef}
@@ -149,6 +155,7 @@ const UserPrompt = (props: ChatInputProps) => {
             <DotsVerticalIcon />
           </div>
         </div>
+        {/* MENU FOR TO SELECT INSERT FORMULA OR RANGE */}
         {isMenuOpen && (
           <div ref={propMenuWrapperRef} className="prompt-options-menu">
             {isAppsheetFetching ? (
@@ -157,10 +164,16 @@ const UserPrompt = (props: ChatInputProps) => {
               </div>
             ) : (
               <>
-                <div onClick={getSelectedFormulaHandler}>
-                  <Icon pathName="ARROW_RIGHT_ON_RECT" width={18} height={18} />
-                  <p>Insert selected formula</p>
-                </div>
+                {!formula && (
+                  <div onClick={getSelectedFormulaHandler}>
+                    <Icon
+                      pathName="ARROW_RIGHT_ON_RECT"
+                      width={18}
+                      height={18}
+                    />
+                    <p>Insert selected formula</p>
+                  </div>
+                )}
                 {!dataTable && (
                   <div onClick={getSelectedRangeValuesHandler}>
                     <Icon
@@ -171,12 +184,19 @@ const UserPrompt = (props: ChatInputProps) => {
                     <p>Insert selected range</p>
                   </div>
                 )}
+                {dataTable && formula && (
+                  <p style={{ position: 'absolute', bottom: 25 }}>
+                    only one formula and range can be attached to your message
+                  </p>
+                )}
               </>
             )}
           </div>
         )}
       </div>
       {/* <div className="prompt-submit" onClick={handleSubmit} /> */}
+
+      {/* RENDER DATA TABLE IF USER HAS INSERTED ONE */}
       {dataTable && (
         <div className="attachment-wrapper">
           <button
@@ -186,7 +206,21 @@ const UserPrompt = (props: ChatInputProps) => {
           >
             <Cross1Icon />
           </button>
-          <DataTable />
+          <DataTable data={dataTable} />
+        </div>
+      )}
+
+      {/* RENDER DATA TABLE IF USER HAS INSERTED ONE */}
+      {formula && (
+        <div className="attachment-wrapper">
+          <button
+            aria-label="remove data table"
+            type="button"
+            onClick={removeFormula}
+          >
+            <Cross1Icon />
+          </button>
+          <CodeBlockMessage formula={formula} showInsertFormula={false} />
         </div>
       )}
     </div>
@@ -194,3 +228,30 @@ const UserPrompt = (props: ChatInputProps) => {
 };
 
 export default UserPrompt;
+
+function formatUserInputs(
+  input: string,
+  datatable: ValueRangeObj | '',
+  formula: string
+) {
+  let formattedInputs = input;
+
+  if (datatable) {
+    formattedInputs += '\n';
+    formattedInputs += `
+    USER_RANGE\n
+    =${datatable.range}
+    USER_RANGE\n
+    
+    USER_DATA_TABLE\n
+    ${datatable.values}
+    USER_DATA_TABLE\n
+    `;
+  }
+
+  if (formula) {
+    formattedInputs += `FORMULA${formula}FORMULA`;
+  }
+
+  return formattedInputs;
+}

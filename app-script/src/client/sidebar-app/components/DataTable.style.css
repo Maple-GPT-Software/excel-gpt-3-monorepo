@@ -5,6 +5,10 @@
     border-radius: 6px;
 }
 
+.table {
+    white-space: nowrap;
+}
+
 .table th {
     background-color: var(--primary-dark);
     color: white;

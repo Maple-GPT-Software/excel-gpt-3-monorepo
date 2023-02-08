@@ -1,10 +1,11 @@
 .prompt-wrapper {
-    padding: 0px 16px;
+    padding: 2px 16px;
     width: 100vw;
     position: fixed;
     bottom: 12px;
     left: 0;
     box-sizing: border-box;
+    background-color: white;
 }
 
 .prompt-wrapper textarea {
@@ -41,10 +42,10 @@
 /* PROMPT MENU OPTIONS */
 .prompt-options-menu {
     padding: 16px;
-    position: fixed;
+    position: absolute;
     z-index: 10;
-    bottom: 55px;
-    width: calc(100vw - 33px);
+    bottom: 30px;
+    width: 100%;
     min-height: 80px;
     box-sizing: border-box;
     border-radius: 6px;
@@ -123,11 +124,15 @@
     border-radius: 12px;
     border: none;
     position: absolute;
+    z-index: 10;
     right: -10px;
     top: -10px;
+    background-color: #b91c1c94;
+    color: white;
 }
 
 .attachment-wrapper > button:hover {
     cursor: pointer;
-    background-color: var(--grey-light);
+    /* TW RED 700 */
+    background-color: #b91c1c;
 }

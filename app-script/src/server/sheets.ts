@@ -53,7 +53,6 @@ export const getSelectedRangeValues = () : ValueRangeObj | null => {
   return {
     range: activeRange.getA1Notation(),
     values: JSON.stringify(activeRangeValues)
-    // values: convertRangeValuesToCSV(activeRangeValues)
   };
 }
 
@@ -100,39 +99,3 @@ function convertRangeValuesToCSV(values: Array<string | number>[]) {
     return csv + `\n` + rowWithFixedDecimals.join(',');
   }, '').concat('\n')
 }
-
-/**
- * Convert any spreadsheet value to a date.
- * Assumes that numbers are using Epoch (days since 1 Jan 1900, e.g. Excel, Sheets).
- * 
- * @param {object}  value  (optional) Cell value; a date, a number or a date-string 
- *                         will be converted to a JavaScript date. If missing or
- *                         an unknown type, will be treated as "today".
- *
- * @return {date}          JavaScript Date object representation of input value.
- */
-// function convert2jsDate( value : Number | Boolean | Object 
-//   | String ) {
-//   let jsDate;  // default to now
-//   if (value) {
-//     // If we were given a date object, use it as-is
-//     if (typeof value === 'object') {
-//       jsDate = new Date(value);
-//     }
-//     else {
-//       if (typeof value === 'number') {
-//         // Assume this is spreadsheet "serial number" date
-//         var daysSince01Jan1900 = value;
-//         var daysSince01Jan1970 = daysSince01Jan1900 - 25569 // 25569 = days TO Unix Time Reference
-//         var msSince01Jan1970 = daysSince01Jan1970 * 24 * 60 * 60 * 1000; // Convert to numeric unix time
-//         var timezoneOffsetInMs = jsDate.getTimezoneOffset() * 60 * 1000;
-//         jsDate = new Date( msSince01Jan1970 + timezoneOffsetInMs );
-//       }
-//       else if (typeof value === 'string') {
-//         // Hope the string is formatted as a date string
-//         jsDate = new Date( value );
-//       }
-//     }
-//   }
-//   return jsDate;
-// }

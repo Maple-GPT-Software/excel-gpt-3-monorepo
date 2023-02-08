@@ -1,14 +1,12 @@
-import React, { useState, useRef, ChangeEvent } from 'react';
+import React, { useState, useRef } from 'react';
+import CodeBlockMessage from './CodeBlockMessage';
 import { GPTCompletion } from '../types.d';
 import LoadingEllipsis from './LoadingEllipsis';
 import Icon from './Icon';
-import { serverFunctions } from '../../utils/serverFunctions';
 
 import './BotMessage.style.css';
 import Modal from './Modal';
-
-const CODE_BLOCK = 'CODE_BLOCK';
-
+import { CODE_BLOCK } from '../constants';
 interface BotMessageProps {
   completion: GPTCompletion;
 }
@@ -27,7 +25,7 @@ function BotMessage({ completion }: BotMessageProps) {
       {/* text block when completion is a formula, start with CODE_BLOCK */}
       {!!completion.choices.length &&
         completion?.choices[0].text.includes(CODE_BLOCK) && (
-          <BotCodeMessage formula={completion?.choices[0].text} />
+          <CodeBlockMessage formula={completion?.choices[0].text} />
         )}
 
       {/* text block when completion is just text */}
@@ -47,32 +45,6 @@ function BotMessage({ completion }: BotMessageProps) {
 }
 
 export default BotMessage;
-
-/**
- * This render the code completion in a IDE-like UI element
- * and includes element for inserting formula into the UI
- */
-function BotCodeMessage({ formula }: { formula: string }) {
-  function handleInsertIntoCell() {
-    console.log('handling insert');
-    serverFunctions.writeFormulaToCell();
-  }
-
-  return (
-    <div className="bot-message-code-wrapper">
-      <div className="bot-message-code-header">
-        <button onClick={handleInsertIntoCell}>INSERT INTO CELL</button>
-      </div>
-      <div className="bot-message-code-container">
-        <code
-          dangerouslySetInnerHTML={{
-            __html: formula.replace(CODE_BLOCK, '').replaceAll('\n', ''),
-          }}
-        ></code>
-      </div>
-    </div>
-  );
-}
 
 // ======================= RATE COMPLETION
 

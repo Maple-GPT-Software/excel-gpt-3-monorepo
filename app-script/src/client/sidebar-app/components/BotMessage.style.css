@@ -4,35 +4,6 @@
     color: black;
 }
 
-.bot-message-code-wrapper {
-    background-color: black;
-    color: white;
-    border-radius: 6px;
-}
-
-.bot-message-code-wrapper .bot-message-code-header {
-    padding: 6px 6px;
-    background-color: #333540;
-    color: white;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.bot-message-code-wrapper .bot-message-code-header > button {
-    background-color: transparent;
-    color: gainsboro;
-    border: solid thin gainsboro;
-    border-radius: 2px;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-.bot-message-code-wrapper .bot-message-code-container {
-    padding: 12px 6px;
-}
-
 .like-dislike-container {
     margin-top: 12px;
     display: flex;

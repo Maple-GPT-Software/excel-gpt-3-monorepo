@@ -13,6 +13,7 @@ function ExamplePrompts() {
         "How do I sort a column of names in descending order?"
       </p>
       <p className="example-prompt-element">"Explain how VLOOKUP works"</p>
+      <p>TODO: open guide modal here</p>
     </div>
   );
 }
