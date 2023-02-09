@@ -18,8 +18,11 @@ import DataTable from './DataTable';
 import CodeBlockMessage from './CodeBlockMessage';
 import Icon from './Icon';
 import LoadingEllipsis from './LoadingEllipsis';
+// PROJECT MODULES
+import { USER_PROMPT_ENHANCEMENTS, USER_RANGE } from '../constants';
 
 import './UserPrompt.style.css';
+import { USER_FORMULA } from '../constants';
 
 interface ChatInputProps {
   shouldDisableTextarea: boolean;
@@ -31,6 +34,7 @@ const UserPrompt = (props: ChatInputProps) => {
 
   const [input, setInput] = useState('');
   const [dataTable, setDataTable] = useState<ValueRangeObj | ''>('');
+  // formula from SpreadsheetApp always starts with "="
   const [formula, setFormula] = useState('');
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -206,7 +210,7 @@ const UserPrompt = (props: ChatInputProps) => {
           >
             <Cross1Icon />
           </button>
-          <DataTable data={dataTable} />
+          <DataTable data={JSON.parse(dataTable.values)} />
         </div>
       )}
 
@@ -234,23 +238,16 @@ function formatUserInputs(
   datatable: ValueRangeObj | '',
   formula: string
 ) {
-  let formattedInputs = input;
+  // we add this string regardless if there are no enhancements
+  // we have a utility function that will take it out for display purposes
+  let formattedInputs = input + ` ${USER_PROMPT_ENHANCEMENTS}`;
 
   if (datatable) {
-    formattedInputs += '\n';
-    formattedInputs += `
-    USER_RANGE\n
-    =${datatable.range}
-    USER_RANGE\n
-    
-    USER_DATA_TABLE\n
-    ${datatable.values}
-    USER_DATA_TABLE\n
-    `;
+    formattedInputs += ` ${USER_RANGE}=${datatable.range} USER_DATA_TABLE=${datatable.values}`;
   }
 
   if (formula) {
-    formattedInputs += `FORMULA${formula}FORMULA`;
+    formattedInputs += ` ${USER_FORMULA}${formula}`;
   }
 
   return formattedInputs;

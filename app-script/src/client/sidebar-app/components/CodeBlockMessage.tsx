@@ -6,7 +6,7 @@ import { CODE_BLOCK } from '../constants';
 import './CodeBlockMessage.style.css';
 
 /**
- * This render the code completion in a IDE-like UI element
+ * This render the formula completion in a IDE-like UI element
  * and conditionally renders a button for inserting formula into sheet
  */
 function CodeBlockMessage({

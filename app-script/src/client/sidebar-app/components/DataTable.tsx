@@ -8,21 +8,15 @@ const DUMMY_DATA: ValueRangeObj = {
   values: `[["Name","Height","Eye color","Email"],["Kyle Stone, test","4.48","red","kyle.stone@gmail.com"],["Reese Reilly","4.61","blue","r.reilly@hotmail.com"]]`,
 };
 
-function DataTable({ data }: { data: ValueRangeObj | '' }) {
-  //   if (!data?.values) return null;
-
+function DataTable({ data }: { data: any[][] | '' }) {
   if (!data) {
     return null;
   }
 
-  const dataArr = JSON.parse(data.values);
-
-  console.log(dataArr);
-
   return (
     <div className="table-wrapper">
       <table className="table">
-        {dataArr.map((row: any, rowIndex: number) => {
+        {data.map((row: any, rowIndex: number) => {
           return (
             <tr key={`row-${rowIndex}`}>
               {rowIndex === 0

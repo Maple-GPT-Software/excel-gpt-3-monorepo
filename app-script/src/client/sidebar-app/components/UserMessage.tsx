@@ -1,19 +1,27 @@
 import React from 'react';
 import { UserInput } from '../Chat';
+import {
+  getDataTableFromText,
+  getFormulaFromText,
+  getUserPromptFromText,
+} from '../utils/regexUtils';
 import DataTable from './DataTable';
 
 import './UserMessage.style.css';
+import CodeBlockMessage from './CodeBlockMessage';
 
 function UserMessage({ prompt }: { prompt: UserInput }) {
-  // TODO: some preprocessing to display data table and formula
-  // if they are present the user prompt string
+  const datatable = getDataTableFromText(prompt);
+  const formula = getFormulaFromText(prompt);
+  const userPrompt = getUserPromptFromText(prompt);
 
   return (
     <div className="user-message-wrapper">
-      <p> {prompt} </p>
-      {/* {!!prompt.dataTable?.values && <DataTable data={undefined} />} */}
-      {/* <DataTable data={undefined} />
-      {prompt.formula && <p>has formula</p>} */}
+      <p> {userPrompt} </p>
+      {datatable && <DataTable data={JSON.parse(datatable)} />}
+      {formula && (
+        <CodeBlockMessage formula={formula} showInsertFormula={false} />
+      )}
     </div>
   );
 }
