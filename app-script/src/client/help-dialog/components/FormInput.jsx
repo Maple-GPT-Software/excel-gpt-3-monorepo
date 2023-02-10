@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 
 const FormInput = ({ submitNewSheet }) => {
   const [inputValue, setInputValue] = useState('');
@@ -36,7 +35,3 @@ const FormInput = ({ submitNewSheet }) => {
 };
 
 export default FormInput;
-
-FormInput.propTypes = {
-  submitNewSheet: PropTypes.func,
-};

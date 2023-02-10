@@ -1,10 +1,5 @@
 // NPM
 import React, { useState, useRef } from 'react';
-import {
-  Cross1Icon,
-  Cross2Icon,
-  DotsVerticalIcon,
-} from '@radix-ui/react-icons';
 // UTILS
 import { serverFunctions } from '../../utils/serverFunctions';
 // TYPES
@@ -159,9 +154,7 @@ const UserPrompt = (props: ChatInputProps) => {
             className="prompt-menu-wrapper"
             onClick={() => setIsMenuOpen(true)}
           >
-            <div className="prompt-menu">
-              <DotsVerticalIcon />
-            </div>
+            <div className="prompt-menu">...</div>
           </div>
         )}
         {/* MENU FOR TO SELECT INSERT FORMULA OR RANGE */}
@@ -213,7 +206,7 @@ const UserPrompt = (props: ChatInputProps) => {
             type="button"
             onClick={removeDataTable}
           >
-            <Cross1Icon />
+            X
           </button>
           <DataTable data={JSON.parse(dataTable.values)} />
         </div>
@@ -227,7 +220,7 @@ const UserPrompt = (props: ChatInputProps) => {
             type="button"
             onClick={removeFormula}
           >
-            <Cross1Icon />
+            X
           </button>
           <CodeBlockMessage formula={formula} showInsertFormula={false} />
         </div>

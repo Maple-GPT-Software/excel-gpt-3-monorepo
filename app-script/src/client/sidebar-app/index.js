@@ -25,6 +25,8 @@ const observer = new MutationObserver((mutationList) => {
             console.log('attribute changed', firebaseStateDiv.attributes);
             firebaseStateDiv.innerHTML = "";
             firebaseStateDiv.style = "";
+
+            console.log('inside MutationObserver')
             root.render(
                 <BrowserRouter basename={isProd ? '/userCodeAppPanel' : '/sidebar-app-impl.html'}>
                     <AuthProvider />

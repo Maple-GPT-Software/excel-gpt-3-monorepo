@@ -89,6 +89,8 @@ function AuthProvider({ children }: AuthProviderProps) {
     });
   }, []);
 
+  console.log('inside AuthProvider');
+
   return (
     <AuthContext.Provider
       value={{ user, signUpWithGoogle, loginWithGoogle, signOut }}

@@ -9,7 +9,6 @@ import {
   Description,
   Close,
 } from '@radix-ui/react-dialog';
-import { Cross2Icon } from '@radix-ui/react-icons';
 
 import './Modal.style.css';
 
@@ -26,10 +25,7 @@ function Modal(props: ModalProps) {
   const { open, setOpen, trigger, title, triggerButtonText, children } = props;
   return (
     <Root open={open} onOpenChange={setOpen}>
-      <Trigger asChild>
-        {/* {triggerButtonText && <button>{triggerButtonText}</button>} */}
-        {!triggerButtonText && trigger}
-      </Trigger>
+      <Trigger asChild>{!triggerButtonText && trigger}</Trigger>
       <Portal>
         <Overlay className="modal-overlay" />
         <Content className="modal-content">
@@ -42,7 +38,7 @@ function Modal(props: ModalProps) {
               aria-label="close"
               onClick={() => setOpen(false)}
             >
-              <Cross2Icon />
+              X
             </button>
           </Close>
         </Content>

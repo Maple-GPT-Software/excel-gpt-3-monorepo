@@ -35,15 +35,11 @@
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.2",
-    "@radix-ui/react-icons": "^1.1.1",
-    "@radix-ui/react-tooltip": "^1.0.3",
     "immer": "^9.0.17",
-    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",
-    "react-transition-group": "^4.4.2",
     "use-immer": "^0.8.1"
   },
   "devDependencies": {
@@ -113,6 +109,7 @@
     "terser-webpack-plugin": "^5.3.3",
     "ts-loader": "^9.3.0",
     "webpack": "^5.73.0",
+    "webpack-bundle-analyzer": "^4.7.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.2"
   }

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import FormInput from './FormInput';
 import SheetButton from './SheetButton';
 
@@ -45,22 +44,6 @@ const SheetEditor = () => {
         red &times; next to the sheet name to delete it.
       </p>
       <FormInput submitNewSheet={submitNewSheet} />
-      <TransitionGroup className="sheet-list">
-        {names.length > 0 &&
-          names.map((name) => (
-            <CSSTransition
-              classNames="sheetNames"
-              timeout={500}
-              key={name.name}
-            >
-              <SheetButton
-                sheetDetails={name}
-                deleteSheet={deleteSheet}
-                setActiveSheet={setActiveSheet}
-              />
-            </CSSTransition>
-          ))}
-      </TransitionGroup>
     </div>
   );
 };

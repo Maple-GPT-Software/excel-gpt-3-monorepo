@@ -1,13 +1,13 @@
 import React from 'react';
 import Chat from '../Chat';
 import { useAuthContext } from '../AuthProvider';
-import * as Tooltip from '@radix-ui/react-tooltip';
 
 import './AuthenticatedLayout.style.css';
-import { QuestionMarkCircledIcon } from '@radix-ui/react-icons';
 
 function AuthenticatedLayout() {
   const { signOut } = useAuthContext();
+
+  console.log('inside AuthenticatedLayout');
 
   return (
     <div className="main-laytout">
@@ -15,7 +15,13 @@ function AuthenticatedLayout() {
         {/* placeholder for hamburger menu trigger */}
         <div className="nav-left-wrapper"></div>
         <div className="nav-right-wrapper">
-          <OpenGuideTooltip />
+          {/* TODO: action here */}
+          <button
+            className="nav-tooltip-button"
+            aria-label="click to open guide"
+          >
+            <span>?</span>
+          </button>
           <button onClick={signOut} className="button button-logout">
             logout
           </button>
@@ -29,23 +35,3 @@ function AuthenticatedLayout() {
 }
 
 export default AuthenticatedLayout;
-
-function OpenGuideTooltip() {
-  return (
-    <Tooltip.Provider delayDuration={0}>
-      <Tooltip.Root>
-        <Tooltip.Trigger asChild>
-          <button aria-label="click to open guide" className="help-button">
-            <QuestionMarkCircledIcon color="white" height={24} width={24} />
-          </button>
-        </Tooltip.Trigger>
-        <Tooltip.Portal>
-          <Tooltip.Content className="TooltipContent" sideOffset={5}>
-            View guide
-            <Tooltip.Arrow className="TooltipArrow" />
-          </Tooltip.Content>
-        </Tooltip.Portal>
-      </Tooltip.Root>
-    </Tooltip.Provider>
-  );
-}

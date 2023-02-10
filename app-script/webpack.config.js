@@ -12,6 +12,7 @@ const HtmlWebpackInlineSourcePlugin = require('@effortlessmotion/html-webpack-in
 const DynamicCdnWebpackPlugin = require('@effortlessmotion/dynamic-cdn-webpack-plugin');
 const moduleToCdn = require('module-to-cdn');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 /*********************************
  *    set up environment variables
@@ -86,6 +87,7 @@ const copyFilesConfig = {
         },
       ],
     }),
+    // new BundleAnalyzerPlugin()
   ],
 };
 
@@ -159,7 +161,7 @@ const clientConfig = ({ isDevClientWrapper }) => ({
       },
     ],
   },
-  devtool : isProd ? 'source-map' : 'cheap-module-source-map'
+  // devtool : isProd ? 'source-map' : 'cheap-module-source-map'
 });
 
 // DynamicCdnWebpackPlugin settings
@@ -307,7 +309,7 @@ const devClientConfigs = clientEntrypoints.map((clientEntrypoint) => {
         inject: 'body',
       }),
       new HtmlWebpackInlineSourcePlugin(),
-      new DynamicCdnWebpackPlugin({}),
+      // new DynamicCdnWebpackPlugin({}),
     ],
   };
 });
@@ -354,7 +356,7 @@ const serverConfig = {
     ],
   },
   optimization: {
-    minimize: isProd,
+    minimize: true,
     minimizer: [
       new TerserPlugin({
         terserOptions: {

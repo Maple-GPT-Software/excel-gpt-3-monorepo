@@ -31,8 +31,14 @@
 }
 
 .prompt-menu {
+    width: -moz-fit-content;
+    width: fit-content;
     display: inline-block;
     position: relative;
+    transform: rotate(90deg);
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-dark);
 }
 
 .prompt-menu > svg {
