@@ -1,0 +1,8 @@
+.chat-wrapper {
+    height: 100%;
+}
+
+.messages-wrapper {
+    height: calc(100% - 50px);
+    overflow: scroll;
+}

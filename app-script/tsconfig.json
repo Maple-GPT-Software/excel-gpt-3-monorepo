@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["DOM", "DOM.Iterable", "es2021"],
+    "forceConsistentCasingInFileNames": true,
+    "types": ["gas-types-detailed"],
+    "jsx": "react",
+    "esModuleInterop": true
+  }
+}

@@ -1,0 +1,27 @@
+.bot-message-wrapper {
+    padding: 16px;
+    background-color: var(--grey-light);
+    color: black;
+}
+
+.like-dislike-container {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.like-dislike-container .icon:first-child {
+    margin-right: 12px;
+}
+
+
+.modal-content .user-feedback{
+    padding: 8px;
+    box-sizing: border-box;
+    resize: none;
+    width: 100%;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 100;
+}

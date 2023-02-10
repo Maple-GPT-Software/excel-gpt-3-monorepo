@@ -1,0 +1,31 @@
+.example-prompt-wrapper {
+    padding: 16px;
+}
+
+.example-prompt-wrapper p {
+    line-height: 18px;
+    font-size: 14px;
+}
+
+.example-prompt-wrapper > h1 {
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+    font-size: 18px;
+    text-align: center;
+}
+
+.example-prompt-wrapper .example-prompt-element {
+    padding: 16px;
+    margin: 16px 0;
+    border-radius: 6px;
+    background-color: var(--grey-light);
+}
+
+.example-prompt-element .modal-trigger {
+    color: var(--primary-main);
+    cursor: pointer;
+}
+
+.example-prompt-element .modal-trigger:hover {
+    color: var(--primary-dark);
+}

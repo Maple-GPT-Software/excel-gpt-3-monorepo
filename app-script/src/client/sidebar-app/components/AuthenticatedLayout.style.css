@@ -1,0 +1,48 @@
+.main-laytout {
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  grid-template-rows: 45px auto;
+}
+
+.nav {
+  background-color: var(--primary-dark);
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-right-wrapper {
+  display: flex;
+  align-items: center;
+  padding-right: 12px;
+}
+
+.nav-right-wrapper .button-logout {
+  padding: 6px 8px;
+  height: fit-content;
+  border: solid 1px #e2e8f0;
+  background-color: transparent;
+  color: white;
+  font-weight: 100;
+}
+
+.nav-right-wrapper .button-logout:hover {
+  box-shadow: 2px 2px 8px 1px #292524
+}
+
+.nav-right-wrapper .nav-tooltip-button {
+    margin-right: 12px;
+    cursor: 'pointer';
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border: solid thin white;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.main-content {
+  max-width: 100vw;
+}
+
