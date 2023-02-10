@@ -1,6 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from './AuthProvider';
+import { CHAT_ROUTE } from './constants';
 
 function Refresh() {
+  const { user } = useAuthContext();
+  const navigate = useNavigate();
+
+  // if the user goes backwards by scrolling to the left
+  // we want to re-direct them to the chat route if
+  // there is a valid user session
+  useEffect(() => {
+    if (user) {
+      setTimeout(() => {
+        navigate(CHAT_ROUTE);
+      }, 300);
+    }
+  }, []);
+
   return (
     <div
       style={{

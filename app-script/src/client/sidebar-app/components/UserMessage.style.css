@@ -2,3 +2,7 @@
     padding: 16px;
     /* background-color: var(--grey-light); */
 }
+
+.user-message-wrapper .table-wrapper, .bot-message-code-wrapper {
+    margin-top: 1rem;
+}

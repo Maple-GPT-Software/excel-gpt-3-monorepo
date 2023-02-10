@@ -119,9 +119,6 @@ function Chat() {
 
   return (
     <div className="chat-wrapper">
-      <button onClick={signOut} style={{ position: 'absolute' }}>
-        Logout
-      </button>
       <section className="messages-wrapper">
         {!chatState.messages.length && <ExamplePrompts />}
         {!!chatState.messages.length &&
@@ -140,6 +137,7 @@ function Chat() {
         <UserPrompt
           shouldDisableTextarea={chatState.status === 'FETCHING'}
           dispatch={dispatch}
+          scrollToBottomOfChat={handleScrollToChatBottom}
         />
       </section>
     </div>

@@ -27,10 +27,11 @@ import { USER_FORMULA } from '../constants';
 interface ChatInputProps {
   shouldDisableTextarea: boolean;
   dispatch: (value: ChatActions) => void;
+  scrollToBottomOfChat: () => void;
 }
 
 const UserPrompt = (props: ChatInputProps) => {
-  const { shouldDisableTextarea, dispatch } = props;
+  const { shouldDisableTextarea, dispatch, scrollToBottomOfChat } = props;
 
   const [input, setInput] = useState('');
   const [dataTable, setDataTable] = useState<ValueRangeObj | ''>('');
@@ -56,8 +57,9 @@ const UserPrompt = (props: ChatInputProps) => {
     });
 
     // scroll to bottom of chat container after user's prompt is added
+    // wrapped in setTimeout so that immer dispatch updates chat first
     setTimeout(() => {
-      //   handleScrollToChatBottom();
+      scrollToBottomOfChat();
     });
 
     // TODO: call API here
@@ -76,8 +78,9 @@ const UserPrompt = (props: ChatInputProps) => {
         },
       });
       // scroll to bottom of chat container after completion is added
+      // wrapped in setTimeout so that immer dispatch updates chat first
       setTimeout(() => {
-        // handleScrollToChatBottom();
+        scrollToBottomOfChat();
       });
     }, 500);
 
@@ -150,15 +153,17 @@ const UserPrompt = (props: ChatInputProps) => {
           onChange={ønChangeHandler}
           disabled={shouldDisableTextarea}
         />
-        <div
-          className="prompt-menu-wrapper"
-          onClick={() => setIsMenuOpen(true)}
-        >
-          {/* menu "icon" to open popup*/}
-          <div className="prompt-menu">
-            <DotsVerticalIcon />
+        {!(dataTable && formula) && (
+          // menu "icon" to open popup
+          <div
+            className="prompt-menu-wrapper"
+            onClick={() => setIsMenuOpen(true)}
+          >
+            <div className="prompt-menu">
+              <DotsVerticalIcon />
+            </div>
           </div>
-        </div>
+        )}
         {/* MENU FOR TO SELECT INSERT FORMULA OR RANGE */}
         {isMenuOpen && (
           <div ref={propMenuWrapperRef} className="prompt-options-menu">

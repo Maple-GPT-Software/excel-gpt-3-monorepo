@@ -12,6 +12,7 @@ import SignUp from './SignUp';
 import Chat from './Chat';
 import Refresh from './Refresh';
 import { CHAT_ROUTE, LOGIN_ROUTE, SIGNUP_ROUTE } from './constants';
+import AuthenticatedLayout from './components/AuthenticatedLayout';
 
 const AuthContext = createContext<
   | {
@@ -43,7 +44,8 @@ interface AuthProviderProps {
  * If the user was previously logged in we refresh their accessToken using firebase's SDK
  */
 function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | undefined>(undefined);
+  // const [user, setUser] = useState<User | undefined>(undefined);
+  const [user, setUser] = useState<any>(undefined);
   //   const [location, setLocation] = useLocation();
   const navgiate = useNavigate();
 
@@ -79,6 +81,7 @@ function AuthProvider({ children }: AuthProviderProps) {
         // we can also schedule a refrehs of the user's id token
         // using getIdToken()
         console.log('logged in user is: ', user);
+        setUser(user);
         navgiate(CHAT_ROUTE);
       } else {
         navgiate(LOGIN_ROUTE);
@@ -94,7 +97,7 @@ function AuthProvider({ children }: AuthProviderProps) {
         <Route path="/" element={<Refresh />} />
         <Route path={LOGIN_ROUTE} element={<Login />} />
         <Route path={SIGNUP_ROUTE} element={<SignUp />} />
-        <Route path={CHAT_ROUTE} element={<Chat />} />
+        <Route path={CHAT_ROUTE} element={<AuthenticatedLayout />} />
       </Routes>
     </AuthContext.Provider>
   );

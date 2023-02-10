@@ -2,6 +2,11 @@
     padding: 16px;
 }
 
+.example-prompt-wrapper p {
+    line-height: 18px;
+    font-size: 14px;
+}
+
 .example-prompt-wrapper > h1 {
     margin-bottom: 2rem;
     margin-top: 1rem;
@@ -16,3 +21,11 @@
     background-color: var(--grey-light);
 }
 
+.example-prompt-element .modal-trigger {
+    color: var(--primary-main);
+    cursor: pointer;
+}
+
+.example-prompt-element .modal-trigger:hover {
+    color: var(--primary-dark);
+}

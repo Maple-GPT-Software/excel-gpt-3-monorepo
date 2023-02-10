@@ -1,4 +1,5 @@
 import React from 'react';
+import { serverFunctions } from '../../utils/serverFunctions';
 
 import './ExamplePrompts.style.css';
 
@@ -13,7 +14,16 @@ function ExamplePrompts() {
         "How do I sort a column of names in descending order?"
       </p>
       <p className="example-prompt-element">"Explain how VLOOKUP works"</p>
-      <p>TODO: open guide modal here</p>
+      <p className="example-prompt-element">
+        If you're not sure where to start
+        <span
+          className="modal-trigger"
+          onClick={serverFunctions.openHelpDialog}
+        >
+          {' '}
+          checkout our guide
+        </span>
+      </p>
     </div>
   );
 }

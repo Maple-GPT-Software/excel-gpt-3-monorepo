@@ -1,7 +1,7 @@
 import {
   onOpen,
   openHelpDialog,
-  openAboutSidebar,
+  openSidebarApplication,
 } from './ui';
 
 import {
@@ -16,7 +16,7 @@ import {
 export {
   onOpen,
   openHelpDialog,
-  openAboutSidebar,
+  openSidebarApplication,
   getSheetsData,
   writeFormulaToCell,
   getActiveSheetRange,
