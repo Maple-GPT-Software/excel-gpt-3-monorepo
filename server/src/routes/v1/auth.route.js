@@ -1,15 +1,14 @@
-import firebaseAuth from '../../middlewares/firebase-auth.ts';
-
 const express = require('express');
 const validate = require('../../middlewares/validate');
-const authValidation = require('../../validations/auth.validation.ts');
+const authValidation = require('../../validations/auth.validation');
 const authController = require('../../controllers/auth.controller');
+const firebaseAuth = require('../../middlewares/firebaseAuth');
 
 const router = express.Router();
 
 router.use(firebaseAuth);
 
-router.post('/signup', validate(authValidation.register), authController.signup());
+router.post('/signup', validate(authValidation.register), authController.signup);
 router.post('/login', authController.login);
 // router.post('/send-verification-email', auth(), authController.sendVerificationEmail);
 // router.post('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);

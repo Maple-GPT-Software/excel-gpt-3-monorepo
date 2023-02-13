@@ -1,5 +1,4 @@
 const Joi = require('joi');
-const { signUpSource } = require('./custom.validation');
 
 const register = {
   body: Joi.object().keys({
@@ -11,7 +10,6 @@ const register = {
   }),
 };
 
-
 module.exports = {
-  register
+  register,
 };
