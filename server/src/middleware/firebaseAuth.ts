@@ -14,10 +14,8 @@ const getAuthTokenFromHeaders: RequestHandlerWithAuth = (req, res, next) => {
   next();
 };
 
-/**
- * verify accessToken and attaches userId to req
- */
-const firebaseAuth = (): RequestHandlerWithAuth => async (req, res, next) => {
+// TODO: this is broken
+export const firebaseAuth: RequestHandlerWithAuth = (req, res, next) => {
   getAuthTokenFromHeaders(req, res, async () => {
     try {
       const { authToken } = req;

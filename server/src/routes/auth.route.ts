@@ -8,9 +8,12 @@ import { RequestHandlerWithAuth } from '@src/types';
 
 const router = express.Router();
 
-router.use(firebaseAuth);
-
-router.post<RequestHandlerWithAuth>('/signup', validate(authValidation.register) as any, authController.signup);
-router.post('/login', authController.login);
+router.post<RequestHandlerWithAuth>(
+  '/signup',
+  firebaseAuth as any,
+  validate(authValidation.register) as any,
+  authController.signup as any
+);
+router.post('/login', authController.login as any);
 
 export default router;

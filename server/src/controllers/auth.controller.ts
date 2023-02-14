@@ -1,8 +1,8 @@
 import { Response } from 'express';
 import { AuthenticatedRequest } from '@src/types';
 
-const httpStatus = require('http-status');
-const catchAsync = require('../utils/catchAsync');
+import httpStatus from "http-status";
+import catchAsync from "@src/utils/catchAsync";
 
 export const signup = catchAsync(async (req: AuthenticatedRequest, res: Response) => {
   // TODO: create user profile

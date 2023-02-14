@@ -15,6 +15,7 @@ import * as morgan from '@src/config/morgan';
 // import { errorConverter, errorHandler } from "./middlewares/error";
 // import ApiError from "./utils/ApiError";
 import logger from './config/logger';
+import routes from './routes';
 
 const app = express();
 
@@ -53,7 +54,7 @@ app.options('*', cors());
 // }
 
 // v1 api routes
-// app.use('/v1', routes);
+app.use('/', routes as any);
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
