@@ -3,13 +3,10 @@ import admin, { ServiceAccount } from 'firebase-admin';
 import firebaseServiceAccount from '../firebase-service-account.json';
 
 import config from '@src/config/config';
+import logger from '@src/config/logger';
 
-admin.initializeApp({
+const app = admin.initializeApp({
   credential: admin.credential.cert(firebaseServiceAccount as ServiceAccount),
 });
 
-async function verifyIdToken(token: string) {
-  return admin.auth().verifyIdToken(token);
-}
-
-export default verifyIdToken;
+export default app;

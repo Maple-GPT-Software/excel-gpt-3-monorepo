@@ -15,7 +15,9 @@ import * as morgan from '@src/config/morgan';
 // import { errorConverter, errorHandler } from "./middlewares/error";
 // import ApiError from "./utils/ApiError";
 import logger from './config/logger';
-import routes from './routes';
+// import routes from './routes';
+import AuthRoutes from '@src/routes/auth.route';
+import verifyIdToken from './services/firebase.service';
 
 const app = express();
 
@@ -54,7 +56,7 @@ app.options('*', cors());
 // }
 
 // v1 api routes
-app.use('/', routes as any);
+app.use('/auth', AuthRoutes);
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
@@ -66,7 +68,5 @@ app.use((req, res, next) => {
 
 // handle error
 // app.use(errorHandler);
-
-logger.info('hello world');
 
 export default app;
