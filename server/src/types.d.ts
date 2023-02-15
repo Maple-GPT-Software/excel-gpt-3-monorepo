@@ -1,13 +1,14 @@
-import { NextFunction } from 'express';
+import { NextFunction, RequestHandler } from 'express';
+import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 
-// Authenticated request type
+// firebase authenticated request type
 export interface AuthenticatedRequest extends Request {
   headers: {
     authorization?: string;
   };
-  authToken?: string | null;
-  tokenTyep?: string | null;
-  userId?: string | null;
+  decodedFirebaseToken?: DecodedIdToken;
 }
 
-export type RequestHandlerWithAuth = (req: AuthenticatedRequest, res: Response, next: NextFunction) => void;
+type RequestWithAuth<T> = T & AuthenticatedRequest;
+
+export type RequestHandlerWithAuth = RequestHandler<RequestWithAuth<{}>>;
