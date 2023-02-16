@@ -1,7 +1,7 @@
-import { RequestHandlerWithAuth } from '@src/types';
+import { RequestHandler } from 'express';
 
 const catchAsync =
-  (fn: any): RequestHandlerWithAuth =>
+  (fn: any): RequestHandler =>
   (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch((err) => next(err));
   };

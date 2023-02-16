@@ -10,26 +10,21 @@ const firebaseAuth: RequestHandler = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return new ApiError(httpStatus.FORBIDDEN, 'You are not authorized');
+      next(new ApiError(httpStatus.FORBIDDEN, 'Please login'));
+      return;
     }
 
     const idToken = authHeader.split(' ')[1];
 
     const decodedToken = await admin.auth().verifyIdToken(idToken);
-    logger.info(`decodedToken ${JSON.stringify(decodedToken)}`);
 
-    if (!decodedToken) {
-      return new ApiError(httpStatus.FORBIDDEN, 'Unauthorized');
-    }
+    req.decodedFirebaseToken = decodedToken;
 
-    // TODO: how to type this thing to add decodedToken as
-    // a property of req???
     res.json(decodedToken);
 
     next();
-  } catch (error) {
-    logger.warn('not authorized');
-    res.json('Not authorized');
+  } catch (error: any) {
+    next(new ApiError(httpStatus.FORBIDDEN, error.message));
   }
 };
 

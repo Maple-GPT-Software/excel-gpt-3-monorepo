@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
 // TODO: SANITIZE????
 // import xss from 'xss-clean';
@@ -17,7 +17,7 @@ import * as morgan from '@src/config/morgan';
 import logger from './config/logger';
 // import routes from './routes';
 import AuthRoutes from '@src/routes/auth.route';
-import verifyIdToken from './services/firebase.service';
+import { errorHandler, errorConverter } from './middleware/error';
 
 const app = express();
 
@@ -64,9 +64,9 @@ app.use((req, res, next) => {
 });
 
 // convert error to ApiError, if needed
-// app.use(errorConverter);
+app.use(errorConverter);
 
 // handle error
-// app.use(errorHandler);
+app.use(errorHandler);
 
 export default app;

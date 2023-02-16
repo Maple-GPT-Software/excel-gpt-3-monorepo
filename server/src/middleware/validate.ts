@@ -1,12 +1,10 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Response, Request } from 'express';
 import Joi from 'joi';
 import httpStatus from 'http-status';
 import pick from '@src/utils/pick';
 import ApiError from '@src/utils/ApiError';
 
-import { AuthenticatedRequest } from '@src/types';
-
-const validate = (schema: any) => (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+const validate = (schema: any) => (req: Request, res: Response, next: NextFunction) => {
   const validSchema = pick(schema, ['params', 'query', 'body']);
   const object = pick(req, Object.keys(validSchema));
   const { value, error } = Joi.compile(validSchema)
