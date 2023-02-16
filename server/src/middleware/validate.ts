@@ -1,4 +1,4 @@
-import { NextFunction, Response, Request } from 'express';
+import { NextFunction, Response, Request, RequestHandler } from 'express';
 import Joi from 'joi';
 import httpStatus from 'http-status';
 import pick from '@src/utils/pick';

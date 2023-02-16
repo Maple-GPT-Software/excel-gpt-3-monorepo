@@ -20,8 +20,6 @@ const firebaseAuth: RequestHandler = async (req, res, next) => {
 
     req.decodedFirebaseToken = decodedToken;
 
-    res.json(decodedToken);
-
     next();
   } catch (error: any) {
     next(new ApiError(httpStatus.FORBIDDEN, error.message));

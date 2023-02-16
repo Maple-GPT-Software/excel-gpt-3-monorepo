@@ -7,8 +7,9 @@ import firebaseAuth from '@src/middleware/firebaseAuth';
 
 const router = express.Router();
 
-router.post('/signup', firebaseAuth, validate(authValidation.register) as any, authController.signup as any);
+// TODO: on sign up we create a stripe subscription for a free 5 day trial
+router.post('/signup', firebaseAuth, validate(authValidation.firebaseSignup), authController.signup);
 
-router.post('/login', authController.login as any);
+router.post('/login', firebaseAuth, authController.login);
 
 export default router;

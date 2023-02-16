@@ -1,10 +1,9 @@
 import Joi from 'joi';
 
-export const register = {
+// checking if a signUpSource has been provided,
+// e.g "app-script", "web-app", "excel", etc...
+export const firebaseSignup = {
   body: Joi.object().keys({
-    emial: Joi.string().required().email(),
-    displayName: Joi.string().required(),
-    createTime: Joi.string().required(),
     referrer: Joi.string().optional(),
     signUpSource: Joi.string().required(),
   }),
