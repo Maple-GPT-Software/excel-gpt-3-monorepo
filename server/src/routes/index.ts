@@ -3,15 +3,15 @@ import authRoute from './auth.route';
 
 const router = express.Router();
 
-const defaultRoutes = [
+const AppRoutes = [
   {
     path: '/auth',
     route: authRoute,
   },
 ];
 
-defaultRoutes.forEach((route) => {
+AppRoutes.forEach((route) => {
   router.use(route.path, route.route);
 });
 
-export default defaultRoutes;
+export default router;

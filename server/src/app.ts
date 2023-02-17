@@ -1,23 +1,20 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import helmet from 'helmet';
 // TODO: SANITIZE????
 // import xss from 'xss-clean';
 import mongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
 import cors from 'cors';
-
 import httpStatus from 'http-status';
 import config from '@src/config/config';
 import * as morgan from '@src/config/morgan';
 
-// import { authLimiter } from "./middlewares/rateLimiter";
-// import routes from "./routes/v1";
-// import { errorConverter, errorHandler } from "./middlewares/error";
-// import ApiError from "./utils/ApiError";
-import logger from './config/logger';
-// import routes from './routes';
-import AuthRoutes from '@src/routes/auth.route';
 import { errorHandler, errorConverter } from './middleware/error';
+// import { authLimiter } from "./middlewares/rateLimiter";
+
+// import routes from "./routes/v1";
+import AppRoutes from '@src/routes';
+import ApiError from '@src/utils/ApiError';
 
 const app = express();
 
@@ -56,11 +53,11 @@ app.options('*', cors());
 // }
 
 // v1 api routes
-app.use('/auth', AuthRoutes);
+app.use('/', AppRoutes);
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
-  //   next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
+  next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
 });
 
 // convert error to ApiError, if needed
