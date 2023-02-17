@@ -1,8 +1,29 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
-const { toJSON } = require('./plugins');
+import { Model, Schema, model } from 'mongoose';
+import validator from 'validator';
 
-const userSchema = mongoose.Schema(
+// import { toJSON } from './plugins';
+
+/**
+ * Base user type
+ */
+export interface UserType {
+  userId: string;
+  email: string;
+  name: string;
+  signUpSource: string;
+  referrer: string;
+  dailyRequests: number;
+}
+
+/**
+ * Extending moongose Model to add statics
+ * https://mongoosejs.com/docs/typescript/statics.html
+ */
+interface UserModel extends Model<UserType> {
+  isEmailTaken: (k: string) => Promise<boolean>;
+}
+
+const userSchema = new Schema<UserType, UserModel>(
   {
     userId: {
       type: String,
@@ -15,6 +36,8 @@ const userSchema = mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
+      // we technically don't need this for OAuth signups
+      // unless if we allow email/pasword signups
       validate(value: string) {
         if (!validator.isEmail(value)) {
           throw new Error('Invalid email');
@@ -26,25 +49,41 @@ const userSchema = mongoose.Schema(
       required: true,
       unique: false,
     },
+    /** the client app they signed up from */
     signUpSource: {
       type: String,
       required: true,
       lowercase: true,
     },
+    /** who referred them */
     referrer: {
       type: String,
       required: false,
       lowercase: true,
     },
-    // TODO: stripe???
+    /** used for rate limiting the user */
+    dailyRequests: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-// add plugin that converts mongoose to json
-userSchema.plugin(toJSON);
+/** Remove properties before Document is sent to client */
+userSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj._id;
+  delete obj.__v;
+  delete obj.createdAt;
+  delete obj.updatedAt;
+  delete obj.referrer;
+  delete obj.signUpSource;
+  delete obj.dailyRequests;
+  return obj;
+};
 
 /**
  * Check if email is taken
@@ -56,4 +95,4 @@ userSchema.statics.isEmailTaken = async function (email: string, excludeUserId?:
   return !!user;
 };
 
-export const User = mongoose.model('User', userSchema);
+export const User = model<UserType, UserModel>('User', userSchema);

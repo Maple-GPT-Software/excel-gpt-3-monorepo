@@ -1,18 +1,14 @@
 import httpStatus from 'http-status';
-import { User } from '@src/models/user.model';
+import { User, UserType } from '@src/models/user.model';
 import ApiError from '@src/utils/ApiError';
 
-interface CreateUserType {
-  userId: string;
-  email: string;
-  name: string;
-  signupSource: string;
-  referrer: string;
-}
-
-export const createUser = async (newUser: CreateUserType) => {
+export const createUser = async (newUser: UserType) => {
   if (await User.isEmailTaken(newUser.email)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+    throw new ApiError(httpStatus.CONFLICT, 'Email already taken');
   }
-  return User.create(newUser);
+  return await User.create(newUser);
+};
+
+export const getUserById = async (userId: string) => {
+  return await User.findOne({ userId });
 };
