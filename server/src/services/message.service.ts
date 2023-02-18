@@ -1,10 +1,7 @@
 import httpStatus from 'http-status';
-import { User, UserType } from '@src/models/user.model';
+import { Message, MessageType } from '@src/models/message.model';
 import ApiError from '@src/utils/ApiError';
 
-export const createMessage = async (newUser: UserType) => {
-  if (await User.isEmailTaken(newUser.email)) {
-    throw new ApiError(httpStatus.CONFLICT, 'Email already taken');
-  }
-  return await User.create(newUser);
+export const createMessage = async (message: MessageType) => {
+  return await Message.create(message);
 };

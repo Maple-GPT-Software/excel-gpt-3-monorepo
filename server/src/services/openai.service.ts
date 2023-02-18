@@ -9,7 +9,6 @@ import logger from '@src/config/logger';
  * https://platform.openai.com/docs/api-reference/completions/create#completions/create-user
  */
 async function getCompletion(prompt: string, user: string) {
-  //   console.log(JSON.stringify(`${BASE_PROMPT} ${prompt}`));
   try {
     const { data } = await openai.createCompletion({
       ...basePrompt,
@@ -19,7 +18,6 @@ async function getCompletion(prompt: string, user: string) {
 
     return data;
   } catch (error) {
-    console.log('openai error: ', JSON.stringify(error));
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Interval server error');
   }
 }

@@ -1,6 +1,6 @@
 import express from 'express';
 import authRoute from './auth.route';
-import completionRoute from './completion.route';
+import completionRoute from './message.route';
 
 const router = express.Router();
 

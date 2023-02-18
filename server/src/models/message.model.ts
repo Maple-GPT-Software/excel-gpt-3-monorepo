@@ -8,7 +8,7 @@ export interface MessageType {
   /** the user that created this message */
   userId: string;
   prompt: string;
-  completon: string;
+  completion: string;
   promptTokens: number;
   completionTokens: number;
   totalTokens: number;
@@ -32,6 +32,10 @@ const messageSchema = new Schema<MessageType, MessageModel>(
       unique: true,
     },
     prompt: {
+      type: String,
+      required: true,
+    },
+    completion: {
       type: String,
       required: true,
     },

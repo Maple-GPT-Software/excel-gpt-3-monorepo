@@ -1,6 +1,6 @@
 import express from 'express';
 
-import * as completionController from '@src/controllers/completion.controller';
+import * as completionController from '@src/controllers/message.controller';
 
 const router = express.Router();
 
