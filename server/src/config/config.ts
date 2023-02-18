@@ -31,5 +31,5 @@ export default {
       useUnifiedTopology: true,
     },
   },
-  openai: envVars.OPEN_AI,
+  openAi: envVars.OPEN_AI,
 };

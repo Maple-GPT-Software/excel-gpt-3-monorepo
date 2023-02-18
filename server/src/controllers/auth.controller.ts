@@ -11,8 +11,7 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
     email: req.decodedFirebaseToken.email,
     name: req.decodedFirebaseToken.name,
     signUpSource: req.body.signUpSource,
-    referrer: req.body.referrer ?? null,
-    dailyRequests: 0,
+    referrer: req.body.referrer ?? '',
   };
   const user = await userService.createUser(newUser);
   res.status(httpStatus.CREATED).send({ user: user });

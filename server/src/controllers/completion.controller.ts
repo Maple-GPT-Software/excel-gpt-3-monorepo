@@ -9,9 +9,7 @@ export const createCompletion = catchAsync(async (req: Request, res: Response) =
   const prompt = req.body.prompt;
   const userId = req.decodedFirebaseToken.uid;
 
-  const completion = await getCompletion(prompt, { userId });
-
-  // TODO: save completion to API in openAI service
+  const completion = await getCompletion(prompt, userId);
 
   res.send(completion);
 });

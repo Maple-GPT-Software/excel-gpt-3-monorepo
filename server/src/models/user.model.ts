@@ -1,8 +1,6 @@
 import { Model, Schema, model } from 'mongoose';
 import validator from 'validator';
 
-// import { toJSON } from './plugins';
-
 /**
  * Base user type
  */
@@ -12,7 +10,7 @@ export interface UserType {
   name: string;
   signUpSource: string;
   referrer: string;
-  dailyRequests: number;
+  dailyRequests?: number;
 }
 
 /**
@@ -65,6 +63,7 @@ const userSchema = new Schema<UserType, UserModel>(
     dailyRequests: {
       type: Number,
       required: true,
+      default: 0,
     },
   },
   {
