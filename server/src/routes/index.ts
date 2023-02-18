@@ -1,5 +1,6 @@
 import express from 'express';
 import authRoute from './auth.route';
+import completionRoute from './completion.route';
 
 const router = express.Router();
 
@@ -7,6 +8,10 @@ const AppRoutes = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/completion',
+    route: completionRoute,
   },
 ];
 

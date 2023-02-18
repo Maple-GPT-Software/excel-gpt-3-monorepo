@@ -1,8 +1,6 @@
-import logger from '@src/config/logger';
-import { RequestHandler, NextFunction } from 'express';
+import { RequestHandler } from 'express';
 import httpStatus from 'http-status';
-// import ApiError from "../utils/ApiError";
-import verifyIdToken from '@src/services/firebase.service';
+
 import ApiError from '@src/utils/ApiError';
 import admin from '@src/services/firebase.service';
 
@@ -15,6 +13,8 @@ const firebaseAuth: RequestHandler = async (req, res, next) => {
     }
 
     const idToken = authHeader.split(' ')[1];
+
+    console.log('host heade is ', JSON.stringify(req.headers.host));
 
     const decodedToken = await admin.auth().verifyIdToken(idToken);
 

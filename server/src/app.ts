@@ -1,20 +1,27 @@
+/** NPM */
 import express from 'express';
 import helmet from 'helmet';
-// TODO: SANITIZE????
-// import xss from 'xss-clean';
+import xss from 'xss-clean';
 import mongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
 import cors from 'cors';
 import httpStatus from 'http-status';
 import config from '@src/config/config';
 import * as morgan from '@src/config/morgan';
-
+/** Middlewares */
+import firebaseAuth from '@src/middleware/firebaseAuth';
 import { errorHandler, errorConverter } from './middleware/error';
 // import { authLimiter } from "./middlewares/rateLimiter";
-
-// import routes from "./routes/v1";
+/** Modules */
 import AppRoutes from '@src/routes';
 import ApiError from '@src/utils/ApiError';
+
+// const corsOptions = {
+//   origin: [
+//     "localhost:3000",
+//     ""
+//   ]
+// }
 
 const app = express();
 
@@ -33,7 +40,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // sanitize request data
-// app.use(xss());
+app.use(xss());
 app.use(mongoSanitize());
 
 // gzip compression
@@ -43,7 +50,10 @@ app.use(compression());
 app.use(cors());
 app.options('*', cors());
 
-// jwt authentication
+// firebase authentication
+app.use(firebaseAuth);
+
+// TODO: refactor this middleware to allow email + password signup
 // app.use(passport.initialize());
 // passport.use('jwt', jwtStrategy);
 

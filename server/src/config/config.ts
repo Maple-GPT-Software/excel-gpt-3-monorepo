@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import Joi from 'joi';
 
+// TODO: how to configure this for netlift
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const envVarsSchema = Joi.object()
@@ -22,7 +23,7 @@ export default {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   mongoose: {
-    url: envVars.MONGODB_URL,
+    url: envVars.MONGODB_URL + (envVars.NODE_ENV === 'production' ? 'excel-simplify' : 'test'),
     // TODO: double check if these are all true by default
     options: {
       useCreateIndex: true,
@@ -30,4 +31,5 @@ export default {
       useUnifiedTopology: true,
     },
   },
+  openai: envVars.OPEN_AI,
 };
