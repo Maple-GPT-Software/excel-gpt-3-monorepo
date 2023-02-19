@@ -1,15 +1,14 @@
 import express from 'express';
 
-import * as completionController from '@src/controllers/message.controller';
+import * as messageController from '@src/controllers/message.controller';
 
 const router = express.Router();
 
-router.post('/', completionController.createCompletion);
+// TODO: middleware to check if the user has an active subscription w Stripe
 
-// router.patch('/completion/rate/:id');
+router.post('/', messageController.createMessage);
 
-// router.post('/signup', validate(authValidation.firebaseSignup), authController.signup);
-
-// router.post('/login', authController.login);
+// model validate if payload is valid, e.g "LIKE" or "DISLIKE"
+router.patch('/rate/:id', messageController.rateMessage);
 
 export default router;

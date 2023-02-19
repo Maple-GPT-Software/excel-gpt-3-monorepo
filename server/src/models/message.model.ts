@@ -20,8 +20,8 @@ export interface MessageType {
  * https://mongoosejs.com/docs/typescript/statics.html
  */
 interface MessageModel extends Model<MessageType> {
-  canRateMessage: (k: string, t: string) => Promise<boolean>;
-  isMessageUnrated: (k: string) => Promise<boolean>;
+  canRateMessage: (messageId: string, userId: string) => Promise<boolean>;
+  isMessageUnrated: (messageId: string) => Promise<boolean>;
 }
 
 const messageSchema = new Schema<MessageType, MessageModel>(
@@ -85,6 +85,7 @@ messageSchema.methods.toJSON = function () {
  */
 messageSchema.statics.canRateMessage = async function (messageId: string, userId: string) {
   const message = await this.findById(messageId);
+  console.log(messageId, userId);
   return userId === message?.userId;
 };
 
@@ -94,7 +95,7 @@ messageSchema.statics.canRateMessage = async function (messageId: string, userId
  */
 messageSchema.statics.isMessageUnrated = async function (messageId: string) {
   const message = await this.findById(messageId);
-  return message?.rating !== 'N/A';
+  return message?.rating === 'N/A';
 };
 
 export const Message = model<MessageType, MessageModel>('Message', messageSchema);

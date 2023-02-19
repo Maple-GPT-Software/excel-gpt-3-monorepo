@@ -1,6 +1,6 @@
 import express from 'express';
 import authRoute from './auth.route';
-import completionRoute from './message.route';
+import messageRoutes from './message.route';
 
 const router = express.Router();
 
@@ -10,8 +10,8 @@ const AppRoutes = [
     route: authRoute,
   },
   {
-    path: '/completion',
-    route: completionRoute,
+    path: '/message',
+    route: messageRoutes,
   },
 ];
 

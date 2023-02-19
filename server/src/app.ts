@@ -16,6 +16,7 @@ import { errorHandler, errorConverter } from './middleware/error';
 import AppRoutes from '@src/routes';
 import ApiError from '@src/utils/ApiError';
 
+// TODO: only allow specific origins
 // const corsOptions = {
 //   origin: [
 //     "localhost:3000",

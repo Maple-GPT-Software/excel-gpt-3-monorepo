@@ -1,7 +1,7 @@
 # Dependencies
 node_modules
 dist
-firebase-service-account.json
+src/**/firebase-service-account.json
 
 # yarn error logs
 yarn-error.log
