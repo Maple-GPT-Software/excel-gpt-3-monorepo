@@ -73,10 +73,10 @@ app.use((req, res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
 });
 
-// convert error to ApiError, if needed
+// convert error to ApiError if this middleware doens't catch typeof ApiError
 app.use(errorConverter);
 
-// handle error
+// returns error using appropriate httpstatus and message
 app.use(errorHandler);
 
 export default app;

@@ -1,5 +1,4 @@
 import admin, { ServiceAccount } from 'firebase-admin';
-// import {getAuth} from 'firebase-admin/auth';
 // TODO: use env vars
 import firebaseServiceAccount from '../firebase-service-account.json';
 
