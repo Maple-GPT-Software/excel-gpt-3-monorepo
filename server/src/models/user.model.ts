@@ -11,7 +11,8 @@ export interface UserType {
   signUpSource: string;
   referrer: string;
   dailyRequests?: number;
-  // TODO: tersOf
+  // TODO: hasAcceptedTerms
+  // acceptedTermsVersion
 }
 
 /**

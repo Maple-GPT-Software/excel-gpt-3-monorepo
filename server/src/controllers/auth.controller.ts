@@ -5,6 +5,7 @@ import catchAsync from '@src/utils/catchAsync';
 import * as userService from '@src/services/user.service';
 import ApiError from '@src/utils/ApiError';
 
+// TODO: CRON job to schedule email to be sent after sign-up
 export const signup = catchAsync(async (req: Request, res: Response) => {
   const newUser = {
     userId: req.decodedFirebaseToken.uid,

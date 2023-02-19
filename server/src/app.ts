@@ -51,7 +51,9 @@ app.use(compression());
 app.use(cors());
 app.options('*', cors());
 
-// firebase authentication
+/**
+ * thise
+ */
 app.use(firebaseAuth);
 
 // TODO: refactor this middleware to allow email + password signup

@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import Joi from 'joi';
 
-// TODO: how to configure this for netlift
+// TODO: how to configure this for netlify
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const envVarsSchema = Joi.object()

@@ -6,7 +6,6 @@ import * as authController from '@src/controllers/auth.controller';
 
 const router = express.Router();
 
-// TODO: email to be sent out after the user signs up???
 router.post('/signup', validate(authValidation.firebaseSignup), authController.signup);
 
 router.post('/login', authController.login);
