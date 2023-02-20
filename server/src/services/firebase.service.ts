@@ -1,9 +1,8 @@
-import admin, { ServiceAccount } from 'firebase-admin';
-// TODO: use env vars
-import firebaseServiceAccount from '../firebase-service-account.json';
+import admin from 'firebase-admin';
+import config from '@src/config/config';
 
 const app = admin.initializeApp({
-  credential: admin.credential.cert(firebaseServiceAccount as ServiceAccount),
+  credential: admin.credential.cert(config.firebase),
 });
 
 export default app;

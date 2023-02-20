@@ -32,4 +32,17 @@ export default {
     },
   },
   openAi: envVars.OPEN_AI,
+  // https://answers.netlify.com/t/how-to-add-a-json-file-to-my-site-without-adding-it-to-github/82468/4
+  firebase: {
+    type: envVars.FIREBASE_TYPE,
+    project_id: envVars.FIREBASE_PROJECT_ID,
+    private_key_id: envVars.FIREBASE_PRIVATE_KEY_ID,
+    private_key: envVars.FIREBASE_PRIVATE_KEY.replace(/\\n/gm, '\n'),
+    client_email: envVars.FIREBASE_CLIENT_EMAIL,
+    client_id: envVars.FIREBASE_CLIENT_ID,
+    auth_uri: envVars.FIREBASE_AUTH_URI,
+    token_uri: envVars.FIREBASE_TOKEN_URI,
+    auth_provider_x509_cert_url: envVars.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
+    client_x509_cert_url: envVars.FIREBASE_CLIENT_X509_CERT_URL,
+  } as any,
 };
