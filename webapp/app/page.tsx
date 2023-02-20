@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main className={styles.main}>
+      <main className="px-6 sm:px-12  md:px-20 lg:px-28">
         <LandingPage />
       </main>
     </>

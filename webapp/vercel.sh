@@ -11,6 +11,7 @@ if [[ "$VERCEL_GIT_COMMIT_REF" == "staging/*" || "$VERCEL_GIT_COMMIT_REF" == "ma
   # Proceed with the build
     echo "✅ - Build can proceed"
     npm run build
+    exit 0;
 
 else
   # Don't build

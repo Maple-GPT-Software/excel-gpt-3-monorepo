@@ -38,9 +38,9 @@ const Header = () => {
   return (
     <>
       <header className={`fixed top-0 left-0 right-0 z-40 bg-white`}>
-        <div className="mx-8 pt-4">
-          <div className="relative w-full -mx-4 flex items-center justify-center">
-            <div className="flex w-full items-center justify-between px-4">
+        <div className="mx-1 sm:mx-8 pt-4">
+          <div className="relative w-full flex items-center justify-between sm:justify-between">
+            <div className="flex w-full items-center justify-between px-2 sm:px-4">
               <div className="flex items-center gap-8">
                 <span className="text-lime-500">
                   Excel<i className="text-slate-500">Simplify</i>
