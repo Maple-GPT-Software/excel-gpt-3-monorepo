@@ -1,0 +1,1 @@
+export const BASE_PROMPT = `Answer this google sheets question. If unsure, respond with "Sorry, not sure". Follow these guidelines: 1) If explicitly asked for a formula, only answer with formula starting with %FORMULA%=. 2) If the question is best answered with steps/explanation, number the steps/explanation and end each sentence with "\n".`;

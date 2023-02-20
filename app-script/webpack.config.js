@@ -21,7 +21,7 @@ const dotenv = require('dotenv').config();
 
 const parsed = dotenv.error ? {} : dotenv.parsed;
 const envVars = parsed || {};
-const PORT = envVars.PORT || 3000;
+const PORT = envVars.PORT || 5000;
 envVars.NODE_ENV = process.env.NODE_ENV;
 envVars.PORT = PORT;
 
