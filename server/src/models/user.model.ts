@@ -47,7 +47,6 @@ const userSchema = new Schema<UserType, UserModel>(
     name: {
       type: String,
       required: true,
-      unique: false,
     },
     /** the client app they signed up from */
     signUpSource: {

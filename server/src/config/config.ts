@@ -1,15 +1,28 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import Joi from 'joi';
+import { Environment } from '../types';
 
 // TODO: how to configure this for netlify
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const envVarsSchema = Joi.object()
   .keys({
-    NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
+    NODE_ENV: Joi.string().valid(Environment.PROD, Environment.DEV, Environment.TEST).required(),
     PORT: Joi.number().default(3000),
-    MONGODB_URL: Joi.string().required().description('Mongo DB url'),
+    MONGODB_URL_PROD: Joi.string().required().description('Mongo PROD url required'),
+    MONGODB_URL_DEV: Joi.string().required().description('Mongo Dev url required'),
+    OPEN_AI: Joi.string().required(),
+    FIREBASE_TYPE: Joi.string().required(),
+    FIREBASE_PROJECT_ID: Joi.string().required(),
+    FIREBASE_PRIVATE_KEY_ID: Joi.string().required(),
+    FIREBASE_PRIVATE_KEY: Joi.string().required(),
+    FIREBASE_CLIENT_EMAIL: Joi.string().required(),
+    FIREBASE_CLIENT_ID: Joi.string().required(),
+    FIREBASE_AUTH_URI: Joi.string().required(),
+    FIREBASE_TOKEN_URI: Joi.string().required(),
+    FIREBASE_AUTH_PROVIDER_X509_CERT_URL: Joi.string().required(),
+    FIREBASE_CLIENT_X509_CERT_URL: Joi.string().required(),
   })
   .unknown();
 
@@ -23,7 +36,7 @@ export default {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   mongoose: {
-    url: envVars.MONGODB_URL + (envVars.NODE_ENV === 'production' ? 'excel-simplify' : 'test'),
+    url: envVars.NODE_ENV === Environment.PROD ? envVars.MONGODB_URL_PROD : envVars.MONGODB_URL_DEV,
     // TODO: double check if these are all true by default
     options: {
       useCreateIndex: true,

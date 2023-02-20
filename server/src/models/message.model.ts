@@ -29,7 +29,6 @@ const messageSchema = new Schema<MessageType, MessageModel>(
     userId: {
       type: String,
       required: true,
-      unique: true,
     },
     prompt: {
       type: String,
