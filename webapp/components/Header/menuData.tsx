@@ -28,7 +28,7 @@ const menuData = [
         path: "/signup",
         newTab: false,
       },
-    ]
-  }
+    ],
+  },
 ];
 export default menuData;

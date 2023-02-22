@@ -1,20 +1,26 @@
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from './page.module.css'
-import React from 'react'
-import Header from '../components/Header'
-import LandingPage from './LandingPage/page'
-
-const inter = Inter({ subsets: ['latin'] })
+import React from "react";
+import Header from "../components/Header";
+import LandingSectionOne from "@/components/Landing/LandingSectionOne";
+import LandingVideoSection from "@/components/Landing/LandingVideoSection";
+import LandingFeaturesSection from "@/components/Landing/LandingFeaturesSection";
+import LandingTrustedSection from "@/components/Landing/LandingTrustedSection";
+import LandingReviewSection from "@/components/Landing/LandingReviewSection";
+import LandingLastSection from "@/components/Landing/LandingLastSection";
 
 export default function Home() {
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <main className="px-6 sm:px-12  md:px-20 lg:px-28">
-        <LandingPage />
+        <div className="flex flex-col gap-10">
+          <LandingSectionOne />
+          <LandingVideoSection />
+          <LandingFeaturesSection />
+          <LandingTrustedSection />
+          <LandingReviewSection />
+          <LandingLastSection />
+        </div>
       </main>
     </>
-    
-  )
+  );
 }

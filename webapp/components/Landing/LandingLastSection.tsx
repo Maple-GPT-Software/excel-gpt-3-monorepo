@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 const LandingLastSection = () => {
-return (
+  return (
     <>
       <section
         id="home"
-        className="relative w-full h-screen z-10 overflow-hidden flex items-center "
+        className="relative z-10 flex h-screen w-full items-center overflow-hidden "
       >
         <div className="container">
           <div className="-mx-4 flex flex-wrap">
@@ -14,22 +14,19 @@ return (
                 className="wow fadeInUp mx-auto max-w-[800px] text-center"
                 data-wow-delay=".2s"
               >
-                <h1 className="mb-5 text-3xl font-bold leading-tight text-black sm:text-4xl sm:leading-tight md:text-5xl md:leading-tight">
-                Try ExcelSimplify now! 
+                <h1 className="mb-5 text-3xl font-bold leading-tight text-black dark:text-white sm:text-4xl sm:leading-tight md:text-5xl md:leading-tight">
+                  Try the #1 Excel AI solution ExcelSimplify now!
                 </h1>
-                <p className="mb-12 text-base font-medium !leading-relaxed text-body-color dark:opacity-90 sm:text-lg md:text-xl">
-                An AI soluton to reinforce the way you use Excel.
-                </p>
                 <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
                   <Link
                     href="https://nextjstemplates.com/templates/startup"
-                    className="rounded-md bg-lime-200 py-4 px-8 text-base font-semibold text-black duration-300 ease-in-out hover:bg-lime-400"
+                    className="rounded-md bg-primary py-2 px-2 text-base font-semibold text-black duration-300 ease-in-out hover:bg-darkGreen sm:py-4 sm:px-8"
                   >
-                    Try Now
+                    Get Started
                   </Link>
                   <Link
                     href="https://github.com/NextJSTemplates/startup-nextjs"
-                    className="rounded-md bg-slate-200 py-4 px-8 text-base font-semibold text-black duration-300 ease-in-out hover:bg-slate-400"
+                    className="rounded-md bg-black/20 py-4 px-8 text-base font-semibold text-black duration-300 ease-in-out hover:bg-black/30 dark:bg-white/20 dark:text-white dark:hover:bg-white/30"
                   >
                     Contact Us
                   </Link>
