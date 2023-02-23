@@ -1,4 +1,3 @@
-import Header from "@/components/Header";
 import Link from "next/link";
 
 const SignupPage = () => {
@@ -8,7 +7,6 @@ const SignupPage = () => {
         id="signup"
         className="relative z-10 overflow-hidden pt-36 pb-16 md:pb-20 lg:pt-[180px] lg:pb-28"
       >
-        <Header />
         <div className="container">
           <div className="-mx-4 flex flex-wrap">
             <div className="w-full px-4">
