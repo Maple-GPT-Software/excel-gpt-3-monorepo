@@ -23,6 +23,7 @@ const envVarsSchema = Joi.object()
     FIREBASE_TOKEN_URI: Joi.string().required(),
     FIREBASE_AUTH_PROVIDER_X509_CERT_URL: Joi.string().required(),
     FIREBASE_CLIENT_X509_CERT_URL: Joi.string().required(),
+    STRIPE_SECRET_KEY: Joi.string().required(),
   })
   .unknown();
 
@@ -58,4 +59,5 @@ export default {
     auth_provider_x509_cert_url: envVars.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
     client_x509_cert_url: envVars.FIREBASE_CLIENT_X509_CERT_URL,
   } as any,
+  stripeApi: envVars.STRIPE_SECRET_KEY,
 };
