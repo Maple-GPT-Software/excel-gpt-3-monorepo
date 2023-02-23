@@ -12,5 +12,4 @@ else
   # changes detected in webapp, build & exit with status code 0
   echo "✅ - Build can proceed"
   npm run build
-  exit 1
 fi
