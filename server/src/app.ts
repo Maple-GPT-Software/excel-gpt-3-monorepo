@@ -39,8 +39,6 @@ if (config.env !== 'test') {
 // set security HTTP headers
 app.use(helmet());
 
-const endpointSecret = 'whsec_6e8bcf75745bb7af21d01dfd5f44e2e78d942e6a8de24eba459d873e49916be8';
-
 // https://codingpr.com/stripe-webhook/
 app.post('/webhook', express.raw({ type: 'application/json' }), (request, response) => {
   const sig = request.headers['stripe-signature'] as string | string[];
@@ -51,7 +49,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
     return;
   }
 
-  const event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret) as Stripe.DiscriminatedEvent;
+  const event = stripe.webhooks.constructEvent(request.body, sig, config.stripeEndpointSecret) as Stripe.DiscriminatedEvent;
 
   // console.log(JSON.stringify(event.data.object));
 
@@ -62,14 +60,13 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
     case 'customer.created':
       const customer = event.data.object;
 
-      console.log('customer.created', customer);
       if (!customer.email) {
         // something has gone horribly wrong
         logger.debug('Stripe webhook [customer.created] missing email');
         break;
       }
 
-      console.log('[customer.created]');
+      console.log('[customer.created] stripe customer ID ', customer.id);
       stripeService.addCustomerId(customer.email, customer.id);
       break;
     /**
@@ -78,9 +75,9 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
      *  - subscribes to premium afer trial ends, stauts: active
      */
     case 'customer.subscription.created':
-      // TODO: email user to thank them for subscribing
+      // TODO: email user with thank you, installation guide
       const createdSubscription = event.data.object;
-      console.log(`customer.subscription.created`);
+      console.log(`customer.subscription.created customer ID `, createdSubscription.customer);
       stripeService.addSubscription(
         createdSubscription.customer as string,
         createdSubscription.current_period_end,
@@ -98,17 +95,17 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
      */
     case 'customer.subscription.updated':
       const updatedSubscription = event.data.object;
-      console.log(`customer.subscription.updated`);
+      console.log(`customer.subscription.updated customer ID`, updatedSubscription.customer);
       stripeService.updateSubscription(updatedSubscription.customer as string, updatedSubscription.status);
       break;
     /**
-     * When a user cancels their plan. We only allow "cancel immediately"
+     * When a user cancels their subscription. We only allow "cancel immediately"
      *  - status: canceled
      */
     case 'customer.subscription.deleted':
       // TODO: email user for feedback as to why they are cancelling
       const deletedSubscription = event.data.object;
-      console.log('customer.subscription.deleted');
+      console.log('customer.subscription.deleted customerID', deletedSubscription.customer);
       stripeService.updateSubscription(deletedSubscription.customer as string, deletedSubscription.status);
     default:
   }

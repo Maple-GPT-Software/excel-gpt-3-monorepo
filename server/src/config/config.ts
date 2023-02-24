@@ -23,7 +23,9 @@ const envVarsSchema = Joi.object()
     FIREBASE_TOKEN_URI: Joi.string().required(),
     FIREBASE_AUTH_PROVIDER_X509_CERT_URL: Joi.string().required(),
     FIREBASE_CLIENT_X509_CERT_URL: Joi.string().required(),
-    STRIPE_SECRET_KEY: Joi.string().required(),
+    // TODO: production keys for stripe after registering business
+    STRIPE_TEST_SECRET_KEY: Joi.string().required(),
+    STRIPE_TEST_ENDPOINT_SECRET: Joi.string().required(),
   })
   .unknown();
 
@@ -33,11 +35,13 @@ if (error) {
   throw new Error(`Config validation error: ${error.message}`);
 }
 
+const isProduction = envVars.NODE_ENV === Environment.PROD;
+
 export default {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   mongoose: {
-    url: envVars.NODE_ENV === Environment.PROD ? envVars.MONGODB_URL_PROD : envVars.MONGODB_URL_DEV,
+    url: isProduction ? envVars.MONGODB_URL_PROD : envVars.MONGODB_URL_DEV,
     // TODO: double check if these are all true by default
     options: {
       useCreateIndex: true,
@@ -59,5 +63,7 @@ export default {
     auth_provider_x509_cert_url: envVars.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
     client_x509_cert_url: envVars.FIREBASE_CLIENT_X509_CERT_URL,
   } as any,
-  stripeApi: envVars.STRIPE_SECRET_KEY,
+  // TODO: stripe production keys
+  stripeApi: envVars.STRIPE_TEST_SECRET_KEY,
+  stripeEndpointSecret: envVars.STRIPE_TEST_ENDPOINT_SECRET,
 };
