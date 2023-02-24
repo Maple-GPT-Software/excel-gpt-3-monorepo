@@ -105,9 +105,11 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
     case 'customer.subscription.deleted':
       // TODO: email user for feedback as to why they are cancelling
       const deletedSubscription = event.data.object;
-      console.log('customer.subscription.deleted customerID', deletedSubscription.customer);
+      console.log('customer.subscription.deleted customerID', deletedSubscription.customer, deletedSubscription.status);
       stripeService.updateSubscription(deletedSubscription.customer as string, deletedSubscription.status);
+      break;
     default:
+      break;
   }
 
   // Return a 200 response to acknowledge receipt of the event

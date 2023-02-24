@@ -29,12 +29,31 @@ export const createCustomerWithFreeTrial = async (email: string) => {
       cancel_at_period_end: true,
       proration_behavior: 'none',
     });
-
-    console.log('#createCustomerWithFreeTrial succeeded');
-    // return { stripeStatus: subcription.status, stripeCurrentPeriodEnd: subcription.current_period_end };
   } catch (error) {
     logger.debug('#createCustomerWithFreeTrial ', error);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error while making stripe account');
+  }
+};
+
+/**
+ * Called when user wants to cancel their subscription. We will cancel their
+ * subscription immediately, that's why we do it server side
+ */
+export const cancelSubscriptionById = async (email: string, id: string) => {
+  try {
+    const customer = await (await stripe.customers.list({ email, limit: 1 })).data.length;
+
+    // at this point, in the client app, the user is authenticated
+    // and they shoud only be requesting to delete a subscription they see in their UI
+    // we don't really need this check?
+    if (customer !== 1) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'You do not have a payments account');
+    }
+
+    await stripe.subscriptions.del(id);
+  } catch (error) {
+    logger.debug('Error while cancelling subcription ', error, email, id);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
   }
 };
 
@@ -43,8 +62,8 @@ export const createCustomerWithFreeTrial = async (email: string) => {
 /** When webhook receives customer created event */
 export const addCustomerId = async (email: string, stripeCustomerId: string) => {
   try {
-    const user = await User.findOneAndUpdate({ email }, { stripeCustomerId }, { new: true });
-    console.log('#addCustomerId user updated', user);
+    await User.findOneAndUpdate({ email }, { stripeCustomerId }, { new: true });
+    // console.log('#addCustomerId user updated', user);
   } catch (error) {
     logger.debug('#addCustomerId unable to add stripe customer id on User');
   }
@@ -57,9 +76,8 @@ export const addSubscription = async (
   stripeStatus: Stripe.Subscription.Status
 ) => {
   try {
-    console.log('#addSubscription', stripeCustomerId);
-    const user = await User.findOneAndUpdate({ stripeCustomerId }, { stripeCurrentPeriodEnd, stripeStatus }, { new: true });
-    console.log('#addSubscription user updated', user);
+    await User.findOneAndUpdate({ stripeCustomerId }, { stripeCurrentPeriodEnd, stripeStatus }, { new: true });
+    // console.log('#addSubscription user updated', user);
   } catch (error) {
     logger.debug('#addSubscription unable to add stripe subscription');
   }
@@ -68,8 +86,8 @@ export const addSubscription = async (
 /** when webhook receives updated / deleted event */
 export const updateSubscription = async (stripeCustomerId: string, stripeStatus: Stripe.Subscription.Status) => {
   try {
-    const user = await User.findOneAndUpdate({ stripeCustomerId }, { stripeStatus }, { new: true });
-    console.log('#updateSubscription user updated', user);
+    await User.findOneAndUpdate({ stripeCustomerId }, { stripeStatus }, { new: true });
+    // console.log('#updateSubscription user updated', user);
   } catch (error) {
     logger.debug('#updateSubscription unable to update stripe status');
   }
