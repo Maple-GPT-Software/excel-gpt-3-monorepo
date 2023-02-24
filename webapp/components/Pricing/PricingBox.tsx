@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 type PricingBoxProps = {
   price: string;
@@ -22,9 +22,7 @@ const PricingBox = (props: PricingBoxProps) => {
             $<span className="amount">{price}</span>
             <span className="time text-body-color">/{duration}</span>
           </h3>
-          <h4 className="mb-2 text-xl font-bold text-dark dark:text-white">
-            {packageName}
-          </h4>
+          <h4 className="mb-2 text-xl font-bold text-dark dark:text-white">{packageName}</h4>
         </div>
         <p className="mb-7 text-base text-body-color">{subtitle}</p>
         <div className="mb-8 border-b border-body-color border-opacity-10 pb-8 dark:border-white dark:border-opacity-10">
@@ -34,13 +32,7 @@ const PricingBox = (props: PricingBoxProps) => {
         </div>
         <div>{children}</div>
         <div className="absolute bottom-0 right-0 z-[-1]">
-          <svg
-            width="179"
-            height="158"
-            viewBox="0 0 179 158"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <svg width="179" height="158" viewBox="0 0 179 158" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               opacity="0.5"
               d="M75.0002 63.256C115.229 82.3657 136.011 137.496 141.374 162.673C150.063 203.47 207.217 197.755 202.419 167.738C195.393 123.781 137.273 90.3579 75.0002 63.256Z"

@@ -1,31 +1,31 @@
 const menuData = [
   {
     id: 1,
-    title: "Home",
-    path: "/",
+    title: 'Home',
+    path: '/',
     newTab: false,
   },
   {
     id: 2,
-    title: "Pricing",
-    path: "/pricing",
+    title: 'Pricing',
+    path: '/pricing',
     newTab: false,
   },
   {
     id: 4,
-    title: "Account",
+    title: 'Account',
     newTab: false,
     submenu: [
       {
         id: 46,
-        title: "Sign In",
-        path: "/signin",
+        title: 'Sign In',
+        path: '/signin',
         newTab: false,
       },
       {
         id: 47,
-        title: "Sign Up",
-        path: "/signup",
+        title: 'Sign Up',
+        path: '/signup',
         newTab: false,
       },
     ],

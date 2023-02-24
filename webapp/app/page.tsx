@@ -1,10 +1,10 @@
-import React from "react";
-import LandingSectionOne from "@/components/Landing/LandingSectionOne";
-import LandingVideoSection from "@/components/Landing/LandingVideoSection";
-import LandingFeaturesSection from "@/components/Landing/LandingFeaturesSection";
-import LandingTrustedSection from "@/components/Landing/LandingTrustedSection";
-import LandingReviewSection from "@/components/Landing/LandingReviewSection";
-import LandingLastSection from "@/components/Landing/LandingLastSection";
+import React from 'react';
+import LandingSectionOne from '@/components/Landing/LandingSectionOne';
+import LandingVideoSection from '@/components/Landing/LandingVideoSection';
+import LandingFeaturesSection from '@/components/Landing/LandingFeaturesSection';
+import LandingTrustedSection from '@/components/Landing/LandingTrustedSection';
+import LandingReviewSection from '@/components/Landing/LandingReviewSection';
+import LandingLastSection from '@/components/Landing/LandingLastSection';
 
 export default function Home() {
   return (
