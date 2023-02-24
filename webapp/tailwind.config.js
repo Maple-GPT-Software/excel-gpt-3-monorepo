@@ -13,29 +13,20 @@ module.exports = {
       white: '#FFFFFF',
       black: '#090E34',
       dark: '#1D2144',
-      primary: '#4ade80',
+      // TODO: primaryLight, primaryDark
+      // is there any way to use the green-600 here or do we have to use the HEX?
+      primary: '#16a34a',
       yellow: '#FBB040',
       'body-color': '#959CB1',
       darkGreen: '#16a34a',
     },
     screens: {
       xs: '450px',
-      // => @media (min-width: 450px) { ... }
-
       sm: '575px',
-      // => @media (min-width: 576px) { ... }
-
       md: '768px',
-      // => @media (min-width: 768px) { ... }
-
       lg: '992px',
-      // => @media (min-width: 992px) { ... }
-
       xl: '1200px',
-      // => @media (min-width: 1200px) { ... }
-
       '2xl': '1400px',
-      // => @media (min-width: 1400px) { ... }
     },
     extend: {
       boxShadow: {
