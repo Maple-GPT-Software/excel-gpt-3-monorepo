@@ -8,14 +8,15 @@ import menuData from './menuData';
 import { HamburgerMenuIcon, ChevronDownIcon } from '@radix-ui/react-icons';
 
 const Header = () => {
-  // Navbar toggle
-  const [navbarOpen, setNavbarOpen] = useState(false);
+  const [isNavbarOpen, setIsNavbarOpen] = useState(false);
+  const [openIndex, setOpenIndex] = useState(-1);
+  const [sticky, setSticky] = useState(false);
+
   const navbarToggleHandler = () => {
-    setNavbarOpen(!navbarOpen);
+    setIsNavbarOpen(!isNavbarOpen);
   };
 
   // Sticky Navbar
-  const [sticky, setSticky] = useState(false);
   const handleStickyNavbar = () => {
     if (window.scrollY >= 80) {
       setSticky(true);
@@ -25,10 +26,13 @@ const Header = () => {
   };
   useEffect(() => {
     window.addEventListener('scroll', handleStickyNavbar);
-  });
+
+    return () => {
+      window.removeEventListener('scroll', handleStickyNavbar);
+    };
+  }, []);
 
   // submenu handler
-  const [openIndex, setOpenIndex] = useState(-1);
   const handleSubmenu = (index: SetStateAction<number>) => {
     if (openIndex === index) {
       setOpenIndex(-1);
@@ -68,10 +72,10 @@ const Header = () => {
                 <nav
                   id="navbarCollapse"
                   className={clsx(
-                    'navbar absolute right-0 z-30 w-[250px] rounded border-[.5px] border-body-color/50 bg-primary py-4 px-6 duration-300 dark:border-body-color/20 dark:bg-dark lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100',
+                    'navbar y-4 border-gray-200 absolute right-4 right-0 z-30 w-[250px] rounded border-[.5px] border-solid border-body-color/50 bg-white px-6 duration-300 dark:border-body-color/20 dark:bg-dark lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100',
                     {
-                      'visibility top-full opacity-100': navbarOpen,
-                      'invisible top-[120%] opacity-0': !navbarOpen,
+                      'visibility top-full opacity-100': isNavbarOpen,
+                      'invisible top-[120%] opacity-0': !isNavbarOpen,
                     }
                   )}
                 >
