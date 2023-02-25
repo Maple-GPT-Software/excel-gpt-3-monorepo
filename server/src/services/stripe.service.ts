@@ -5,14 +5,17 @@ import stripe from '@src/config/stripe';
 import ApiError from '@src/utils/ApiError';
 import httpStatus from 'http-status';
 
-// this is the price_id for the premium subscription, 5.99$ per month
-// we can use it to create a free_trial subscription without accepting payment info
-const STRIPE_DEFAULT_PRICE_ID = 'price_1MdLWWGB7M3KTCGBlQufaDuk';
+enum SUBSCRIPTIONS {
+  // this is the price_id for the premium subscription, 5.99$ per month for standalone accounts
+  // we use it to create a free_trial subscription without accepting payment info
+  STANDALONE_MONTHLY = 'price_1MdLWWGB7M3KTCGBlQufaDuk',
+  // other price ids e.g, standalone yearly, team monthly, team yearly
+}
 
 /**
  * This method only gets used when the user has created their account for the first time.
  * The client apps send an access token to the server, which we validate with firebase's admin SDK.
- * This method is only repsonsbile for calling stripe's API to create
+ * This method is only repsonsbile for calling stripe's API to create:
  *  1) a customer profile w user's email
  *  2) a free 5 day subscription with the appropriate product id (managed in Stripe UI)
  * We don't need to save the stripe properties in our DB at this point because we use Stripe's
@@ -24,7 +27,7 @@ export const createCustomerWithFreeTrial = async (email: string) => {
 
     stripe.subscriptions.create({
       customer: customer.id,
-      items: [{ price: STRIPE_DEFAULT_PRICE_ID }],
+      items: [{ price: SUBSCRIPTIONS.STANDALONE_MONTHLY }],
       trial_period_days: 5,
       cancel_at_period_end: true,
       proration_behavior: 'none',
@@ -37,11 +40,12 @@ export const createCustomerWithFreeTrial = async (email: string) => {
 
 /**
  * Called when user wants to cancel their subscription. We will cancel their
- * subscription immediately, that's why we do it server side
+ * subscription immediately, if we do it client side the user can arbitrary params to Stripe
+ * that's why we do it server side
  */
 export const cancelSubscriptionById = async (email: string, id: string) => {
   try {
-    const customer = await (await stripe.customers.list({ email, limit: 1 })).data.length;
+    const customer = (await stripe.customers.list({ email, limit: 1 })).data.length;
 
     // at this point, in the client app, the user is authenticated
     // and they shoud only be requesting to delete a subscription they see in their UI
@@ -59,7 +63,7 @@ export const cancelSubscriptionById = async (email: string, id: string) => {
 
 // TODO: if any of these fail how do we approach syncing properties with those in Stripe's DB
 
-/** When webhook receives customer created event */
+/** When webhook receives customer.created event */
 export const addCustomerId = async (email: string, stripeCustomerId: string) => {
   try {
     await User.findOneAndUpdate({ email }, { stripeCustomerId }, { new: true });
@@ -69,7 +73,7 @@ export const addCustomerId = async (email: string, stripeCustomerId: string) => 
   }
 };
 
-/** when webhook receives subscription created event */
+/** when webhook receives subscription.created event */
 export const addSubscription = async (
   stripeCustomerId: string,
   stripeCurrentPeriodEnd: number,
