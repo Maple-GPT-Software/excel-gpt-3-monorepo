@@ -25,3 +25,5 @@ dist-ssr
 *.sw?
 **/__pycache__/
 **/.env
+
+**/webapp-landing/.next/
