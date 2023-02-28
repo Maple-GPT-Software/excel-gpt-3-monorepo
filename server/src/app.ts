@@ -43,15 +43,15 @@ app.use(helmet());
 app.post('/webhook', express.raw({ type: 'application/json' }), (request, response) => {
   const sig = request.headers['stripe-signature'] as string | string[];
 
-  if (!sig) {
-    logger.debug('stripe /webhook no sig', sig);
-    response.send(500);
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(request.body, sig, config.stripeEndpointSecret) as Stripe.DiscriminatedEvent;
+  } catch (error: unknown) {
+    // @ts-ignore
+    response.status(400).send(`Webhook Error: ${error.message}`);
     return;
   }
-
-  const event = stripe.webhooks.constructEvent(request.body, sig, config.stripeEndpointSecret) as Stripe.DiscriminatedEvent;
-
-  // console.log(JSON.stringify(event.data.object));
 
   switch (event.type) {
     /**
@@ -91,7 +91,6 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
      *  - switched to premium invoice succeeds, status: active
      *  - switched to premium invoice failed. status: past_due
      *  - switched to premium during trial period, status: active
-     * TODO: past due, in UI tell user add valid payment
      */
     case 'customer.subscription.updated':
       const updatedSubscription = event.data.object;
@@ -108,6 +107,9 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
       console.log('customer.subscription.deleted customerID', deletedSubscription.customer, deletedSubscription.status);
       stripeService.updateSubscription(deletedSubscription.customer as string, deletedSubscription.status);
       break;
+
+    /** We set the checkout lifespan to 30 minutes. We can use this to follow up with the user  */
+    // case 'checkout.session.expired':
     default:
       break;
   }
@@ -138,7 +140,7 @@ app.options('*', cors());
  */
 app.use(firebaseAuth);
 
-// TODO: refactor this middleware to allow email + password signup
+// FUTURE_WORK: refactor this middleware to allow email + password signup
 // app.use(passport.initialize());
 // passport.use('jwt', jwtStrategy);
 

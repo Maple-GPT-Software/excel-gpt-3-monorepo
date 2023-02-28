@@ -7,8 +7,10 @@ import {
   User,
 } from "firebase/auth";
 
-import preactLogo from "./assets/preact.svg";
 import "./app.css";
+import { Route, Routes } from "react-router-dom";
+import Checkout from "./Checkout";
+import { Fragment } from "preact/jsx-runtime";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD-HGaNIlqTjZiRQAA6wvKOBjQVUyFwBQQ",
@@ -26,7 +28,7 @@ const googleProvider = new GoogleAuthProvider();
 
 export function App() {
   const [user, setUser] = useState<User | undefined>(undefined);
-  const [accessToken, setAccessToken] = useState<string>("");
+  const [accessToken, setAccessToken] = useState<string | null>("");
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -41,7 +43,7 @@ export function App() {
   });
 
   return (
-    <>
+    <div style={{ display: "grid", gridTemplateColumns: "50% 50%" }}>
       <div>
         <button
           onClick={() => {
@@ -58,22 +60,25 @@ export function App() {
         >
           logout
         </button>
+        {accessToken && (
+          <>
+            <button
+              style={{ marginTop: "1rem" }}
+              onClick={() => {
+                navigator.clipboard.writeText(accessToken);
+              }}
+            >
+              Copy Access Token
+            </button>
+            <p style={{ maxWidth: "500px", wordBreak: "break-word" }}>
+              {accessToken.slice(0, 50) + "...."}
+            </p>
+          </>
+        )}
       </div>
-      {accessToken && (
-        <>
-          <button
-            style={{ marginTop: "1rem" }}
-            onClick={() => {
-              navigator.clipboard.writeText(accessToken);
-            }}
-          >
-            Copy Access Token
-          </button>
-          <p style={{ maxWidth: "500px", wordBreak: "break-word" }}>
-            {accessToken.slice(0, 50) + "...."}
-          </p>
-        </>
-      )}
-    </>
+      <Routes>
+        <Route path="/registration/checkout" element={<Checkout />} />
+      </Routes>
+    </div>
   );
 }

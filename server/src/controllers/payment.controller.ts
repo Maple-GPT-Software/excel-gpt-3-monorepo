@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import catchAsync from '@src/utils/catchAsync';
-import { cancelSubscriptionById, createCustomerWithFreeTrial } from '../services/stripe.service';
+import { cancelSubscriptionById, createCustomerWithFreeTrial, createSessionByProductId } from '@src/services/stripe.service';
 import httpStatus from 'http-status';
 
 export const createTrial = catchAsync(async (req: Request, res: Response) => {
@@ -16,4 +16,13 @@ export const cancelSubscription = catchAsync(async (req: Request, res: Response)
   const email = req.decodedFirebaseToken.email;
   await cancelSubscriptionById(email, subscriptionId);
   res.status(httpStatus.OK).send();
+});
+
+export const createSubscriptionSession = catchAsync(async (req: Request, res: Response) => {
+  const email = req.decodedFirebaseToken.email;
+  const { priceId } = req.body;
+
+  const session = await createSessionByProductId(email, priceId);
+
+  res.status(httpStatus.TEMPORARY_REDIRECT).send(session);
 });

@@ -23,9 +23,10 @@ const envVarsSchema = Joi.object()
     FIREBASE_TOKEN_URI: Joi.string().required(),
     FIREBASE_AUTH_PROVIDER_X509_CERT_URL: Joi.string().required(),
     FIREBASE_CLIENT_X509_CERT_URL: Joi.string().required(),
-    // TODO: production keys for stripe after registering business
     STRIPE_TEST_SECRET_KEY: Joi.string().required(),
     STRIPE_TEST_ENDPOINT_SECRET: Joi.string().required(),
+    STRIPE_PROD_SECRET_KEY: Joi.string().required(),
+    STRIPE_PROD_ENDPOINT_SECRET: Joi.string().required(),
   })
   .unknown();
 
@@ -42,12 +43,8 @@ export default {
   port: envVars.PORT,
   mongoose: {
     url: isProduction ? envVars.MONGODB_URL_PROD : envVars.MONGODB_URL_DEV,
-    // TODO: double check if these are all true by default
-    options: {
-      useCreateIndex: true,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    },
+    // useCreateIndex, useNewUrlParser, useUnifiedTopology options are true by default
+    // https://www.mongodb.com/community/forums/t/option-usecreateindex-is-not-supported/123048/4
   },
   openAi: envVars.OPEN_AI,
   // https://answers.netlify.com/t/how-to-add-a-json-file-to-my-site-without-adding-it-to-github/82468/4
@@ -63,7 +60,15 @@ export default {
     auth_provider_x509_cert_url: envVars.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
     client_x509_cert_url: envVars.FIREBASE_CLIENT_X509_CERT_URL,
   } as any,
-  // TODO: stripe production keys
-  stripeApi: envVars.STRIPE_TEST_SECRET_KEY,
-  stripeEndpointSecret: envVars.STRIPE_TEST_ENDPOINT_SECRET,
+  stripeApi: isProduction ? envVars.STRIPE_PROD_SECRET_KEY : envVars.STRIPE_TEST_SECRET_KEY,
+  stripeEndpointSecret: isProduction ? envVars.STRIPE_PROD_ENDPOINT_SECRET : envVars.STRIPE_TEST_ENDPOINT_SECRET,
+  clients: {
+    // TODO: webapp production url
+    webappCheckoutSuccessUrl: isProduction
+      ? 'production_url'
+      : 'http://127.0.0.1:5000/app/registration/checkout?status=successfull',
+    webappCheckoutCancelledUrl: isProduction
+      ? 'production_url'
+      : 'http://127.0.0.1:5000/app/registration/checkout?status=cancelled',
+  },
 };

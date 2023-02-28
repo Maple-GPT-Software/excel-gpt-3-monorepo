@@ -5,6 +5,7 @@ import Joi from 'joi';
 export const firebaseSignup = {
   body: Joi.object().keys({
     referrer: Joi.string().optional(),
+    // TODO: deprecate signup source
     signUpSource: Joi.string().required(),
   }),
 };

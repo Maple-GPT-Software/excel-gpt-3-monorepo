@@ -4,20 +4,13 @@ import { User } from '@src/models/user.model';
 import stripe from '@src/config/stripe';
 import ApiError from '@src/utils/ApiError';
 import httpStatus from 'http-status';
-
-enum SUBSCRIPTIONS {
-  // this is the price_id for the premium subscription, 5.99$ per month for standalone accounts
-  // we use it to create a free_trial subscription without accepting payment info
-  STANDALONE_MONTHLY = 'price_1MdLWWGB7M3KTCGBlQufaDuk',
-  // other price ids e.g, standalone yearly, team monthly, team yearly
-}
+import config from '@src/config/config';
+import { PRICE_IDS } from '@src/constants';
 
 /**
- * This method only gets used when the user has created their account for the first time.
- * The client apps send an access token to the server, which we validate with firebase's admin SDK.
- * This method is only repsonsbile for calling stripe's API to create:
+ * This method is uses stripe's API to create:
  *  1) a customer profile w user's email
- *  2) a free 5 day subscription with the appropriate product id (managed in Stripe UI)
+ *  2) a free 5 day subscription with the premium subscription id
  * We don't need to save the stripe properties in our DB at this point because we use Stripe's
  * webhook to subscribe to certain events. see `app.ts`
  */
@@ -27,7 +20,7 @@ export const createCustomerWithFreeTrial = async (email: string) => {
 
     stripe.subscriptions.create({
       customer: customer.id,
-      items: [{ price: SUBSCRIPTIONS.STANDALONE_MONTHLY }],
+      items: [{ price: PRICE_IDS.STANDALONE_MONTHLY }],
       trial_period_days: 5,
       cancel_at_period_end: true,
       proration_behavior: 'none',
@@ -35,6 +28,39 @@ export const createCustomerWithFreeTrial = async (email: string) => {
   } catch (error) {
     logger.debug('#createCustomerWithFreeTrial ', error);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error while making stripe account');
+  }
+};
+
+/**
+ * 1) user completes checkout session: Customer object created, Subscription is created
+ * 2) user complets checkout, redirected to success_url (client app)
+ * 3) user clicks on cancel_url, is navigated back to client and clients makes API call to create free trial
+ */
+export const createSessionByProductId = async (email: string, priceId: string) => {
+  try {
+    // https://stripe.com/docs/api/checkout/sessions/create?lang=node
+    const session = await stripe.checkout.sessions.create({
+      success_url: config.clients.webappCheckoutSuccessUrl,
+      cancel_url: config.clients.webappCheckoutCancelledUrl,
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      mode: 'subscription',
+      currency: 'usd',
+      // stripe will use this email when creating the Customer object
+      customer_email: email,
+      // expires in 30 minutes
+      expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
+    });
+
+    return session;
+  } catch (error) {
+    // Stripe was not able to create a checkout session for whatever reason
+    logger.error('#createSessionByProductId failed', error);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to checkout with Stripe');
   }
 };
 
@@ -56,20 +82,19 @@ export const cancelSubscriptionById = async (email: string, id: string) => {
 
     await stripe.subscriptions.del(id);
   } catch (error) {
-    logger.debug('Error while cancelling subcription ', error, email, id);
+    logger.notice('Error while cancelling subcription ', error, email, id);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
   }
 };
 
-// TODO: if any of these fail how do we approach syncing properties with those in Stripe's DB
+// FUTURE_WORK: if any of these fail how do we approach syncing properties with those in Stripe's DB
 
 /** When webhook receives customer.created event */
 export const addCustomerId = async (email: string, stripeCustomerId: string) => {
   try {
     await User.findOneAndUpdate({ email }, { stripeCustomerId }, { new: true });
-    // console.log('#addCustomerId user updated', user);
   } catch (error) {
-    logger.debug('#addCustomerId unable to add stripe customer id on User');
+    logger.notice('#addCustomerId unable to add stripe customer id on User');
   }
 };
 
@@ -81,18 +106,16 @@ export const addSubscription = async (
 ) => {
   try {
     await User.findOneAndUpdate({ stripeCustomerId }, { stripeCurrentPeriodEnd, stripeStatus }, { new: true });
-    // console.log('#addSubscription user updated', user);
   } catch (error) {
-    logger.debug('#addSubscription unable to add stripe subscription');
+    logger.notice('#addSubscription unable to add stripe subscription');
   }
 };
 
-/** when webhook receives updated / deleted event */
+/** when webhook receives subscription.created / subscription.deleted event */
 export const updateSubscription = async (stripeCustomerId: string, stripeStatus: Stripe.Subscription.Status) => {
   try {
     await User.findOneAndUpdate({ stripeCustomerId }, { stripeStatus }, { new: true });
-    // console.log('#updateSubscription user updated', user);
   } catch (error) {
-    logger.debug('#updateSubscription unable to update stripe status');
+    logger.notice('#updateSubscription unable to update stripe status');
   }
 };

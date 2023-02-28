@@ -6,6 +6,7 @@ export interface UserType {
   userId: string;
   email: string;
   name: string;
+  // TODO: remove this from schema
   signUpSource: string;
   referrer: string;
   dailyRequests?: number;
