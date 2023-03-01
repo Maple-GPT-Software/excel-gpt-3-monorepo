@@ -22,6 +22,27 @@ const firebaseConfig = {
   measurementId: "G-NDF54XDW0L",
 };
 
+async function redirectToCheckout(accessToken: string) {
+  const res = await fetch(
+    "http://localhost:3000/payment/subscription-session",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        priceId: "price_1MdLWWGB7M3KTCGBlQufaDuk",
+      }),
+      redirect: "follow",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `acces ${accessToken}`,
+      },
+    }
+  );
+
+  const { url } = await res.json();
+
+  window.location.href = url;
+}
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
@@ -33,6 +54,7 @@ export function App() {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
+        console.log(user);
         user.getIdToken().then((token) => setAccessToken(token));
         setUser(user);
       } else {
@@ -59,6 +81,9 @@ export function App() {
           }}
         >
           logout
+        </button>
+        <button onClick={() => redirectToCheckout(accessToken)}>
+          Free trial checkout
         </button>
         {accessToken && (
           <>

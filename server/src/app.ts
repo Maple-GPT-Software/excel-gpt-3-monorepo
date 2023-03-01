@@ -13,6 +13,7 @@ import * as morgan from '@src/config/morgan';
 /** Middlewares */
 import firebaseAuth from '@src/middleware/firebaseAuth';
 import { errorHandler, errorConverter } from './middleware/error';
+// FUTURE: rate limiting
 // import { authLimiter } from "./middlewares/rateLimiter";
 /** Modules */
 import AppRoutes from '@src/routes';
@@ -46,10 +47,12 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
   let event;
 
   try {
+    // verifying the signature sent by Stripe
     event = stripe.webhooks.constructEvent(request.body, sig, config.stripeEndpointSecret) as Stripe.DiscriminatedEvent;
   } catch (error: unknown) {
     // @ts-ignore
-    response.status(400).send(`Webhook Error: ${error.message}`);
+    logger.debug(`⚠️  Webhook signature verification failed.`, err.message);
+    response.status(400).send();
     return;
   }
 
@@ -75,7 +78,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
      *  - subscribes to premium afer trial ends, stauts: active
      */
     case 'customer.subscription.created':
-      // TODO: email user with thank you, installation guide
+      // FUTURE: email user with thank you, installation guide
       const createdSubscription = event.data.object;
       console.log(`customer.subscription.created customer ID `, createdSubscription.customer);
       stripeService.addSubscription(
@@ -102,7 +105,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
      *  - status: canceled
      */
     case 'customer.subscription.deleted':
-      // TODO: email user for feedback as to why they are cancelling
+      // FUTURE: email user for feedback as to why they are cancelling
       const deletedSubscription = event.data.object;
       console.log('customer.subscription.deleted customerID', deletedSubscription.customer, deletedSubscription.status);
       stripeService.updateSubscription(deletedSubscription.customer as string, deletedSubscription.status);

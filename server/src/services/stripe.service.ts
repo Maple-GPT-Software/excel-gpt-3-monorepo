@@ -91,11 +91,9 @@ export const cancelSubscriptionById = async (email: string, id: string) => {
 
 /** When webhook receives customer.created event */
 export const addCustomerId = async (email: string, stripeCustomerId: string) => {
-  try {
-    await User.findOneAndUpdate({ email }, { stripeCustomerId }, { new: true });
-  } catch (error) {
-    logger.notice('#addCustomerId unable to add stripe customer id on User');
-  }
+  User.findOneAndUpdate({ email }, { stripeCustomerId }).catch((e) => {
+    logger.notice('#addCustomerId unable to add stripe customer id on User', stripeCustomerId, e);
+  });
 };
 
 /** when webhook receives subscription.created event */
@@ -104,18 +102,14 @@ export const addSubscription = async (
   stripeCurrentPeriodEnd: number,
   stripeStatus: Stripe.Subscription.Status
 ) => {
-  try {
-    await User.findOneAndUpdate({ stripeCustomerId }, { stripeCurrentPeriodEnd, stripeStatus }, { new: true });
-  } catch (error) {
-    logger.notice('#addSubscription unable to add stripe subscription');
-  }
+  User.findOneAndUpdate({ stripeCustomerId }, { stripeCurrentPeriodEnd, stripeStatus }).catch((e) => {
+    logger.notice('#addSubscription unable to add stripe subscription', stripeCustomerId, e);
+  });
 };
 
 /** when webhook receives subscription.created / subscription.deleted event */
 export const updateSubscription = async (stripeCustomerId: string, stripeStatus: Stripe.Subscription.Status) => {
-  try {
-    await User.findOneAndUpdate({ stripeCustomerId }, { stripeStatus }, { new: true });
-  } catch (error) {
-    logger.notice('#updateSubscription unable to update stripe status');
-  }
+  User.findOneAndUpdate({ stripeCustomerId }, { stripeStatus }).catch((e) => {
+    logger.notice('#updateSubscription unable to update stripe status', stripeCustomerId, e);
+  });
 };

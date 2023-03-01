@@ -10,6 +10,9 @@ export interface UserType {
   signUpSource: string;
   referrer: string;
   dailyRequests?: number;
+  /**
+   * We don't have to keep all the metadata associated with a subscription because Stripe's client facing SDK has no rate limiting. Server side API however has a limit of 100 reads/min.
+   */
   /** stripe customer id associated with user's email */
   stripeCustomerId?: string;
   /** the end of the bill cycle of the user's subscription*/
@@ -18,9 +21,6 @@ export interface UserType {
    * possible statuses: paid, incomplete, trialing, active, past_due, canceled. We don't allow users to pause their subscription.
    */
   stripeStatus?: Stripe.Subscription.Status;
-  /**
-   * We don't have to keep all the metadata associated with a subscription because Stripe's client facing SDK has no rate limiting. Server side API however has a limit of 100 reads/min.
-   */
   // TODO: hasAcceptedTerms
   // TODO: acceptedTermsVersion
 }
@@ -99,7 +99,7 @@ userSchema.methods.toJSON = function () {
   delete obj.referrer;
   delete obj.signUpSource;
   delete obj.dailyRequests;
-  delete obj.currentPeriodEnd;
+  delete obj.stripeCurrentPeriodEnd;
   delete obj.stripeStatus;
   return obj;
 };

@@ -3,6 +3,8 @@ node_modules
 dist
 src/firebase-service-account.json
 
+tsconfig.tsbuildinfo
+
 # yarn error logs
 yarn-error.log
 
