@@ -3,7 +3,6 @@ import httpStatus from 'http-status';
 import Stripe from 'stripe';
 
 import ApiError from '@src/utils/ApiError';
-import admin from '@src/services/firebase.service';
 import { User, UserType } from '@src/models/user.model';
 
 /**
@@ -18,7 +17,7 @@ const subscriptionCheck: RequestHandler = async (req, res, next) => {
     // do we need to 1) check if user exists, 2) throw error if user === null
     const user = (await User.findOne({ email })) as UserType;
 
-    if (isStripeSubscriptionInvalid(user?.stripeCurrentPeriodEnd, user?.stripeStatus)) {
+    if (isSubscriptionInvalid(user?.stripeCurrentPeriodEnd, user?.stripeStatus)) {
       next(new ApiError(httpStatus.FORBIDDEN, 'Your subscription has expired'));
     }
 
@@ -30,11 +29,8 @@ const subscriptionCheck: RequestHandler = async (req, res, next) => {
 
 export default subscriptionCheck;
 
-/**
- * Checks if the current subscription is invalid. Returns true if the present time, unix timestamp, is ahead of stripeCurrentPeriodEnd.
- *
- */
-export function isStripeSubscriptionInvalid(
+/** Checks if the current subscription is invalid */
+export function isSubscriptionInvalid(
   stripeCurrentPeriodEnd: number | undefined,
   stripeStatus: Stripe.Subscription.Status | undefined
 ) {
@@ -49,14 +45,10 @@ export function isStripeSubscriptionInvalid(
    */
   const hasCurrentPeriodExpired = stripeCurrentPeriodEnd - getCurrentUnixSeconds() < 0;
 
-  console.log(
-    `stripeCurrentPeriodEnd ${stripeCurrentPeriodEnd}, current date ${getCurrentUnixSeconds()}, hasCurrentPeriodExpired ${hasCurrentPeriodExpired}`
-  );
-
   if (hasCurrentPeriodExpired || stripeStatus === 'past_due') {
     return true;
   } else if (stripeStatus === 'trialing' || stripeStatus === 'active' || stripeStatus === 'canceled') {
-    // subscription can be cancelled but we permit access to APIs until date > currentPeriodEnd
+    // subscription can be cancelled but we permit access to APIs until current date > currentPeriodEnd
     return false;
   } else {
     return true;
@@ -66,6 +58,6 @@ export function isStripeSubscriptionInvalid(
 /**
  * get the current time as seconds since epoch
  */
-function getCurrentUnixSeconds() {
+export function getCurrentUnixSeconds() {
   return Math.floor(Date.now() / 1000);
 }
