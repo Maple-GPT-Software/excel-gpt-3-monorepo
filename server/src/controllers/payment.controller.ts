@@ -2,12 +2,24 @@ import { Request, Response } from 'express';
 import catchAsync from '@src/utils/catchAsync';
 import { cancelSubscriptionById, createCustomerWithFreeTrial, createSessionByProductId } from '@src/services/stripe.service';
 import httpStatus from 'http-status';
+import { User } from '@src/models/user.model';
 
 export const createTrial = catchAsync(async (req: Request, res: Response) => {
-  await createCustomerWithFreeTrial(req.decodedFirebaseToken.email);
+  const { email } = req.decodedFirebaseToken;
+  const user = await User.findOne({ email });
 
-  // we dont need to send back the customerId, subscription properties etc...
-  // the client apps can use Stripe's client SDK and retrieve information needed
+  /**
+   * customer ids only get added to the user's profile if they
+   *  1) signed up to trial
+   *  2) completed checkout for a paid subscription
+   */
+  if (user?.stripeCustomerId) {
+    res.status(httpStatus.FORBIDDEN).send('You already trialed our services');
+  }
+
+  await createCustomerWithFreeTrial(email);
+
+  // send OK so client knows to move user along in signup flow
   res.status(httpStatus.OK).send();
 });
 
