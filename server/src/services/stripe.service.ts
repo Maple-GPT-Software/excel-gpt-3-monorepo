@@ -97,19 +97,12 @@ export const addCustomerId = async (email: string, stripeCustomerId: string) => 
 };
 
 /** when webhook receives subscription.created event */
-export const addSubscription = async (
+export const updateSubscription = async (
   stripeCustomerId: string,
   stripeCurrentPeriodEnd: number,
   stripeStatus: Stripe.Subscription.Status
 ) => {
   User.findOneAndUpdate({ stripeCustomerId }, { stripeCurrentPeriodEnd, stripeStatus }).catch((e) => {
-    logger.notice('#addSubscription unable to add stripe subscription', stripeCustomerId, e);
-  });
-};
-
-/** when webhook receives subscription.created / subscription.deleted event */
-export const updateSubscription = async (stripeCustomerId: string, stripeStatus: Stripe.Subscription.Status) => {
-  User.findOneAndUpdate({ stripeCustomerId }, { stripeStatus }).catch((e) => {
-    logger.notice('#updateSubscription unable to update stripe status', stripeCustomerId, e);
+    logger.notice('#addSubscription unable to update stripe subscription', stripeCustomerId, e);
   });
 };

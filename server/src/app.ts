@@ -80,8 +80,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
     case 'customer.subscription.created':
       // FUTURE: email user with thank you, installation guide
       const createdSubscription = event.data.object;
-      console.log(`customer.subscription.created customer ID `, createdSubscription.customer);
-      stripeService.addSubscription(
+      stripeService.updateSubscription(
         createdSubscription.customer as string,
         createdSubscription.current_period_end,
         createdSubscription.status
@@ -97,8 +96,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
      */
     case 'customer.subscription.updated':
       const updatedSubscription = event.data.object;
-      console.log(`customer.subscription.updated customer ID`, updatedSubscription.customer);
-      stripeService.updateSubscription(updatedSubscription.customer as string, updatedSubscription.status);
+      stripeService.updateSubscription(updatedSubscription.customer as string, updatedSubscription.current_period_end, updatedSubscription.status);
       break;
     /**
      * When a user cancels their subscription. We only allow "cancel immediately"
@@ -107,8 +105,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
     case 'customer.subscription.deleted':
       // FUTURE: email user for feedback as to why they are cancelling
       const deletedSubscription = event.data.object;
-      console.log('customer.subscription.deleted customerID', deletedSubscription.customer, deletedSubscription.status);
-      stripeService.updateSubscription(deletedSubscription.customer as string, deletedSubscription.status);
+      stripeService.updateSubscription(deletedSubscription.customer as string, deletedSubscription.current_period_end, deletedSubscription.status);
       break;
 
     /** We set the checkout lifespan to 30 minutes. We can use this to follow up with the user  */
