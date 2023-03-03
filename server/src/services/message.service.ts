@@ -13,19 +13,21 @@ export const createUserMessage = async (message: MessageType) => {
  * updates the rating on an exisiting message document
  */
 export const rateUserMessage = async ({
-  messageId,
+  id,
   userId,
   rating,
 }: {
-  messageId: string;
+  id: string;
   userId: string;
   rating: string;
 }) => {
-  if (!(await Message.canRateMessage(messageId, userId))) {
+  const message = await Message.findById(id);
+
+  if (userId !== message?.userId) {
     throw new ApiError(httpStatus.FORBIDDEN, 'Not authorized to rate message');
-  } else if (!(await Message.isMessageUnrated(messageId))) {
+  } else if (!message?.rating) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Message already has rating');
   }
 
-  return await Message.findByIdAndUpdate(messageId, { rating }, { runValidators: true });
+  return await Message.findByIdAndUpdate(id, { rating }, { runValidators: true, new: true });
 };

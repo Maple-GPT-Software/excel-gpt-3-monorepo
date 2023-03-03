@@ -3,9 +3,8 @@ import { Response, Request } from 'express';
 import httpStatus from 'http-status';
 import catchAsync from '@src/utils/catchAsync';
 import ApiError from '@src/utils/ApiError';
-import getCompletion from '../services/openai.service';
-import { createUserMessage, rateUserMessage } from '../services/message.service';
-import logger from '@src/config/logger';
+import getCompletion from '@src/services/openai.service';
+import * as messageService from '@src/services/message.service';
 
 export const createMessage = catchAsync(async (req: Request, res: Response) => {
   const prompt = req.body.prompt;
@@ -14,9 +13,10 @@ export const createMessage = catchAsync(async (req: Request, res: Response) => {
   try {
     const completion = await getCompletion(prompt, userId);
 
-    const message = await createUserMessage({
+    const message = await messageService.createUserMessage({
       userId,
       prompt,
+      model: completion.model,
       completion: completion.choices[0].text ?? '',
       promptTokens: completion.usage?.prompt_tokens ?? 0,
       completionTokens: completion.usage?.prompt_tokens ?? 0,
@@ -26,7 +26,7 @@ export const createMessage = catchAsync(async (req: Request, res: Response) => {
     res.send(message);
   } catch (error) {
     console.error('#createMessage error', error);
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to communicate with AI service');
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to answer question');
   }
 });
 
@@ -35,7 +35,11 @@ export const rateMessage = catchAsync(async (req: Request, res: Response) => {
   const userId = req.decodedFirebaseToken.uid;
   const { id } = req.params;
 
-  await rateUserMessage({ messageId: id, userId, rating });
-
-  res.status(httpStatus.ACCEPTED).send();
+  try { 
+    await messageService.rateUserMessage({ id, userId, rating });
+    res.status(httpStatus.ACCEPTED).send();
+  } catch (error) {
+    console.error("messageController.rateMessage error", error);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Rating failed. Try again.')
+  }
 });

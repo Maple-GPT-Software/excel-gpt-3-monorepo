@@ -1,6 +1,10 @@
 import { Configuration, CreateCompletionRequest, OpenAIApi } from 'openai';
 import config from '@src/config/config';
 
+export enum OpenAiModels {
+  TURBO = "gpt-3.5-turbo"
+}
+
 const configuration = new Configuration({
   apiKey: config.openAi,
   organization: 'org-WdaykyBMcZad17H1WbC3trTM',
@@ -13,7 +17,7 @@ const openai = new OpenAIApi(configuration);
  * `How many moons does the earth have?`
  */
 export const basePrompt: CreateCompletionRequest = {
-  model: 'text-davinci-003',
+  model: OpenAiModels.TURBO,
   max_tokens: 300,
   /**
    * between 0 and 2. Higher values like 0.8 will make the output more random,

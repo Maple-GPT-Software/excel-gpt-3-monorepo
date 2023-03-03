@@ -1,9 +1,11 @@
+import { OpenAiModels } from '@src/config/openai';
 import { Model, Schema, model } from 'mongoose';
-import validator from 'validator';
 
-/**
- * completion type
- */
+export enum CompletiongRating {
+  LIKE = "LIKE",
+  DISLIKE = "DISLIKE"
+}
+
 export interface MessageType {
   /** the user that created this message */
   userId: string;
@@ -12,7 +14,8 @@ export interface MessageType {
   promptTokens: number;
   completionTokens: number;
   totalTokens: number;
-  rating?: string;
+  model: string;
+  rating?: CompletiongRating;
 }
 
 /**
@@ -50,10 +53,15 @@ const messageSchema = new Schema<MessageType, MessageModel>(
       type: Number,
       required: true,
     },
+    model: {
+      type: String,
+      enum: [OpenAiModels.TURBO],
+      required: true,
+    },
     rating: {
       type: String,
-      enum: ['LIKE', 'DISLIKE', 'N/A'],
-      default: 'N/A',
+      enum: [CompletiongRating.LIKE, CompletiongRating.DISLIKE, ''],
+      default: '',
     },
   },
   {
@@ -70,31 +78,31 @@ messageSchema.methods.toJSON = function () {
   delete obj._id;
   delete obj.__v;
   delete obj.prompt;
-  delete obj.tok;
   delete obj.promptTokens;
   delete obj.completionTokens;
   delete obj.totalTokens;
+  delete obj.model;
   return obj;
 };
 
 /**
  * Check if the user can rate the message based on their userId
- * @param {string} messageId - the message's id
+ * @param {string} id - the message's id
  * @param {string} userId - the user's id
  */
-messageSchema.statics.canRateMessage = async function (messageId: string, userId: string) {
-  const message = await this.findById(messageId);
-  console.log(messageId, userId);
+messageSchema.statics.canRateMessage = async function (id: string, userId: string) {
+  const message = await this.findById(id);
+  
   return userId === message?.userId;
 };
 
 /**
  * Check if the user can rate the message based on their userId
- * @param {string} messageId - the message's id
+ * @param {string} id - the message's id
  */
-messageSchema.statics.isMessageUnrated = async function (messageId: string) {
-  const message = await this.findById(messageId);
-  return message?.rating === 'N/A';
+messageSchema.statics.isMessageUnrated = async function (id: string) {
+  const message = await this.findById(id);
+  return !message?.rating;
 };
 
 export const Message = model<MessageType, MessageModel>('Message', messageSchema);

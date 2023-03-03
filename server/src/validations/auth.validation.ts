@@ -1,11 +1,9 @@
 import Joi from 'joi';
 
-// checking if a signUpSource has been provided,
-// e.g "app-script", "web-app", "excel", etc...
 export const firebaseSignup = {
   body: Joi.object().keys({
     referrer: Joi.string().optional(),
-    // TODO: deprecate signup source
+    // TODO: deprecate signup source since signup can only happen through webapp
     signUpSource: Joi.string().required(),
   }),
 };
