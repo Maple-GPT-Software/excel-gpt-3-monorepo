@@ -9,6 +9,7 @@ const router = express.Router();
 
 router.use(subscriptionCheck);
 
+// TODO: rate limiting and backoff middlewares
 router.post('/', validate(messageValidation.createMessage), messageController.createMessage);
 
 router.patch('/rate/:id', validate(messageValidation.rateMessage), messageController.rateMessage);

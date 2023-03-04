@@ -7,3 +7,6 @@ export enum PRICE_IDS {
   STANDALONE_MONTHLY = 'price_1MdLWWGB7M3KTCGBlQufaDuk',
   // other price ids e.g, standalone yearly, team monthly, team yearly
 }
+
+/** which version the user accepted when they signed up */
+export const TERMS_AND_CONDITION_VERSION = 1;

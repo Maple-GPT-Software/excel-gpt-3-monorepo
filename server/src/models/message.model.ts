@@ -15,7 +15,7 @@ export interface MessageType {
   completionTokens: number;
   totalTokens: number;
   model: string;
-  rating?: CompletionRating;
+  rating?: CompletionRating | '';
 }
 
 /**
