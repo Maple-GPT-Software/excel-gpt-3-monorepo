@@ -1,7 +1,7 @@
 import { OpenAiModels } from '@src/config/openai';
 import { Model, Schema, model } from 'mongoose';
 
-export enum CompletiongRating {
+export enum CompletionRating {
   LIKE = "LIKE",
   DISLIKE = "DISLIKE"
 }
@@ -15,7 +15,7 @@ export interface MessageType {
   completionTokens: number;
   totalTokens: number;
   model: string;
-  rating?: CompletiongRating;
+  rating?: CompletionRating;
 }
 
 /**
@@ -55,12 +55,13 @@ const messageSchema = new Schema<MessageType, MessageModel>(
     },
     model: {
       type: String,
-      enum: [OpenAiModels.TURBO],
+      /** its better to leave out this check for now because openai is rapidly iterating and we might get a random bug if they return a different model name */
+      // enum: [...Object.values(OpenAiModels)],
       required: true,
     },
     rating: {
       type: String,
-      enum: [CompletiongRating.LIKE, CompletiongRating.DISLIKE, ''],
+      enum: [...Object.values(CompletionRating), ''],
       default: '',
     },
   },

@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import Joi from 'joi';
-import { Environment } from '../types';
+import { Environment } from '@src/types';
 
 // TODO: how to configure this for netlify
 dotenv.config({ path: path.join(__dirname, '../../.env') });
