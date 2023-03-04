@@ -21,6 +21,7 @@ import ApiError from '@src/utils/ApiError';
 import * as stripeService from '@src/services/stripe.service';
 import logger from './config/logger';
 import stripe from './config/stripe';
+import { StripeWebhooks } from './types';
 
 // TODO: only allow specific origins
 // const corsOptions = {
@@ -57,56 +58,25 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
   }
 
   switch (event.type) {
-    /**
-     * we create customer account from client after the user is successfully authenticated by firebase
-     */
-    case 'customer.created':
+    case StripeWebhooks.CustomerCreated:
       const customer = event.data.object;
-
-      if (!customer.email) {
-        // something has gone horribly wrong
-        logger.debug('Stripe webhook [customer.created] missing email');
-        break;
-      }
-
-      console.log('[customer.created] stripe customer ID ', customer.id);
-      stripeService.addCustomerId(customer.email, customer.id);
+      // note: customer.email is string|null but when we create the customer with Stripe
+      // we specify the user's email that should be used to uniquely identify the customer
+      stripeService.addCustomerId(customer.email as string, customer.id);
       break;
-    /**
-     * When a user starts a trial or subscribes to premium after trial expiration.
-     *  - trial starts, status: trialing
-     *  - subscribes to premium afer trial ends, stauts: active
-     */
-    case 'customer.subscription.created':
+    case StripeWebhooks.SubscriptionCreated:
       // FUTURE: email user with thank you, installation guide
-      const createdSubscription = event.data.object;
-      stripeService.updateSubscription(
-        createdSubscription.customer as string,
-        createdSubscription.current_period_end,
-        createdSubscription.status
-      );
+      stripeService.updateSubscription(event.data.object);
       break;
-    /**
-     * Subscriptions are updated when card info changes, switching from trial to premium
-     *  - invoice succeeds, status: active
-     *  - invoice fails, status: past_due.
-     *  - switched to premium invoice succeeds, status: active
-     *  - switched to premium invoice failed. status: past_due
-     *  - switched to premium during trial period, status: active
-     */
-    case 'customer.subscription.updated':
-      const updatedSubscription = event.data.object;
-      stripeService.updateSubscription(updatedSubscription.customer as string, updatedSubscription.current_period_end, updatedSubscription.status);
+    case StripeWebhooks.SubscriptionUpdated:
+      stripeService.updateSubscription(event.data.object);
       break;
-    /**
-     * When a user cancels their subscription. We only allow "cancel immediately"
-     *  - status: canceled
-     */
-    case 'customer.subscription.deleted':
+    case StripeWebhooks.SubscriptionDeleted:
       // FUTURE: email user for feedback as to why they are cancelling
-      const deletedSubscription = event.data.object;
-      stripeService.updateSubscription(deletedSubscription.customer as string, deletedSubscription.current_period_end, deletedSubscription.status);
+      stripeService.updateSubscription(event.data.object);
       break;
+
+    // FUTURE: https://stripe.com/docs/api/events/types#event_types-customer.subscription.trial_will_end
 
     /** We set the checkout lifespan to 30 minutes. We can use this to follow up with the user  */
     // case 'checkout.session.expired':
