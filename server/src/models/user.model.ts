@@ -13,7 +13,7 @@ export interface UserType {
   hasAcceptedTerms: boolean;
   acceptedTermsVersion: number;
   /** for rate limiting trialing users */
-  dailyRequests?: number;
+  dailyRequests: number;
   /**
    * We don't have to keep all the metadata associated with a subscription because Stripe's client facing SDK has no rate limiting. Server side API however has a limit of 100 reads/min.
    */

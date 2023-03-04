@@ -14,6 +14,7 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
     signUpSource: req.body.signUpSource,
     hasAcceptedTerms: req.body.hasAcceptedTerms,
     acceptedTermsVersion: TERMS_AND_CONDITION_VERSION,
+    dailyRequests: 0,
     referrer: req.body.referrer ?? '',
   };
   const user = await userService.createUser(newUser);
