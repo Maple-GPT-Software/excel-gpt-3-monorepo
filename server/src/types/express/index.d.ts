@@ -9,6 +9,7 @@ declare global {
   namespace Express {
     export interface Request {
       decodedFirebaseToken?: DecodedIdToken;
+      isPremiumUser?: boolean;
     }
   }
 }

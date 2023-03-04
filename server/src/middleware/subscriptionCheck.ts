@@ -21,6 +21,7 @@ const subscriptionCheck: RequestHandler = async (req, res, next) => {
       next(new ApiError(httpStatus.FORBIDDEN, 'Your subscription has expired'));
     }
 
+    req.isPremiumUser = user.stripeStatus === 'active' || user.stripeStatus === 'canceled';
     next();
   } catch (error: any) {
     next(new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to retrieve your account'));
@@ -29,7 +30,7 @@ const subscriptionCheck: RequestHandler = async (req, res, next) => {
 
 export default subscriptionCheck;
 
-/** Checks if the current subscription is invalid */
+/** Checks if the current subscription is invalid. Canceled subscriptions are good until current date > current period end */
 export function isSubscriptionInvalid(
   stripeCurrentPeriodEnd: number | undefined,
   stripeStatus: Stripe.Subscription.Status | undefined

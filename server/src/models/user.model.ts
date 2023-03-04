@@ -12,8 +12,6 @@ export interface UserType {
   /** terms and conditions and the version the user has accepted */
   hasAcceptedTerms: boolean;
   acceptedTermsVersion: number;
-  /** for rate limiting trialing users */
-  dailyRequests: number;
   /**
    * We don't have to keep all the metadata associated with a subscription because Stripe's client facing SDK has no rate limiting. Server side API however has a limit of 100 reads/min.
    */
@@ -74,11 +72,6 @@ const userSchema = new Schema<UserType, UserModel>({
     required: true,
     lowercase: true,
   },
-  dailyRequests: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
   stripeCustomerId: {
     type: String,
     required: false,
@@ -96,11 +89,6 @@ const userSchema = new Schema<UserType, UserModel>({
 /** Remove properties before Document is sent to client */
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
-
-  // users trailing need to know how many requests they've made
-  if (obj?.stripeStatus !== 'trialing') {
-    delete obj.dailyRequests;
-  }
 
   delete obj._id;
   delete obj.__v;
