@@ -6,6 +6,8 @@ import app from './app';
 
 let server: any;
 
+mongoose.set('strictQuery', false);
+
 mongoose.connect(config.mongoose.url).then(() => {
   logger.info('Connected to MongoDB');
   server = app.listen(config.port, () => {
