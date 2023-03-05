@@ -15,14 +15,7 @@ function ExamplePrompts() {
       </p>
       <p className="example-prompt-element">"Explain how VLOOKUP works"</p>
       <p className="example-prompt-element">
-        If you're not sure where to start
-        <span
-          className="modal-trigger"
-          onClick={serverFunctions.openHelpDialog}
-        >
-          {' '}
-          checkout our guide
-        </span>
+        If you're not sure where to start? Click on "help" in the menu.
       </p>
     </div>
   );

@@ -77,7 +77,7 @@ const userSchema = new Schema<UserType, UserModel>({
     required: false,
   },
   stripeCurrentPeriodEnd: {
-    type: String,
+    type: Number,
     required: false,
   },
   stripeStatus: {
@@ -96,8 +96,6 @@ userSchema.methods.toJSON = function () {
   delete obj.updatedAt;
   delete obj.referrer;
   delete obj.signUpSource;
-  delete obj.stripeCurrentPeriodEnd;
-  delete obj.stripeStatus;
 
   return obj;
 };

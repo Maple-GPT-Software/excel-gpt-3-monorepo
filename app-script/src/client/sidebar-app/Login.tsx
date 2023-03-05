@@ -1,13 +1,34 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import GoogleIcon from './components/GoogleIcon';
 import { useAuthContext } from './AuthProvider';
-import { SIGNUP_ROUTE } from './constants';
+import { CHAT_ROUTE } from './constants';
 
 import './Login.style.css';
 
 function Login() {
-  const { loginWithGoogle } = useAuthContext();
+  const { loginWithGoogle, accessToken } = useAuthContext();
+  const navigate = useNavigate();
+
+  if (accessToken) {
+    return (
+      <div className="auth-wrapper login-wrapper">
+        {/* EMPTY for placement */}
+        <div></div>
+        <div className="auth-main">
+          <button
+            onClick={() => {
+              navigate(CHAT_ROUTE);
+            }}
+            className="button auth-button"
+            type="button"
+          >
+            <p>Ooops! Go back.</p>
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-wrapper login-wrapper">
@@ -21,9 +42,6 @@ function Login() {
           <GoogleIcon />
           <p>Sign in with Google</p>
         </button>
-        <p className="auth-link">
-          No account? <Link to={SIGNUP_ROUTE}>Create one</Link>
-        </p>
       </div>
 
       <p style={{ textAlign: 'center' }}>Private policy stuff</p>

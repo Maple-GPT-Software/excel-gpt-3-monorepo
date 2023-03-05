@@ -242,7 +242,7 @@ const clientConfigs = clientEntrypoints.map((clientEntrypoint) => {
     ...clientConfig({ isDevClientWrapper }),
     name: clientEntrypoint.name,
     entry: clientEntrypoint.entry,
-    target: "web",
+    target: 'web',
     plugins: [
       !isProd && new ReactRefreshWebpackPlugin(),
       new webpack.DefinePlugin({
@@ -250,6 +250,7 @@ const clientConfigs = clientEntrypoints.map((clientEntrypoint) => {
       }),
       new HtmlWebpackPlugin({
         template: clientEntrypoint.template,
+        // filename: `${clientEntrypoint.filename}.html`,
         filename: `${clientEntrypoint.filename}${isProd ? '' : '-impl'}.html`,
         inlineSource: '^/.*(js|css)$', // embed all js and css inline, exclude packages from dynamic cdn insertion
         scriptLoading: 'blocking',
