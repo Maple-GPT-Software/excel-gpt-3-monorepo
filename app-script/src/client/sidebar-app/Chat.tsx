@@ -16,59 +16,63 @@ import './Chat.style.css';
 export type UserInput = string;
 
 export interface ChatState {
+  /** the state of the application. Fetching when we're waiting for the AI to answer */
   status: 'FETCHING' | 'SUCCESS' | 'FAIL';
   messages: (GPTCompletion | UserInput)[];
 }
 
+export enum ChatReducerActionTypes {
+  ADD_USER_PROMPT = 'ADD_USER_PROMPT',
+  ADD_GPT_COMPLETION_SUCCESS = 'ADD_GPT_COMPLETION_SUCCESS',
+  ADD_GPT_COMPLETION_FAIL = 'ADD_GPT_COMPLETION_FAIL',
+}
+
 export type ChatActions =
-  | { type: 'ADD_USER_PROMPT'; payload: UserInput }
-  | { type: 'ADD_GPT_COMPLETION_SUCCESS'; payload: GPTCompletion }
-  | { type: 'ADD_GPT_COMPLETION_FAIL'; payload: GPTCompletion };
+  | { type: ChatReducerActionTypes.ADD_USER_PROMPT; payload: UserInput }
+  | {
+      type: ChatReducerActionTypes.ADD_GPT_COMPLETION_SUCCESS;
+      payload: GPTCompletion;
+    }
+  | {
+      type: ChatReducerActionTypes.ADD_GPT_COMPLETION_FAIL;
+      payload: GPTCompletion;
+    };
 
 const chatReducer = (draft: ChatState, action: ChatActions) => {
   switch (action.type) {
-    case 'ADD_USER_PROMPT':
+    case ChatReducerActionTypes.ADD_USER_PROMPT:
       draft.status = 'FETCHING';
       draft.messages.push(action.payload);
       // when the user adds a prompt we add a temporary completion so that a loading state can be shown
-      // we mirror the behaviour of recipient is typing
-      // when the API call completes we'll remove it and push response as the last entry in the array
+      // when the API call completes we'll remove it and push response as the last entry in the messages array
       draft.messages.push({
-        choices: [],
+        message: '',
         id: `${Math.random()}`,
-        model: 'DUMMY_MODEL',
-        object: 'DUMMY_OBJECT',
+        rating: undefined,
+        status: 'success',
       });
       break;
-    case 'ADD_GPT_COMPLETION_SUCCESS':
+    case ChatReducerActionTypes.ADD_GPT_COMPLETION_SUCCESS:
       draft.status = 'SUCCESS';
+      /** remove most recent placeholder message */
       draft.messages.pop();
       // TODO: replace with action.payload
       draft.messages.push({
-        choices: [
-          {
-            finish_reason: 'success',
-            index: 0,
-            text: 'CODE_BLOCK\n=AVERAGE(range)',
-          },
-        ],
+        message: 'CODE_BLOCK\n=AVERAGE(range)',
         id: `${Math.random()}`,
-        // TODO: SPECIFY MODEL
-        model: 'DEVELOPMENT_MODEL',
-        object: 'DEVELOPMENT_OBJECT',
+        rating: undefined,
+        status: 'success',
       });
       break;
-    case 'ADD_GPT_COMPLETION_FAIL':
+    case ChatReducerActionTypes.ADD_GPT_COMPLETION_FAIL:
       draft.status = 'FAIL';
+      /** remove most recent placeholder message */
       draft.messages.pop();
-      // TODO: replace with action.payload
       draft.messages.push({
-        choices: [
-          { finish_reason: 'success', index: 0, text: 'some response' },
-        ],
+        message: 'Unexpected error. Please retry your question.',
         id: `${Math.random()}`,
-        model: 'DEVELOPMENT_MODEL',
-        object: 'DEVELOPMENT_OBJECT',
+        rating: undefined,
+        status: 'fail',
       });
       break;
   }

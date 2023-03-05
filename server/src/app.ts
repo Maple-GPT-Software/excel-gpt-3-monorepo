@@ -22,6 +22,7 @@ import * as stripeService from '@src/services/stripe.service';
 import logger from './config/logger';
 import stripe from './config/stripe';
 import { StripeWebhooks } from './types';
+// !IMPORTANT start server with pm2
 
 // TODO: only allow specific origins
 // const corsOptions = {

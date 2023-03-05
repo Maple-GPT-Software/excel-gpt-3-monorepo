@@ -12,7 +12,9 @@ interface BotMessageProps {
 }
 
 function BotMessage({ completion }: BotMessageProps) {
-  if (!completion.choices.length) {
+  const { message, rating, status } = completion;
+
+  if (!message) {
     return (
       <div className="bot-message-wrapper">
         <LoadingEllipsis />
@@ -20,23 +22,27 @@ function BotMessage({ completion }: BotMessageProps) {
     );
   }
 
+  if (status === 'fail') {
+    return (
+      <div className="bot-message-wrapper">
+        <p style={{ color: '#dc2626' }}>{message}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bot-message-wrapper">
       {/* text block when completion is a formula, start with CODE_BLOCK */}
-      {!!completion.choices.length &&
-        completion?.choices[0].text.includes(CODE_BLOCK) && (
-          <CodeBlockMessage formula={completion?.choices[0].text} />
-        )}
+      {message.includes(CODE_BLOCK) && <CodeBlockMessage formula={message} />}
 
       {/* text block when completion is just text */}
-      {!!completion.choices.length &&
-        !completion?.choices[0].text.includes(CODE_BLOCK) && (
-          <p
-            dangerouslySetInnerHTML={{
-              __html: completion?.choices[0].text.replace('\n', '<br>'),
-            }}
-          ></p>
-        )}
+      {!message.includes(CODE_BLOCK) && (
+        <p
+          dangerouslySetInnerHTML={{
+            __html: message.replace('\n', '<br>'),
+          }}
+        ></p>
+      )}
 
       {/* TODO: conditionally render this based on rating property on completion */}
       <RateCompletion completion={completion} />

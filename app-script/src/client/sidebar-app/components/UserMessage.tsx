@@ -18,10 +18,10 @@ function UserMessage({ prompt }: { prompt: UserInput }) {
   return (
     <div className="user-message-wrapper">
       <p> {userPrompt} </p>
-      {datatable && <DataTable data={JSON.parse(datatable)} />}
       {formula && (
         <CodeBlockMessage formula={formula} showInsertFormula={false} />
       )}
+      {datatable && <DataTable data={JSON.parse(datatable)} />}
     </div>
   );
 }

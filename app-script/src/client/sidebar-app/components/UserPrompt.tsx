@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 // UTILS
 import { serverFunctions } from '../../utils/serverFunctions';
 // TYPES
-import { ChatActions } from '../Chat';
+import { ChatActions, ChatReducerActionTypes } from '../Chat';
 import { ValueRangeObj } from '../types';
 // HOOKS
 import useAutosizeTextArea from '../hooks/useAutosizeTextArea';
@@ -17,7 +17,7 @@ import LoadingEllipsis from './LoadingEllipsis';
 import { USER_PROMPT_ENHANCEMENTS, USER_RANGE } from '../constants';
 
 import './UserPrompt.style.css';
-import { USER_FORMULA } from '../constants';
+import { FORMULA_BLOCK } from '../constants';
 
 interface ChatInputProps {
   shouldDisableTextarea: boolean;
@@ -46,7 +46,7 @@ const UserPrompt = (props: ChatInputProps) => {
   async function handleSubmit() {
     if (!input) return;
     dispatch({
-      type: 'ADD_USER_PROMPT',
+      type: ChatReducerActionTypes.ADD_USER_PROMPT,
       // TODO: format data table and formula
       payload: formatUserInputs(input, dataTable, formula),
     });
@@ -62,18 +62,15 @@ const UserPrompt = (props: ChatInputProps) => {
     // ONLY FOR TESTING
     setTimeout(() => {
       dispatch({
-        type: 'ADD_GPT_COMPLETION_SUCCESS',
+        type: ChatReducerActionTypes.ADD_GPT_COMPLETION_FAIL,
         payload: {
-          choices: [
-            { finish_reason: 'success', index: 0, text: 'some response' },
-          ],
+          message: '',
           id: `${Math.random()}`,
-          model: 'DEVELOPMENT_MODEL',
-          object: 'DEVELOPMENT_OBJECT',
+          rating: undefined,
+          status: 'success',
         },
       });
-      // scroll to bottom of chat container after completion is added
-      // wrapped in setTimeout so that immer dispatch updates chat first
+
       setTimeout(() => {
         scrollToBottomOfChat();
       });
@@ -152,7 +149,7 @@ const UserPrompt = (props: ChatInputProps) => {
           // menu "icon" to open popup
           <button
             aria-label="Open message attachments menu"
-            className="attachment-button"
+            className="button-round attachment-button"
             onClick={() => setIsMenuOpen(true)}
           >
             +
@@ -248,7 +245,7 @@ function formatUserInputs(
   }
 
   if (formula) {
-    formattedInputs += ` ${USER_FORMULA}${formula}`;
+    formattedInputs += ` ${FORMULA_BLOCK}${formula}`;
   }
 
   return formattedInputs;

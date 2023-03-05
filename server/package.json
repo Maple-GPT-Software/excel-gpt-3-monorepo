@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "prepare": "npx ts-patch install -s",
+    "preinstall": "npx -y only-allow pnpm",
     "type-check": "tsc --noEmit",
     "build": "rm -rf dist && swc src -d dist",
     "dev": "concurrently \"npm run type-check\" \"cross-env NODE_ENV=development nodemon --exec node -r @swc-node/register ./src/index.ts --require tsconfig-paths -q dist/index.js\"",
     "stripe:dev": "stripe listen --forward-to localhost:3000/webhook",
     "lint": "eslint .",
-    "prettier": "prettier --check **/*.js",
-    "prettier:fix": "prettier --write **/*.js",
-    "preinstall": "npx -y only-allow pnpm",
+    "prettier": "prettier --check **/*.ts",
+    "prettier:fix": "prettier --write **/*.ts",
     "test": "jest",
     "test:watch": "jest --watch"
   },
