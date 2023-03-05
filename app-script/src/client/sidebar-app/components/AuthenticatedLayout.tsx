@@ -35,12 +35,12 @@ function AuthenticatedLayout() {
         </div>
         <div className="nav-right-wrapper">
           {/* TODO: dropdown menu */}
-          <button
+          {/* <button
             className="nav-tooltip-button"
             aria-label="click to open guide"
           >
             <span>?</span>
-          </button>
+          </button> */}
           <button
             aria-label="logout"
             onClick={signOut}

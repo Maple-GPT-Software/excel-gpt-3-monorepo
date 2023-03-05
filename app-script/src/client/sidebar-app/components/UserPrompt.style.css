@@ -1,146 +1,140 @@
 .prompt-wrapper {
-    padding: 2px 16px;
-    width: 100vw;
-    position: fixed;
-    bottom: 12px;
-    left: 0;
-    box-sizing: border-box;
-    background-color: white;
+  padding: 2px;
+  width: 100vw;
+  position: fixed;
+  bottom: 12px;
+  left: 0;
+  box-sizing: border-box;
+  background-color: white;
 }
 
-.prompt-wrapper textarea {
-    padding: 8px 20px;
-    width: 100%;
-    min-height: 32px;
-    box-sizing: border-box;
-    resize: none;
-    overflow: hidden;
-    outline: none;
-    border: solid thin gainsboro;
-    border-radius: 6px;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 100;
+.prompt-wrapper .button-round {
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
 }
 
-/* PROMPT MENU */
-.prompt-menu-wrapper {
-    padding: 0 6px;
-    position: absolute;
-    bottom: 8px;
-    cursor: pointer;
+/* TEXT AREA WRAPPER */
+
+.text-area-wrapper textarea {
+  padding: 8px 12px;
+  margin-left: 12px;
+  width: calc(100% - 24px);
+  min-height: 32px;
+  box-sizing: border-box;
+  resize: none;
+  overflow: hidden;
+  outline: none;
+  border: solid thin gainsboro;
+  border-radius: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 100;
 }
 
-.prompt-menu {
-    width: -moz-fit-content;
-    width: fit-content;
-    display: inline-block;
-    position: relative;
-    transform: rotate(90deg);
-    font-size: 24px;
-    font-weight: bold;
-    color: var(--primary-dark);
-}
-
-.prompt-menu > svg {
-    stroke: var(--primary-dark);
+.text-area-wrapper .attachment-button {
+  position: absolute;
+  left: 3px;
+  top: 7px;
+  background-color: var(--primary-main);
+  color: white;
 }
 
 /* PROMPT MENU OPTIONS */
 .prompt-options-menu {
-    padding: 16px;
-    position: absolute;
-    z-index: 10;
-    bottom: 30px;
-    width: 100%;
-    box-sizing: border-box;
-    border-radius: 6px;
-    background-color: var(--grey-light);
-    box-shadow: rgb(0 0 0 / 24%) 0px 3px 8px;
+  padding: 16px;
+  position: absolute;
+  z-index: 10;
+  left: 6px;
+  bottom: 100%;
+  width: calc(100% - 12px);
+  box-sizing: border-box;
+  border-radius: 6px;
+  background-color: var(--grey-light);
+  box-shadow: rgb(0 0 0 / 24%) 0px 3px 8px;
 }
 
 .prompt-options-menu p {
-    text-transform: uppercase;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .prompt-options-menu > div {
-    display: flex;
+  display: flex;
 }
 
 .prompt-options-menu > div:first-child {
-    margin-bottom: 12px;
+  margin-bottom: 12px;
 }
 
 .prompt-options-menu > div:only-child {
-    margin: 0;
+  margin: 0;
 }
 
 .prompt-options-menu > div:hover {
-    color: var(--primary-main);
+  color: var(--primary-main);
 }
 
-.prompt-options-menu > div:hover svg{
-    stroke: var(--primary-main);
+.prompt-options-menu > div:hover svg {
+  stroke: var(--primary-main);
 }
 
 .prompt-options-menu .icon {
-    margin-right: 6px;
+  margin-right: 6px;
 }
 
 .prompt-wrapper .prompt-submit {
-    width: 0; 
-    height: 0; 
-    cursor: pointer;
-    border-top: 8px solid transparent;
-    border-bottom: 8px solid transparent;
-    border-left: 10px solid var(--primary-main);
+  width: 0;
+  height: 0;
+  cursor: pointer;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 10px solid var(--primary-main);
 
-    position: fixed;
-    bottom: 22px;
-    right: 22px;
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
 }
 
 /* PROMPT MENU LOADER */
 .prompt-options-menu-loader {
-    padding: 1rem 0;
-    position: relative;
+  padding: 1rem 0;
+  position: relative;
 }
 
 .prompt-options-menu-loader .lds-ellipsis {
-    margin-left: -35px;
-    position: absolute;
-    left: 50%;
+  margin-left: -35px;
+  position: absolute;
+  left: 50%;
 }
-
 
 /* ATTACHMENT WRAPPER */
 .attachment-wrapper {
-    position: relative;
-    margin-top: 1rem;
+  padding: 0 12px;
+  margin-top: 1rem;
+  position: relative;
 }
 
 .attachment-wrapper > button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 12px;
-    border: none;
-    position: absolute;
-    z-index: 10;
-    right: -10px;
-    top: -10px;
-    background-color: #b91c1c94;
-    color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  position: absolute;
+  z-index: 10;
+  right: 5px;
+  top: -7px;
+  background-color: #b91c1c94;
+  color: white;
 }
 
 .attachment-wrapper > button:hover {
-    cursor: pointer;
-    /* TW RED 700 */
-    background-color: #b91c1c;
+  /* TW RED 700 */
+  background-color: #b91c1c;
 }

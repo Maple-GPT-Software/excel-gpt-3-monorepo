@@ -150,12 +150,13 @@ const UserPrompt = (props: ChatInputProps) => {
         />
         {!(dataTable && formula) && (
           // menu "icon" to open popup
-          <div
-            className="prompt-menu-wrapper"
+          <button
+            aria-label="Open message attachments menu"
+            className="attachment-button"
             onClick={() => setIsMenuOpen(true)}
           >
-            <div className="prompt-menu">...</div>
-          </div>
+            +
+          </button>
         )}
         {/* MENU FOR TO SELECT INSERT FORMULA OR RANGE */}
         {isMenuOpen && (
@@ -202,6 +203,7 @@ const UserPrompt = (props: ChatInputProps) => {
       {dataTable && (
         <div className="attachment-wrapper">
           <button
+            className="button-round"
             aria-label="remove data table"
             type="button"
             onClick={removeDataTable}
@@ -216,6 +218,7 @@ const UserPrompt = (props: ChatInputProps) => {
       {formula && (
         <div className="attachment-wrapper">
           <button
+            className="button-round"
             aria-label="remove data table"
             type="button"
             onClick={removeFormula}

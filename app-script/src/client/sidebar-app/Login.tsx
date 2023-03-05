@@ -42,6 +42,13 @@ function Login() {
           <GoogleIcon />
           <p>Sign in with Google</p>
         </button>
+        <p className="auth-link">
+          {/* TODO: our domain */}
+          No account?{' '}
+          <a href="https://google.com" target="_blank">
+            Create one
+          </a>
+        </p>
       </div>
 
       <p style={{ textAlign: 'center' }}>Private policy stuff</p>
