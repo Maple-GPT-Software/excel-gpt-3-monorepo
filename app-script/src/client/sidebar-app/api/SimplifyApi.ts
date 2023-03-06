@@ -1,4 +1,5 @@
 import { SIMPLIFY_BASE_URL } from '../settings';
+import { GPTCompletion } from '../types';
 import { AuthenticatedRequestor } from './requestors';
 
 export enum Ratings {
@@ -35,17 +36,44 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     super(baseUrl, accessToken);
   }
 
+  // TODO: AuthenticatedRequestor should return a raw response
   async getUserProfile(): Promise<SimplifyUserProfile> {
-    return await this.post('/auth/login', {});
+    const res = await this.post('/auth/login', {});
+
+    if (res.status === 404) {
+      throw new Error('Please create an account.');
+    }
+
+    return res.json();
   }
 
-  async getCompletion(prompt: string) {
-    const res = await this.post(`/${MESSAGE_BASE}`, { prompt });
-    console.log(res);
+  async getCompletion(prompt: string): Promise<GPTCompletion> {
+    const response = await this.post(`/${MESSAGE_BASE}`, { prompt });
+
+    if (response.status === 500) {
+      throw new Error('Unexpected Error. Please try again.');
+    } else if (response.status === 403) {
+      throw new Error('Your subscription has expired.');
+    }
+
+    const completion = await response.json();
+
+    return {
+      ...completion,
+      message: completion.completion,
+      status: 'success',
+    };
   }
 
-  async rateMessage(id: string, rating: Ratings) {
+  async rateMessage(id: string, rating: Ratings): Promise<void> {
     const res = await this.patch(`/${MESSAGE_BASE}/rate/${id}`, { rating });
-    console.log(res);
+
+    if (res.status === 403) {
+      throw new Error('You are not authorized to rate this message.');
+    } else if (res.status === 400) {
+      throw new Error('This message already has a rating.');
+    }
+
+    return;
   }
 }

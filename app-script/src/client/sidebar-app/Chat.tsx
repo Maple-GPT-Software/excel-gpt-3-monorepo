@@ -35,7 +35,7 @@ export type ChatActions =
     }
   | {
       type: ChatReducerActionTypes.ADD_GPT_COMPLETION_FAIL;
-      payload: GPTCompletion;
+      payload: string;
     };
 
 const chatReducer = (draft: ChatState, action: ChatActions) => {
@@ -56,20 +56,20 @@ const chatReducer = (draft: ChatState, action: ChatActions) => {
       draft.status = 'SUCCESS';
       /** remove most recent placeholder message */
       draft.messages.pop();
-      // TODO: replace with action.payload
-      draft.messages.push({
-        message: 'CODE_BLOCK\n=AVERAGE(range)',
-        id: `${Math.random()}`,
-        rating: undefined,
-        status: 'success',
-      });
+      draft.messages.push(action.payload);
+      // draft.messages.push({
+      //   message: 'CODE_BLOCK\n=AVERAGE(range)',
+      //   id: `${Math.random()}`,
+      //   rating: undefined,
+      //   status: 'success',
+      // });
       break;
     case ChatReducerActionTypes.ADD_GPT_COMPLETION_FAIL:
       draft.status = 'FAIL';
       /** remove most recent placeholder message */
       draft.messages.pop();
       draft.messages.push({
-        message: 'Unexpected error. Please retry your question.',
+        message: action.payload,
         id: `${Math.random()}`,
         rating: undefined,
         status: 'fail',

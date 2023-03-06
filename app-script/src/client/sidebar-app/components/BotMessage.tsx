@@ -39,7 +39,7 @@ function BotMessage({ completion }: BotMessageProps) {
       {!message.includes(CODE_BLOCK) && (
         <p
           dangerouslySetInnerHTML={{
-            __html: message.replace('\n', '<br>'),
+            __html: message.replace(/\n/g, '<br>'),
           }}
         ></p>
       )}

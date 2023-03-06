@@ -1,11 +1,13 @@
 // NPM
 import React, { useState, useRef } from 'react';
 // UTILS
+import SimplifyApi from '../api/SimplifyApi';
 import { serverFunctions } from '../../utils/serverFunctions';
 // TYPES
 import { ChatActions, ChatReducerActionTypes } from '../Chat';
 import { ValueRangeObj } from '../types';
 // HOOKS
+import { useAuthContext } from '../AuthProvider';
 import useAutosizeTextArea from '../hooks/useAutosizeTextArea';
 import useOnClickOutside from '../hooks/useOnClickOutside';
 // COMPONENTS
@@ -14,10 +16,14 @@ import CodeBlockMessage from './CodeBlockMessage';
 import Icon from './Icon';
 import LoadingEllipsis from './LoadingEllipsis';
 // PROJECT MODULES
-import { USER_PROMPT_ENHANCEMENTS, USER_RANGE } from '../constants';
+import {
+  USER_PROMPT_ENHANCEMENTS,
+  USER_RANGE,
+  USER_DATA_TABLE,
+  FORMULA_BLOCK,
+} from '../constants';
 
 import './UserPrompt.style.css';
-import { FORMULA_BLOCK } from '../constants';
 
 interface ChatInputProps {
   shouldDisableTextarea: boolean;
@@ -26,6 +32,7 @@ interface ChatInputProps {
 }
 
 const UserPrompt = (props: ChatInputProps) => {
+  const { accessToken } = useAuthContext();
   const { shouldDisableTextarea, dispatch, scrollToBottomOfChat } = props;
 
   const [input, setInput] = useState('');
@@ -45,10 +52,13 @@ const UserPrompt = (props: ChatInputProps) => {
 
   async function handleSubmit() {
     if (!input) return;
+
+    const clientUserPrompt = formatUserInputs(input, dataTable, formula);
+
     dispatch({
       type: ChatReducerActionTypes.ADD_USER_PROMPT,
       // TODO: format data table and formula
-      payload: formatUserInputs(input, dataTable, formula),
+      payload: clientUserPrompt,
     });
 
     // scroll to bottom of chat container after user's prompt is added
@@ -57,24 +67,24 @@ const UserPrompt = (props: ChatInputProps) => {
       scrollToBottomOfChat();
     });
 
-    // TODO: call API here
+    try {
+      const completion = await SimplifyApi(accessToken).getCompletion(
+        formatUserPromptForAPI(clientUserPrompt)
+      );
 
-    // ONLY FOR TESTING
-    setTimeout(() => {
+      dispatch({
+        type: ChatReducerActionTypes.ADD_GPT_COMPLETION_SUCCESS,
+        payload: completion,
+      });
+    } catch (error: any) {
       dispatch({
         type: ChatReducerActionTypes.ADD_GPT_COMPLETION_FAIL,
-        payload: {
-          message: '',
-          id: `${Math.random()}`,
-          rating: undefined,
-          status: 'success',
-        },
+        payload:
+          error.message ?? 'Unexpected Error. Pleaser retry your request.',
       });
-
-      setTimeout(() => {
-        scrollToBottomOfChat();
-      });
-    }, 500);
+    } finally {
+      scrollToBottomOfChat();
+    }
 
     // re-initialize input state
     setInput('');
@@ -241,7 +251,7 @@ function formatUserInputs(
   let formattedInputs = input + ` ${USER_PROMPT_ENHANCEMENTS}`;
 
   if (datatable) {
-    formattedInputs += ` ${USER_RANGE}=${datatable.range} USER_DATA_TABLE=${datatable.values}`;
+    formattedInputs += ` ${USER_RANGE}=${datatable.range} ${USER_DATA_TABLE}=${datatable.values}`;
   }
 
   if (formula) {
@@ -249,4 +259,14 @@ function formatUserInputs(
   }
 
   return formattedInputs;
+}
+
+function formatUserPromptForAPI(prompt: string) {
+  let newPrompt = prompt;
+
+  newPrompt = newPrompt.replace(FORMULA_BLOCK, 'formua: ');
+  newPrompt = newPrompt.replace(USER_RANGE, 'range: ');
+  newPrompt = newPrompt.replace(USER_DATA_TABLE, 'data table: ');
+
+  return newPrompt;
 }
