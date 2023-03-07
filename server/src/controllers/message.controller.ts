@@ -22,7 +22,8 @@ export const createMessage = catchAsync(async (req: Request, res: Response) => {
     totalTokens: completion.usage?.prompt_tokens ?? 0,
   });
 
-  res.send(message);
+  // preserve special characters such as "\n"
+  res.send({ ...message, completion: encodeURI(message.completion) });
 });
 
 export const rateMessage = catchAsync(async (req: Request, res: Response) => {

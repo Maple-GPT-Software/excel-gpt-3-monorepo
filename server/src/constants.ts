@@ -1,4 +1,4 @@
-export const BASE_PROMPT = `Answer this google sheets question. If unsure, respond with "Sorry, not sure". Follow these guidelines: 1) If explicitly asked for a formula, only answer with formula starting with %FORMULA%=. 2) If the question is best answered with steps/explanation, number the steps/explanation and end each sentence with "\n".`;
+export const BASE_PROMPT = `Answer this google sheets question. Be concise. Include explanations if they are helpful. If you can't answer the question, only answer with "Sorry, not sure" and end answer. Follow these guidelines: 1) If explicitly asked for a formula only, only answer with a formula and no explanation 2) formulas should be on their own line and start with FORMULA_BLOCK= and end with "\n" 3) Only include formulas in your answer if needed 4) If the question is best answered with steps, number the steps and end each sentence with "\n".`;
 
 // these price ids created in the Stripe dashboard UI
 export enum PRICE_IDS {

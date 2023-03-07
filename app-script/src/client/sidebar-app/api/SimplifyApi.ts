@@ -60,7 +60,8 @@ class SimplifyApiClient extends AuthenticatedRequestor {
 
     return {
       ...completion,
-      message: completion.completion,
+      // back-end encodes special characters so that they aren't escaped by browser
+      message: decodeURI(completion.completion),
       status: 'success',
     };
   }

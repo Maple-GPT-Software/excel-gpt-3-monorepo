@@ -102,6 +102,22 @@ function AuthProvider({ children }: AuthProviderProps) {
     });
   });
 
+  /** Refresh access token every 50 minutes */
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const user = window.getAuth().currentUser;
+
+      if (user) {
+        const token = await user.getIdToken();
+        setAccessToken(token);
+      }
+    }, 50 * 60 * 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{

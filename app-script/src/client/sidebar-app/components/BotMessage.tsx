@@ -6,7 +6,7 @@ import Icon from './Icon';
 
 import './BotMessage.style.css';
 import Modal from './Modal';
-import { CODE_BLOCK } from '../constants';
+import { CODE_BLOCK, FORMULA_BLOCK } from '../constants';
 interface BotMessageProps {
   completion: GPTCompletion;
 }
@@ -30,20 +30,42 @@ function BotMessage({ completion }: BotMessageProps) {
     );
   }
 
+  const messageParts = message.split('\n').filter((message) => {
+    // band-aid fix due to hallucination from AI
+    const hasNotSure = !!message.match(/(sorry, not sure)/i);
+    if (message.includes(`${FORMULA_BLOCK}`) && hasNotSure) {
+      return false;
+    }
+
+    return true;
+  });
+
   return (
     <div className="bot-message-wrapper">
-      {/* text block when completion is a formula, start with CODE_BLOCK */}
-      {message.includes(CODE_BLOCK) && <CodeBlockMessage formula={message} />}
-
-      {/* text block when completion is just text */}
-      {!message.includes(CODE_BLOCK) && (
-        <p
-          dangerouslySetInnerHTML={{
-            __html: message.replace(/\n/g, '<br>'),
-          }}
-        ></p>
-      )}
-
+      {messageParts.map((message) => {
+        if (message.includes(FORMULA_BLOCK)) {
+          return (
+            <>
+              <CodeBlockMessage formula={message} />
+              <br />
+            </>
+          );
+        } else if (!message) {
+          return null;
+        } else {
+          return (
+            <>
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: message.replace(/\n/g, '<br>'),
+                }}
+                style={{ wordBreak: 'break-word' }}
+              ></p>
+              <br />
+            </>
+          );
+        }
+      })}
       {/* TODO: conditionally render this based on rating property on completion */}
       <RateCompletion completion={completion} />
     </div>

@@ -12,6 +12,7 @@ export const CHAT_ROUTE = '/chat';
  * This is how we specify parts of the message that
  * should be in a code block
  */
+// TODO: we don't need these regexes
 export const CODE_BLOCK = 'CODE_BLOCK';
 export const FORMULA_BLOCK = 'FORMULA_BLOCK';
 export const USER_RANGE = 'USER_RANGE';

@@ -10,7 +10,8 @@
 const getSheets = () => SpreadsheetApp.getActive().getSheets();
 
 // returns the sheet the user sees in the UI
-const getActiveSheet = () => SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+const getActiveSheet = () =>
+  SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
 const getActiveSheetName = () => SpreadsheetApp.getActive().getSheetName();
 
@@ -18,23 +19,23 @@ const getActiveSheetName = () => SpreadsheetApp.getActive().getSheetName();
  * Writes the pass in formula, a string that starts with "=",
  * into the user's selected cell
  */
-export const writeFormulaToCell = () => {  
+export const writeFormulaToCell = (formula: string) => {
   const activeCell = getActiveSheet().getActiveCell();
-  activeCell.setValue('=AVERAGE(range)');
-}
+  activeCell.setValue(formula);
+};
 
 /**
  * get formula from the user's selected cell
  */
 export const getSelectedCellFormula = () => {
   const activeCellFormula = getActiveSheet().getActiveCell().getFormula();
-  
+
   return activeCellFormula;
-}
+};
 
 interface ValueRangeObj {
-  range: string,
-  values: string
+  range: string;
+  values: string;
 }
 
 /**
@@ -43,7 +44,7 @@ interface ValueRangeObj {
  * we only get display (text values) because
  * something like "1:00:00 AM" in a cell returns "1899-12-30T06:00:00.000Z" with getValues()
  */
-export const getSelectedRangeValues = () : ValueRangeObj | null => {
+export const getSelectedRangeValues = (): ValueRangeObj | null => {
   const activeRange = getActiveSheet().getActiveRange();
   const activeRangeValues = activeRange.getDisplayValues();
 
@@ -52,21 +53,21 @@ export const getSelectedRangeValues = () : ValueRangeObj | null => {
   // format values in string format
   return {
     range: activeRange.getA1Notation(),
-    values: JSON.stringify(activeRangeValues)
+    values: JSON.stringify(activeRangeValues),
   };
-}
+};
 
 /**
- * 
+ *
  */
 
 export const getActiveSheetRange = () => {
-  console.log('get active range start: ')
+  console.log('get active range start: ');
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const activeRange = sheet.getActiveRange();
 
   return activeRange.getValues();
-}
+};
 
 export const getSheetsData = () => {
   const activeSheetName = getActiveSheetName();
@@ -80,7 +81,6 @@ export const getSheetsData = () => {
   });
 };
 
-
 // UTILITY FUNCTIONS
 
 /**
@@ -88,14 +88,16 @@ export const getSheetsData = () => {
  * is a row. We convert this into CSV format.
  */
 function convertRangeValuesToCSV(values: Array<string | number>[]) {
-  return values.reduce((csv, row) => {
-    const rowWithFixedDecimals = row.map((el) => {
-      if (typeof el === 'number') {
-        return el.toFixed(2);
-      } else {
-        return el;
-      }
-    });
-    return csv + `\n` + rowWithFixedDecimals.join(',');
-  }, '').concat('\n')
+  return values
+    .reduce((csv, row) => {
+      const rowWithFixedDecimals = row.map((el) => {
+        if (typeof el === 'number') {
+          return el.toFixed(2);
+        } else {
+          return el;
+        }
+      });
+      return csv + `\n` + rowWithFixedDecimals.join(',');
+    }, '')
+    .concat('\n');
 }

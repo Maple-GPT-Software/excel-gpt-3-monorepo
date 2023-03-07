@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import LoadingEllipsis from './LoadingEllipsis';
 import { serverFunctions } from '../../utils/serverFunctions';
-import { CODE_BLOCK } from '../constants';
+import { CODE_BLOCK, FORMULA_BLOCK } from '../constants';
 
 import './CodeBlockMessage.style.css';
 
@@ -10,6 +10,7 @@ import './CodeBlockMessage.style.css';
  * and conditionally renders a button for inserting formula into sheet
  */
 function CodeBlockMessage({
+  // text that starts with FORMULA_BLOCK
   formula,
   showInsertFormula = true,
 }: {
@@ -20,7 +21,9 @@ function CodeBlockMessage({
 
   async function handleInsertIntoCell() {
     setIsInserting(true);
-    await serverFunctions.writeFormulaToCell();
+    await serverFunctions.writeFormulaToCell(
+      formula.replace(FORMULA_BLOCK, '')
+    );
     setIsInserting(false);
   }
 
@@ -36,7 +39,7 @@ function CodeBlockMessage({
       <div className="bot-message-code-container">
         <code
           dangerouslySetInnerHTML={{
-            __html: formula.replace(CODE_BLOCK, '').replaceAll('\n', ''),
+            __html: formula.replace(FORMULA_BLOCK, '').replaceAll('\n', ''),
           }}
         ></code>
       </div>

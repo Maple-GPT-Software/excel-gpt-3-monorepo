@@ -55,6 +55,11 @@ const UserPrompt = (props: ChatInputProps) => {
 
     const clientUserPrompt = formatUserInputs(input, dataTable, formula);
 
+    // re-initialize input state
+    setInput('');
+    setDataTable('');
+    setFormula('');
+
     dispatch({
       type: ChatReducerActionTypes.ADD_USER_PROMPT,
       // TODO: format data table and formula
@@ -85,11 +90,6 @@ const UserPrompt = (props: ChatInputProps) => {
     } finally {
       scrollToBottomOfChat();
     }
-
-    // re-initialize input state
-    setInput('');
-    setDataTable('');
-    setFormula('');
   }
 
   /**
@@ -241,6 +241,7 @@ const UserPrompt = (props: ChatInputProps) => {
 
 export default UserPrompt;
 
+// TODO: fix USER_PROMPT_ENHANCEMENTS, we can get rid of it entirely.
 function formatUserInputs(
   input: string,
   datatable: ValueRangeObj | '',
@@ -264,7 +265,7 @@ function formatUserInputs(
 function formatUserPromptForAPI(prompt: string) {
   let newPrompt = prompt;
 
-  newPrompt = newPrompt.replace(FORMULA_BLOCK, 'formua: ');
+  newPrompt = newPrompt.replace(FORMULA_BLOCK, 'formula: ');
   newPrompt = newPrompt.replace(USER_RANGE, 'range: ');
   newPrompt = newPrompt.replace(USER_DATA_TABLE, 'data table: ');
 

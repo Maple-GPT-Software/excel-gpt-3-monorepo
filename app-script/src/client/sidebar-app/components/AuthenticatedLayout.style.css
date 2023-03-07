@@ -60,6 +60,8 @@
 
 .main-content {
   max-width: 100vw;
+  /* 45px is height of navbar */
+  height: calc(100vh - 45px);
 }
 
 /* LOGOUT ICON */
