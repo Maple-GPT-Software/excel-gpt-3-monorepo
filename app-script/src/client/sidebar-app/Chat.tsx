@@ -2,9 +2,7 @@
 import React, { useRef, useCallback } from 'react';
 import { useImmerReducer } from 'use-immer';
 // TYPES
-import { GPTCompletion } from './types';
-// HOOKS
-import { useAuthContext } from './AuthProvider';
+import { CompletionRating, GPTCompletion } from './types';
 // COMPONENTS
 import UserPrompt from './components/UserPrompt';
 import UserMessage from './components/UserMessage';
@@ -25,6 +23,8 @@ export enum ChatReducerActionTypes {
   ADD_USER_PROMPT = 'ADD_USER_PROMPT',
   ADD_GPT_COMPLETION_SUCCESS = 'ADD_GPT_COMPLETION_SUCCESS',
   ADD_GPT_COMPLETION_FAIL = 'ADD_GPT_COMPLETION_FAIL',
+  RATE_COMPLETION_OPTIMISTIC = 'RATE_COMPLETION_OPTIMISTIC',
+  RATE_COMPLETION_FAILED = 'RATE_COMPLETION_FAILED',
 }
 
 export type ChatActions =
@@ -35,6 +35,16 @@ export type ChatActions =
     }
   | {
       type: ChatReducerActionTypes.ADD_GPT_COMPLETION_FAIL;
+      payload: string;
+    }
+  | {
+      type: ChatReducerActionTypes.RATE_COMPLETION_OPTIMISTIC;
+      /** the id of the completion being rated */
+      payload: { id: string; rating: CompletionRating };
+    }
+  | {
+      type: ChatReducerActionTypes.RATE_COMPLETION_FAILED;
+      /** the id of the completion who's rating needs to be reset */
       payload: string;
     };
 
@@ -48,21 +58,14 @@ const chatReducer = (draft: ChatState, action: ChatActions) => {
       draft.messages.push({
         message: '',
         id: `${Math.random()}`,
-        rating: undefined,
+        rating: '',
         status: 'success',
       });
       break;
     case ChatReducerActionTypes.ADD_GPT_COMPLETION_SUCCESS:
       draft.status = 'SUCCESS';
-      /** remove most recent placeholder message */
       draft.messages.pop();
       draft.messages.push(action.payload);
-      // draft.messages.push({
-      //   message: 'CODE_BLOCK\n=AVERAGE(range)',
-      //   id: `${Math.random()}`,
-      //   rating: undefined,
-      //   status: 'success',
-      // });
       break;
     case ChatReducerActionTypes.ADD_GPT_COMPLETION_FAIL:
       draft.status = 'FAIL';
@@ -71,41 +74,58 @@ const chatReducer = (draft: ChatState, action: ChatActions) => {
       draft.messages.push({
         message: action.payload,
         id: `${Math.random()}`,
-        rating: undefined,
+        rating: '',
         status: 'fail',
       });
+      break;
+    case ChatReducerActionTypes.RATE_COMPLETION_OPTIMISTIC:
+      const { id, rating } = action.payload;
+      const oldCompletion = draft.messages.find((message) => {
+        if (typeof message === 'string') {
+          return false;
+        } else if (message.id === id) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if (!oldCompletion || typeof oldCompletion === 'string') {
+        break;
+      }
+
+      draft.messages.pop();
+      draft.messages.push({
+        ...oldCompletion,
+        rating: rating,
+      });
+      break;
+    case ChatReducerActionTypes.RATE_COMPLETION_FAILED:
+      const failedRatedCompletion = draft.messages.find((message) => {
+        if (typeof message === 'string') {
+          return false;
+        } else if (message.id === action.payload) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if (!failedRatedCompletion || typeof failedRatedCompletion === 'string') {
+        break;
+      }
+      draft.messages.pop();
+      draft.messages.push({
+        ...failedRatedCompletion,
+        rating: '',
+      });
+      break;
+    default:
       break;
   }
 };
 
-async function getCompletion(prompt: string): Promise<GPTCompletion> {
-  // TODO: base URL
-  // return await fetch(`${settings.promptBaseUrl}`, {
-  return await fetch(`localhost:3000`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      // TODO: version number and custom header
-      Client: 'google-sheet-version',
-    },
-    body: JSON.stringify({ prompt }),
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => data);
-}
-
-function scrollToBottom(element: HTMLElement) {
-  element.scroll({
-    behavior: 'auto',
-    top: element.scrollHeight,
-  });
-}
-
 function Chat() {
-  const { signOut } = useAuthContext();
-
   const promptWrapperRef = useRef<HTMLDivElement>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
   const [chatState, dispatch] = useImmerReducer<ChatState, ChatActions>(
@@ -131,7 +151,11 @@ function Chat() {
               return <UserMessage key={index} prompt={message as UserInput} />;
             } else {
               return (
-                <BotMessage key={index} completion={message as GPTCompletion} />
+                <BotMessage
+                  dispatch={dispatch}
+                  key={index}
+                  completion={message as GPTCompletion}
+                />
               );
             }
           })}

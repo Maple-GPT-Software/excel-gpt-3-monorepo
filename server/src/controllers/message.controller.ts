@@ -12,6 +12,7 @@ export const createMessage = catchAsync(async (req: Request, res: Response) => {
 
   const completion: any = await openAIService.getCompletion(prompt, userId);
 
+  // TODO: check why id isn't being sent back to client
   const message = await messageService.createUserMessage({
     userId,
     prompt,

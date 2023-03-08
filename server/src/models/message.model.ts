@@ -2,8 +2,8 @@ import { OpenAiModels } from '@src/config/openai';
 import { Model, Schema, model } from 'mongoose';
 
 export enum CompletionRating {
-  LIKE = "LIKE",
-  DISLIKE = "DISLIKE"
+  LIKE = 'LIKE',
+  DISLIKE = 'DISLIKE',
 }
 
 export interface MessageType {
@@ -78,6 +78,7 @@ messageSchema.methods.toJSON = function () {
 
   delete obj._id;
   delete obj.__v;
+  delete obj._doc;
   delete obj.prompt;
   delete obj.promptTokens;
   delete obj.completionTokens;
@@ -93,7 +94,7 @@ messageSchema.methods.toJSON = function () {
  */
 messageSchema.statics.canRateMessage = async function (id: string, userId: string) {
   const message = await this.findById(id);
-  
+
   return userId === message?.userId;
 };
 

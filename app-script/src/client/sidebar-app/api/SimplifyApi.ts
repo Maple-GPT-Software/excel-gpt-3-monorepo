@@ -1,11 +1,6 @@
 import { SIMPLIFY_BASE_URL } from '../settings';
-import { GPTCompletion } from '../types';
+import { CompletionRating, GPTCompletion } from '../types';
 import { AuthenticatedRequestor } from './requestors';
-
-export enum Ratings {
-  LIKE = 'LIKE',
-  DISLIKE = 'DISLIKE',
-}
 
 export const enum SubscriptionStatuses {
   ACTIVE = 'active',
@@ -66,7 +61,7 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     };
   }
 
-  async rateMessage(id: string, rating: Ratings): Promise<void> {
+  async rateMessage(id: string, rating: CompletionRating): Promise<void> {
     const res = await this.patch(`/${MESSAGE_BASE}/rate/${id}`, { rating });
 
     if (res.status === 403) {
