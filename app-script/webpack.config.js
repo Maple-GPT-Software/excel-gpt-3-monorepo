@@ -266,7 +266,8 @@ const clientConfigs = clientEntrypoints.map((clientEntrypoint) => {
 
 // webpack settings for devServer https://webpack.js.org/configuration/dev-server/
 const devServer = {
-  // hot: true,
+  hot: true,
+  liveReload: false,
   port: PORT,
   server: 'https',
 };

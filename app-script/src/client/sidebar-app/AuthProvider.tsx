@@ -18,6 +18,7 @@ const AuthContext = createContext<
       accessToken: string;
       loginWithGoogle: () => void;
       signOut: () => void;
+      hasFetchedProfile: boolean;
     }
   | undefined
 >(undefined);
@@ -46,12 +47,12 @@ function AuthProvider({ children }: AuthProviderProps) {
     SimplifyUserProfile | undefined
   >(undefined);
   const [accessToken, setAccessToken] = useState<string>('');
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [hasFetchedProfile, setHasFetchedProfile] = useState(false);
   //   const [location, setLocation] = useLocation();
   const navgiate = useNavigate();
 
   function loginWithGoogle() {
-    setShowSpinner(true);
+    setHasFetchedProfile(true);
     window.googleAuthPopUp();
   }
 
@@ -69,11 +70,11 @@ function AuthProvider({ children }: AuthProviderProps) {
 
         const profile = await SimplifyApi(accessToken).getUserProfile();
 
-        setShowSpinner(false);
+        setHasFetchedProfile(false);
         setUserProfile(profile);
         navgiate(CHAT_ROUTE);
       } else {
-        setShowSpinner(false);
+        setHasFetchedProfile(false);
         setUserProfile(undefined);
         setAccessToken('');
         navgiate('/');
@@ -96,7 +97,7 @@ function AuthProvider({ children }: AuthProviderProps) {
             signOut();
           })
           .finally(() => {
-            setShowSpinner(false);
+            setHasFetchedProfile(false);
           });
       }
     });
@@ -125,9 +126,10 @@ function AuthProvider({ children }: AuthProviderProps) {
         accessToken,
         loginWithGoogle,
         signOut,
+        hasFetchedProfile,
       }}
     >
-      {showSpinner && <Refresh />}
+      {hasFetchedProfile && <Refresh />}
       <Routes>
         <Route index element={<Login />} />
         <Route path={CHAT_ROUTE} element={<AuthenticatedLayout />} />

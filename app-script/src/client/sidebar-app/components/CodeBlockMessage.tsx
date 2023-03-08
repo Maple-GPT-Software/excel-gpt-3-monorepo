@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import LoadingEllipsis from './LoadingEllipsis';
 import { serverFunctions } from '../../utils/serverFunctions';
-import { CODE_BLOCK, FORMULA_BLOCK } from '../constants';
+import { FORMULA } from '../constants';
 
 import './CodeBlockMessage.style.css';
 
 /**
  * This render the formula completion in a IDE-like UI element
  * and conditionally renders a button for inserting formula into sheet
+ * NOTE: formula should keep %formula% placeholder
  */
 function CodeBlockMessage({
-  // text that starts with FORMULA_BLOCK
   formula,
   showInsertFormula = true,
 }: {
@@ -22,7 +22,7 @@ function CodeBlockMessage({
   async function handleInsertIntoCell() {
     setIsInserting(true);
     await serverFunctions.writeFormulaToCell(
-      formula.replace(FORMULA_BLOCK, '')
+      formatFormulaForSheetInsert(formula)
     );
     setIsInserting(false);
   }
@@ -30,6 +30,7 @@ function CodeBlockMessage({
   return (
     <div className="bot-message-code-wrapper">
       <div className="bot-message-code-header">
+        {/* TODO: investigate why loading state is not shown */}
         {showInsertFormula && !isInserting ? (
           <button onClick={handleInsertIntoCell}>INSERT INTO CELL</button>
         ) : (
@@ -39,7 +40,7 @@ function CodeBlockMessage({
       <div className="bot-message-code-container">
         <code
           dangerouslySetInnerHTML={{
-            __html: formula.replace(FORMULA_BLOCK, '').replaceAll('\n', ''),
+            __html: formula.replace(FORMULA, '').replaceAll('\n', ''),
           }}
         ></code>
       </div>
@@ -48,3 +49,8 @@ function CodeBlockMessage({
 }
 
 export default CodeBlockMessage;
+
+/** removes %FORMULA% from string and any leading whitespace that the AI inserts by accident */
+function formatFormulaForSheetInsert(formula: string) {
+  return formula.replace(FORMULA, '').replace(/^\s+/g, '');
+}

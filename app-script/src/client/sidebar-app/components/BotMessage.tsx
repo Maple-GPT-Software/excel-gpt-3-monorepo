@@ -6,7 +6,8 @@ import Icon from './Icon';
 
 import './BotMessage.style.css';
 import Modal from './Modal';
-import { CODE_BLOCK, FORMULA_BLOCK } from '../constants';
+import { FORMULA } from '../constants';
+// import { CODE_BLOCK, FORMULA_BLOCK } from '../constants';
 interface BotMessageProps {
   completion: GPTCompletion;
 }
@@ -32,21 +33,21 @@ function BotMessage({ completion }: BotMessageProps) {
 
   const messageParts = message.split('\n').filter((message) => {
     // band-aid fix due to hallucination from AI
-    const hasNotSure = !!message.match(/(sorry, not sure)/i);
-    if (message.includes(`${FORMULA_BLOCK}`) && hasNotSure) {
-      return false;
-    }
+    // const hasNotSure = !!message.match(/(sorry, not sure)/i);
+    // if (message.includes(`${FORMULA_BLOCK}`) && hasNotSure) {
+    //   return false;
+    // }
 
     return true;
   });
 
   return (
     <div className="bot-message-wrapper">
-      {messageParts.map((message) => {
-        if (message.includes(FORMULA_BLOCK)) {
+      {messageParts.map((message, index) => {
+        if (message.startsWith('=')) {
           return (
             <>
-              <CodeBlockMessage formula={message} />
+              <CodeBlockMessage formula={message} key={index} />
               <br />
             </>
           );
@@ -56,6 +57,7 @@ function BotMessage({ completion }: BotMessageProps) {
           return (
             <>
               <p
+                key={index}
                 dangerouslySetInnerHTML={{
                   __html: message.replace(/\n/g, '<br>'),
                 }}

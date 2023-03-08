@@ -17,10 +17,10 @@ import Icon from './Icon';
 import LoadingEllipsis from './LoadingEllipsis';
 // PROJECT MODULES
 import {
-  USER_PROMPT_ENHANCEMENTS,
+  CSV,
   USER_RANGE,
-  USER_DATA_TABLE,
-  FORMULA_BLOCK,
+  FORMULA,
+  MAXIMUM_ALLOWED_CHARACTERS,
 } from '../constants';
 
 import './UserPrompt.style.css';
@@ -37,7 +37,6 @@ const UserPrompt = (props: ChatInputProps) => {
 
   const [input, setInput] = useState('');
   const [dataTable, setDataTable] = useState<ValueRangeObj | ''>('');
-  // formula from SpreadsheetApp always starts with "="
   const [formula, setFormula] = useState('');
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -50,8 +49,16 @@ const UserPrompt = (props: ChatInputProps) => {
   useAutosizeTextArea(textAreaRef?.current, input);
   useOnClickOutside(propMenuWrapperRef, () => setIsMenuOpen(false));
 
+  const totalInputCharacters = calculateUserInputLength(
+    input,
+    dataTable,
+    formula
+  );
+
+  const inputExceedsMaximum = totalInputCharacters > MAXIMUM_ALLOWED_CHARACTERS;
+
   async function handleSubmit() {
-    if (!input) return;
+    if (!input || inputExceedsMaximum) return;
 
     const clientUserPrompt = formatUserInputs(input, dataTable, formula);
 
@@ -73,8 +80,10 @@ const UserPrompt = (props: ChatInputProps) => {
     });
 
     try {
+      // replace range with USER_RANGE so we can easily figure out if the user
+      // added a data table via the prompt enhacements feature
       const completion = await SimplifyApi(accessToken).getCompletion(
-        formatUserPromptForAPI(clientUserPrompt)
+        clientUserPrompt.replaceAll('%', '')
       );
 
       dispatch({
@@ -88,7 +97,9 @@ const UserPrompt = (props: ChatInputProps) => {
           error.message ?? 'Unexpected Error. Pleaser retry your request.',
       });
     } finally {
-      scrollToBottomOfChat();
+      setTimeout(() => {
+        scrollToBottomOfChat();
+      });
     }
   }
 
@@ -114,7 +125,6 @@ const UserPrompt = (props: ChatInputProps) => {
     try {
       setIsAppsheetFetching(true);
       const rangeValueObj = await serverFunctions.getSelectedRangeValues();
-      console.log(rangeValueObj);
       if (rangeValueObj) {
         setDataTable(rangeValueObj);
       }
@@ -142,7 +152,6 @@ const UserPrompt = (props: ChatInputProps) => {
   function removeFormula() {
     setFormula('');
   }
-
   return (
     <div className="prompt-wrapper">
       <div className="text-area-wrapper" style={{ position: 'relative' }}>
@@ -165,6 +174,13 @@ const UserPrompt = (props: ChatInputProps) => {
             +
           </button>
         )}
+        {/* CHARACTER LIMIT COUNTER */}
+        <p
+          className="character-count"
+          style={{
+            backgroundColor: inputExceedsMaximum ? '#ef4444' : '#22c55e',
+          }}
+        >{`${totalInputCharacters}/400`}</p>
         {/* MENU FOR TO SELECT INSERT FORMULA OR RANGE */}
         {isMenuOpen && (
           <div ref={propMenuWrapperRef} className="prompt-options-menu">
@@ -241,33 +257,34 @@ const UserPrompt = (props: ChatInputProps) => {
 
 export default UserPrompt;
 
-// TODO: fix USER_PROMPT_ENHANCEMENTS, we can get rid of it entirely.
 function formatUserInputs(
   input: string,
   datatable: ValueRangeObj | '',
   formula: string
 ) {
-  // we add this string regardless if there are no enhancements
-  // we have a utility function that will take it out for display purposes
-  let formattedInputs = input + ` ${USER_PROMPT_ENHANCEMENTS}`;
+  let formattedInputs = input + `\n`;
 
   if (datatable) {
-    formattedInputs += ` ${USER_RANGE}=${datatable.range} ${USER_DATA_TABLE}=${datatable.values}`;
+    formattedInputs += `${USER_RANGE}=${datatable.range} ${CSV}${datatable.values}\n`;
   }
 
   if (formula) {
-    formattedInputs += ` ${FORMULA_BLOCK}${formula}`;
+    formattedInputs += `${FORMULA}${formula}`;
   }
 
   return formattedInputs;
 }
 
-function formatUserPromptForAPI(prompt: string) {
-  let newPrompt = prompt;
+function calculateUserInputLength(
+  input: string,
+  dataTable: ValueRangeObj | '',
+  formula: string
+) {
+  let totalLength = input.length + formula.length;
 
-  newPrompt = newPrompt.replace(FORMULA_BLOCK, 'formula: ');
-  newPrompt = newPrompt.replace(USER_RANGE, 'range: ');
-  newPrompt = newPrompt.replace(USER_DATA_TABLE, 'data table: ');
+  if (typeof dataTable === 'object') {
+    totalLength += dataTable.range.length + dataTable.values.length;
+  }
 
-  return newPrompt;
+  return totalLength;
 }

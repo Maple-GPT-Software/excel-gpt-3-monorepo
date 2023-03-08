@@ -7,14 +7,12 @@ import { CHAT_ROUTE } from './constants';
 import './Login.style.css';
 
 function Login() {
-  const { loginWithGoogle, accessToken } = useAuthContext();
+  const { loginWithGoogle, accessToken, hasFetchedProfile } = useAuthContext();
   const navigate = useNavigate();
 
-  if (accessToken) {
+  if (accessToken && hasFetchedProfile) {
     return (
       <div className="auth-wrapper login-wrapper">
-        {/* EMPTY for placement */}
-        <div></div>
         <div className="auth-main">
           <button
             onClick={() => {
