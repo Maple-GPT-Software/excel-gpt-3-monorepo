@@ -7,8 +7,10 @@ import {
   User,
 } from "firebase/auth";
 
-import preactLogo from "./assets/preact.svg";
 import "./app.css";
+import { Route, Routes } from "react-router-dom";
+import Checkout from "./Checkout";
+import { Fragment } from "preact/jsx-runtime";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD-HGaNIlqTjZiRQAA6wvKOBjQVUyFwBQQ",
@@ -20,17 +22,39 @@ const firebaseConfig = {
   measurementId: "G-NDF54XDW0L",
 };
 
+async function redirectToCheckout(accessToken: string) {
+  const res = await fetch(
+    "http://localhost:3000/payment/subscription-session",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        priceId: "price_1MdLWWGB7M3KTCGBlQufaDuk",
+      }),
+      redirect: "follow",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `acces ${accessToken}`,
+      },
+    }
+  );
+
+  const { url } = await res.json();
+
+  window.location.href = url;
+}
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
 export function App() {
   const [user, setUser] = useState<User | undefined>(undefined);
-  const [accessToken, setAccessToken] = useState<string>("");
+  const [accessToken, setAccessToken] = useState<string | null>("");
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
+        console.log(user);
         user.getIdToken().then((token) => setAccessToken(token));
         setUser(user);
       } else {
@@ -41,7 +65,7 @@ export function App() {
   });
 
   return (
-    <>
+    <div style={{ display: "grid", gridTemplateColumns: "50% 50%" }}>
       <div>
         <button
           onClick={() => {
@@ -58,22 +82,28 @@ export function App() {
         >
           logout
         </button>
+        <button onClick={() => redirectToCheckout(accessToken)}>
+          Free trial checkout
+        </button>
+        {accessToken && (
+          <>
+            <button
+              style={{ marginTop: "1rem" }}
+              onClick={() => {
+                navigator.clipboard.writeText(accessToken);
+              }}
+            >
+              Copy Access Token
+            </button>
+            <p style={{ maxWidth: "500px", wordBreak: "break-word" }}>
+              {accessToken.slice(0, 50) + "...."}
+            </p>
+          </>
+        )}
       </div>
-      {accessToken && (
-        <>
-          <button
-            style={{ marginTop: "1rem" }}
-            onClick={() => {
-              navigator.clipboard.writeText(accessToken);
-            }}
-          >
-            Copy Access Token
-          </button>
-          <p style={{ maxWidth: "500px", wordBreak: "break-word" }}>
-            {accessToken.slice(0, 50) + "...."}
-          </p>
-        </>
-      )}
-    </>
+      <Routes>
+        <Route path="/registration/checkout" element={<Checkout />} />
+      </Routes>
+    </div>
   );
 }

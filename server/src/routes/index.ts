@@ -1,17 +1,22 @@
 import express from 'express';
-import authRoute from './auth.route';
+import authRoutes from './auth.route';
 import messageRoutes from './message.route';
+import paymentRoutes from './payment.route';
 
 const router = express.Router();
 
 const AppRoutes = [
   {
     path: '/auth',
-    route: authRoute,
+    route: authRoutes,
   },
   {
     path: '/message',
     route: messageRoutes,
+  },
+  {
+    path: '/payment',
+    route: paymentRoutes,
   },
 ];
 
