@@ -1,19 +1,15 @@
 #!/bin/bash
 
-# only deploy for changes to ./webapp
-git diff HEAD^ HEAD --quiet ./webapp
-
 echo "VERCEL_GIT_COMMIT_REF: $VERCEL_GIT_COMMIT_REF"
+echo "VERCEL_GIT_COMMIT_MESSAGE: $VERCEL_GIT_COMMIT_MESSAGE" 
 
-# allow staging deployments for branches that start with staging/
-# and main
-if [[ "$VERCEL_GIT_COMMIT_REF" == "staging/*" || "$VERCEL_GIT_COMMIT_REF" == "main"  ]] ; then
-  # Proceed with the build
-    echo "✅ - Build can proceed"
-    npm run build
-
-else
-  # Don't build
+# only deploy for changes to ./webapp
+if git diff --quiet HEAD^ HEAD -- .; then
+  # no changes in webapp, exit with status code 1
   echo "🛑 - Build cancelled"
-  exit 0;
+  exit 0
+else
+  # changes detected in webapp, build & exit with status code 0
+  echo "✅ - Build can proceed"
+  pnpm run build
 fi
