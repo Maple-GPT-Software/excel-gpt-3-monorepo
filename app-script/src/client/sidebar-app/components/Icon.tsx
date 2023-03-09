@@ -9,6 +9,7 @@ interface IconProps {
   height?: number;
   strokeColor?: string;
   className?: string;
+  styles?: React.CSSProperties;
 }
 
 const Icon: React.FC<IconProps> = ({
@@ -18,12 +19,13 @@ const Icon: React.FC<IconProps> = ({
   height = 24,
   strokeColor = 'black',
   className = '',
+  styles,
 }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
-      style={{ width, height, cursor: 'pointer' }}
+      style={{ width, height, cursor: 'pointer', ...styles }}
       viewBox={`0 0 24 24`}
       strokeWidth={1.5}
       stroke={strokeColor}

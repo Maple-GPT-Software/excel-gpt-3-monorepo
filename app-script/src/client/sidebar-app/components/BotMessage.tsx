@@ -104,21 +104,34 @@ const RateCompletion: React.FC<RateCompletionFormProps> = (props) => {
     }
   }
 
+  if (rating) {
+    return (
+      <div className="like-dislike-container">
+        <Icon
+          pathName={`${rating === 'LIKE' ? 'THUMB_UP' : 'THUMB_DOWN'}`}
+          styles={{ cursor: 'not-allowed' }}
+          width={16}
+          height={16}
+        />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="like-dislike-container">
         <div>
           <Icon
-            pathName="THUMB_DOWN"
-            width={16}
-            height={16}
-            onClick={() => iconClickHandler(CompletionRating.DISLIKE)}
-          />
-          <Icon
             pathName="THUMB_UP"
             width={16}
             height={16}
             onClick={() => iconClickHandler(CompletionRating.LIKE)}
+          />
+          <Icon
+            pathName="THUMB_DOWN"
+            width={16}
+            height={16}
+            onClick={() => iconClickHandler(CompletionRating.DISLIKE)}
           />
         </div>
       </div>

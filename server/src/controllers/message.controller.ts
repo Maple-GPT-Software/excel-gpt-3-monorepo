@@ -18,8 +18,8 @@ export const createMessage = catchAsync(async (req: Request, res: Response) => {
     model: completion.model,
     completion: completion.choices[0].message.content ?? '',
     promptTokens: completion.usage?.prompt_tokens ?? 0,
-    completionTokens: completion.usage?.prompt_tokens ?? 0,
-    totalTokens: completion.usage?.prompt_tokens ?? 0,
+    completionTokens: completion.usage?.completion_tokens ?? 0,
+    totalTokens: completion.usage?.total_tokens ?? 0,
   });
 
   res.send(message);
