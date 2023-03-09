@@ -9,6 +9,9 @@
 
 const getSheets = () => SpreadsheetApp.getActive().getSheets();
 
+// in a range such as AAB1:AAD4 we want the starting column AAB
+const LETTERS_BEFORE_NUMBER_REGEX = /[A-Z]+(?=\d)/;
+
 // returns the sheet the user sees in the UI
 const getActiveSheet = () =>
   SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
@@ -35,6 +38,7 @@ export const getSelectedCellFormula = () => {
 
 interface ValueRangeObj {
   range: string;
+  // columns: string[];
   values: string;
 }
 
@@ -47,12 +51,26 @@ interface ValueRangeObj {
 export const getSelectedRangeValues = (): ValueRangeObj | null => {
   const activeRange = getActiveSheet().getActiveRange();
   const activeRangeValues = activeRange.getDisplayValues();
+  const columnsA1Notation = activeRange.getA1Notation();
 
-  if (!activeRangeValues.length) null;
+  if (!activeRangeValues.length || !columnsA1Notation) null;
+
+  // if activeRangeValues.length > 0, and columnsA1Notation exists, there will be a match
+  let firstColumnLetter = columnsA1Notation.match(
+    LETTERS_BEFORE_NUMBER_REGEX
+  )?.[0] as string;
+
+  let columnLettersArray = incrementStartingFrom(
+    firstColumnLetter,
+    activeRangeValues[0].length
+  ).map((column) => `column ${column}`);
+
+  // add column info to active range
+  activeRangeValues.unshift(columnLettersArray);
 
   // format values in string format
   return {
-    range: activeRange.getA1Notation(),
+    range: columnsA1Notation,
     values: JSON.stringify(activeRangeValues),
   };
 };
@@ -83,21 +101,50 @@ export const getSheetsData = () => {
 
 // UTILITY FUNCTIONS
 
+function incrementString(str: string) {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let i = str.length - 1;
+
+  // Start at the end of the string and find the last non-'Z' character
+  // AAZ, i = 2
+  while (i >= 0 && str[i] === 'Z') {
+    i--;
+  }
+
+  // If all characters are 'Z', add a new 'A' at the beginning
+  if (i < 0) {
+    // ZZ => AA
+    return 'A' + 'A'.repeat(str.length);
+  }
+
+  // Increment the last non-'Z' character by 1
+  const newChar = alphabet[alphabet.indexOf(str[i]) + 1];
+  let newStr = str.slice(0, i) + newChar;
+
+  // If there are remaining characters, set them to 'A'
+  // if we had AAZ, at this point str = AB, newStr should be ABA
+  if (i < str.length - 1) {
+    newStr += 'A'.repeat(str.length - i - 1);
+  }
+
+  return newStr;
+}
+
+// incrementStartingFrom('Y', 5) ==> ["Y", "Z", "AA", "AB", "AC"]
+// incrementStartingFrom('ZY', 5) ==> ["ZY", "ZZ", "AAA", "AAB", "AAC"]
 /**
- * takes in values, an array of nested arrays where each nested array
- * is a row. We convert this into CSV format.
+ * This function takes in a starting colmun in a range selection, e.g Y
+ * and returns of array representing the column headers until the end of
+ * the range. E.g if the range is A1:C1 we want ['A', 'B', 'C'] as column
+ * headers
  */
-function convertRangeValuesToCSV(values: Array<string | number>[]) {
-  return values
-    .reduce((csv, row) => {
-      const rowWithFixedDecimals = row.map((el) => {
-        if (typeof el === 'number') {
-          return el.toFixed(2);
-        } else {
-          return el;
-        }
-      });
-      return csv + `\n` + rowWithFixedDecimals.join(',');
-    }, '')
-    .concat('\n');
+function incrementStartingFrom(startCol: string, count: number) {
+  let results = [startCol];
+
+  for (let i = 0; i < count - 1; i++) {
+    const newStr = incrementString(results[results.length - 1]);
+    results.push(newStr);
+  }
+
+  return results;
 }

@@ -74,7 +74,10 @@ const messageSchema = new Schema<MessageType, MessageModel>(
 messageSchema.methods.toJSON = function () {
   const obj = this.toObject();
 
-  obj.id = obj._id.toString();
+  obj.id = obj._id;
+  // preserve special characters such as "\n" so that clients can split up
+  // completion and render formulas appropriately
+  obj.completion = encodeURI(obj.completion);
 
   delete obj._id;
   delete obj.__v;
@@ -84,6 +87,7 @@ messageSchema.methods.toJSON = function () {
   delete obj.completionTokens;
   delete obj.totalTokens;
   delete obj.model;
+
   return obj;
 };
 

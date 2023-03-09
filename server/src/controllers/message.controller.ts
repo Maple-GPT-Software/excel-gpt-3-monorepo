@@ -12,7 +12,6 @@ export const createMessage = catchAsync(async (req: Request, res: Response) => {
 
   const completion: any = await openAIService.getCompletion(prompt, userId);
 
-  // TODO: check why id isn't being sent back to client
   const message = await messageService.createUserMessage({
     userId,
     prompt,
@@ -23,8 +22,7 @@ export const createMessage = catchAsync(async (req: Request, res: Response) => {
     totalTokens: completion.usage?.prompt_tokens ?? 0,
   });
 
-  // preserve special characters such as "\n"
-  res.send({ ...message, completion: encodeURI(message.completion) });
+  res.send(message);
 });
 
 export const rateMessage = catchAsync(async (req: Request, res: Response) => {
