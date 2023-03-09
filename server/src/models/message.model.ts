@@ -16,6 +16,8 @@ export interface MessageType {
   totalTokens: number;
   model: string;
   rating?: CompletionRating | '';
+  // TODO: add base prompt version
+  // TODO: add source, e.g app-script
 }
 
 /**

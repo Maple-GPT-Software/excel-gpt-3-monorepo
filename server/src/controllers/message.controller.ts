@@ -2,7 +2,7 @@ import { Response, Request } from 'express';
 
 import httpStatus from 'http-status';
 import catchAsync from '@src/utils/catchAsync';
-import ApiError from '@src/utils/ApiError';
+
 import * as openAIService from '@src/services/openai.service';
 import * as messageService from '@src/services/message.service';
 
