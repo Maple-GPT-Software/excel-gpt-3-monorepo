@@ -163,6 +163,7 @@ const UserPrompt = (props: ChatInputProps) => {
           onKeyDown={handleInputKeyDown}
           onChange={ønChangeHandler}
           disabled={shouldDisableTextarea}
+          placeholder="I want a formula that..."
         />
         {!(dataTable && formula) && (
           // menu "icon" to open popup
@@ -207,12 +208,12 @@ const UserPrompt = (props: ChatInputProps) => {
                       width={18}
                       height={18}
                     />
-                    <p>Insert selected range</p>
+                    <p>Insert selected values</p>
                   </div>
                 )}
                 {dataTable && formula && (
                   <p style={{ position: 'absolute', bottom: 25 }}>
-                    only one formula and range can be attached to your message
+                    only one formula and table can be attached to your message
                   </p>
                 )}
               </>

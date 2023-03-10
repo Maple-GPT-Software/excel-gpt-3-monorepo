@@ -49,6 +49,7 @@ function Login() {
         </p>
       </div>
 
+      {/* TODO: Real links */}
       <p style={{ textAlign: 'center' }}>Private policy stuff</p>
     </div>
   );
