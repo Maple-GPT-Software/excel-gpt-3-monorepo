@@ -7,10 +7,10 @@ import { CHAT_ROUTE } from './constants';
 import './Login.style.css';
 
 function Login() {
-  const { loginWithGoogle, accessToken, hasFetchedProfile } = useAuthContext();
+  const { loginWithGoogle, userProfile } = useAuthContext();
   const navigate = useNavigate();
 
-  if (accessToken && hasFetchedProfile) {
+  if (userProfile) {
     return (
       <div className="auth-wrapper login-wrapper">
         <div className="auth-main">

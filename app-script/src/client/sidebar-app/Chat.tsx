@@ -80,45 +80,32 @@ const chatReducer = (draft: ChatState, action: ChatActions) => {
       break;
     case ChatReducerActionTypes.RATE_COMPLETION_OPTIMISTIC:
       const { id, rating } = action.payload;
-      const oldCompletion = draft.messages.find((message) => {
+      const updatedCompletions = draft.messages.map((message) => {
         if (typeof message === 'string') {
-          return false;
+          return message;
         } else if (message.id === id) {
-          return true;
+          return { ...message, rating };
         }
 
-        return false;
+        return message;
       });
 
-      if (!oldCompletion || typeof oldCompletion === 'string') {
-        break;
-      }
-
-      draft.messages.pop();
-      draft.messages.push({
-        ...oldCompletion,
-        rating: rating,
-      });
+      draft.messages = updatedCompletions;
       break;
     case ChatReducerActionTypes.RATE_COMPLETION_FAILED:
-      const failedRatedCompletion = draft.messages.find((message) => {
+      const failedMessageId = action.payload;
+      const resetFailedCompletionRating = draft.messages.map((message) => {
         if (typeof message === 'string') {
-          return false;
-        } else if (message.id === action.payload) {
-          return true;
+          return message;
+        } else if (message.id === failedMessageId) {
+          return { ...message, rating };
         }
 
-        return false;
+        return message;
       });
 
-      if (!failedRatedCompletion || typeof failedRatedCompletion === 'string') {
-        break;
-      }
-      draft.messages.pop();
-      draft.messages.push({
-        ...failedRatedCompletion,
-        rating: '',
-      });
+      draft.messages = resetFailedCompletionRating;
+      break;
       break;
     default:
       break;
@@ -136,7 +123,6 @@ function Chat() {
     }
   );
 
-  // TODO: scrolling to bottom after user prompt/completion is added
   const handleScrollToChatBottom = useCallback(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);

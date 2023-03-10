@@ -12,13 +12,18 @@ import { CHAT_ROUTE } from './constants';
 import AuthenticatedLayout from './components/AuthenticatedLayout';
 import SimplifyApi, { SimplifyUserProfile } from './api/SimplifyApi';
 
+/**
+ * WARNING! When making changes to this component you have to restart the dev server :(
+ * because the app refreshes in a loop
+ * However component that are children of <Routes /> are not affected by the refresh loop
+ */
+
 const AuthContext = createContext<
   | {
       userProfile: SimplifyUserProfile | undefined;
       accessToken: string;
       loginWithGoogle: () => void;
       signOut: () => void;
-      hasFetchedProfile: boolean;
     }
   | undefined
 >(undefined);
@@ -47,12 +52,12 @@ function AuthProvider({ children }: AuthProviderProps) {
     SimplifyUserProfile | undefined
   >(undefined);
   const [accessToken, setAccessToken] = useState<string>('');
-  const [hasFetchedProfile, setHasFetchedProfile] = useState(false);
-  //   const [location, setLocation] = useLocation();
+  const [waitingForFirebase, setWaitingForFirebase] = useState(false);
+  const [authErrorMessage, setAuthErrorMessage] = useState('');
   const navgiate = useNavigate();
 
   function loginWithGoogle() {
-    setHasFetchedProfile(true);
+    setWaitingForFirebase(true);
     window.googleAuthPopUp();
   }
 
@@ -68,13 +73,17 @@ function AuthProvider({ children }: AuthProviderProps) {
       if (user) {
         const accessToken = await user.getIdToken();
 
-        const profile = await SimplifyApi(accessToken).getUserProfile();
-
-        setHasFetchedProfile(false);
-        setUserProfile(profile);
-        navgiate(CHAT_ROUTE);
+        try {
+          const profile = await SimplifyApi(accessToken).getUserProfile();
+          setWaitingForFirebase(false);
+          setUserProfile(profile);
+          navgiate(CHAT_ROUTE);
+        } catch (error: any) {
+          const { message } = error;
+          console.log(message);
+        }
       } else {
-        setHasFetchedProfile(false);
+        setWaitingForFirebase(false);
         setUserProfile(undefined);
         setAccessToken('');
         navgiate('/');
@@ -97,7 +106,7 @@ function AuthProvider({ children }: AuthProviderProps) {
             signOut();
           })
           .finally(() => {
-            setHasFetchedProfile(false);
+            setWaitingForFirebase(false);
           });
       }
     });
@@ -126,10 +135,10 @@ function AuthProvider({ children }: AuthProviderProps) {
         accessToken,
         loginWithGoogle,
         signOut,
-        hasFetchedProfile,
       }}
     >
-      {hasFetchedProfile && <Refresh />}
+      {/* when modal popups we have to wait for user to confirm their login w firebase */}
+      {waitingForFirebase && <Refresh />}
       <Routes>
         <Route index element={<Login />} />
         <Route path={CHAT_ROUTE} element={<AuthenticatedLayout />} />

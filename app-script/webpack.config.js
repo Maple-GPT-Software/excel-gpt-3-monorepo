@@ -11,7 +11,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('@effortlessmotion/html-webpack-inline-source-plugin');
 const DynamicCdnWebpackPlugin = require('@effortlessmotion/dynamic-cdn-webpack-plugin');
 const moduleToCdn = require('module-to-cdn');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+// const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const PreactRefreshPlugin = require('@prefresh/webpack');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 /*********************************
@@ -109,6 +110,16 @@ const clientConfig = ({ isDevClientWrapper }) => ({
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+    alias: {
+      react: '@preact/compat',
+      'react-dom': '@preact/compat',
+      '@prefresh/core': path.resolve(
+        __dirname,
+        'node_modules',
+        '@prefresh',
+        'core'
+      ),
+    },
   },
   module: {
     rules: [
@@ -176,7 +187,7 @@ const DynamicCdnWebpackPluginConfig = {
 
     // don't externalize react during development due to issue with react-refresh
     // https://github.com/pmmmwh/react-refresh-webpack-plugin/issues/334
-    if (packageName === 'react') {
+    if (packageName === 'react' || packageName === 'react-dom') {
       return null;
     }
 
@@ -184,13 +195,6 @@ const DynamicCdnWebpackPluginConfig = {
     // "name" should match the package being imported
     // "var" is important to get right -- this should be the exposed global. Look up "webpack externals" for info.
     switch (packageName) {
-      case 'react-transition-group':
-        return {
-          name: packageName,
-          var: 'ReactTransitionGroup',
-          version: packageVersion,
-          url: `https://unpkg.com/react-transition-group@${packageVersion}/dist/react-transition-group${packageSuffix}`,
-        };
       case 'react-bootstrap':
         return {
           name: packageName,
@@ -221,13 +225,6 @@ const DynamicCdnWebpackPluginConfig = {
           version: packageVersion,
           url: `https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/${packageVersion}/react-router-dom.production.min.js`,
         };
-      case 'react':
-        return {
-          name: packageName,
-          var: 'react',
-          version: packageVersion,
-          url: `https://cdnjs.cloudflare.com/ajax/libs/react/${packageVersion}/umd/react.production.min.js`,
-        };
       // return defaults/null depending if Dynamic CDN plugin finds package
       default:
         return moduleDetails;
@@ -244,7 +241,7 @@ const clientConfigs = clientEntrypoints.map((clientEntrypoint) => {
     entry: clientEntrypoint.entry,
     target: 'web',
     plugins: [
-      !isProd && new ReactRefreshWebpackPlugin(),
+      !isProd && new PreactRefreshPlugin(),
       new webpack.DefinePlugin({
         'process.env': JSON.stringify(envVars),
       }),

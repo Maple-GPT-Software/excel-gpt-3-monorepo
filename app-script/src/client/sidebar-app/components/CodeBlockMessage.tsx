@@ -21,21 +21,22 @@ function CodeBlockMessage({
 
   async function handleInsertIntoCell() {
     setIsInserting(true);
-    await serverFunctions.writeFormulaToCell(
-      formatFormulaForSheetInsert(formula)
-    );
-    setIsInserting(false);
+    try {
+      await serverFunctions.writeFormulaToCell(
+        formatFormulaForSheetInsert(formula)
+      );
+    } finally {
+      setIsInserting(false);
+    }
   }
 
   return (
     <div className="bot-message-code-wrapper">
       <div className="bot-message-code-header">
-        {/* TODO: investigate why loading state is not shown */}
-        {showInsertFormula && !isInserting ? (
+        {showInsertFormula && !isInserting && (
           <button onClick={handleInsertIntoCell}>INSERT INTO CELL</button>
-        ) : (
-          showInsertFormula ?? <LoadingEllipsis />
         )}
+        {showInsertFormula && isInserting && <LoadingEllipsis />}
       </div>
       <div className="bot-message-code-container">
         <code
