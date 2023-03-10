@@ -1,4 +1,4 @@
-import { OpenAiModels } from '@src/config/openai';
+import { ClientSources } from '@src/types';
 import { Model, Schema, model } from 'mongoose';
 
 export enum CompletionRating {
@@ -7,7 +7,7 @@ export enum CompletionRating {
 }
 
 export interface MessageType {
-  /** the user that created this message */
+  /** the uid decoded from firebase auth token */
   userId: string;
   prompt: string;
   completion: string;
@@ -16,8 +16,8 @@ export interface MessageType {
   totalTokens: number;
   model: string;
   rating?: CompletionRating | '';
-  // TODO: add base prompt version
-  // TODO: add source, e.g app-script
+  source: ClientSources;
+  promptVersion: number;
 }
 
 /**
@@ -57,7 +57,7 @@ const messageSchema = new Schema<MessageType, MessageModel>(
     },
     model: {
       type: String,
-      /** its better to leave out this check for now because openai is rapidly iterating and we might get a random bug if they return a different model name */
+      /** its better to leave out enum check for now because openai is rapidly iterating and we might get a random bug if they return a different model name */
       // enum: [...Object.values(OpenAiModels)],
       required: true,
     },
@@ -65,6 +65,15 @@ const messageSchema = new Schema<MessageType, MessageModel>(
       type: String,
       enum: [...Object.values(CompletionRating), ''],
       default: '',
+    },
+    source: {
+      type: String,
+      enum: [...Object.values(ClientSources)],
+      required: true,
+    },
+    promptVersion: {
+      type: Number,
+      required: true,
     },
   },
   {
@@ -89,6 +98,8 @@ messageSchema.methods.toJSON = function () {
   delete obj.completionTokens;
   delete obj.totalTokens;
   delete obj.model;
+  delete obj.source;
+  delete obj.promptVersion;
 
   return obj;
 };

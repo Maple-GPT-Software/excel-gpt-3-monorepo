@@ -5,9 +5,10 @@ import catchAsync from '@src/utils/catchAsync';
 
 import * as openAIService from '@src/services/openai.service';
 import * as messageService from '@src/services/message.service';
+import { BASE_PROMP_VERSION } from '@src/constants';
 
 export const createMessage = catchAsync(async (req: Request, res: Response) => {
-  const prompt = req.body.prompt;
+  const { prompt, source } = req.body;
   const userId = req.decodedFirebaseToken.uid;
 
   const completion: any = await openAIService.getCompletion(prompt, userId);
@@ -20,6 +21,8 @@ export const createMessage = catchAsync(async (req: Request, res: Response) => {
     promptTokens: completion.usage?.prompt_tokens ?? 0,
     completionTokens: completion.usage?.completion_tokens ?? 0,
     totalTokens: completion.usage?.total_tokens ?? 0,
+    source,
+    promptVersion: BASE_PROMP_VERSION,
   });
 
   res.send(message);

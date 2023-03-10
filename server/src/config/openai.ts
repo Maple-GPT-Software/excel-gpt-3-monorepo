@@ -18,7 +18,7 @@ const openai = new OpenAIApi(configuration);
  * `How many moons does the earth have?`
  */
 export const basePromptConfig: CreateCompletionRequest = {
-  model: 'gpt-3.5-turbo',
+  model: OpenAiModels.TURBO,
   max_tokens: 250,
   /**
    * between 0 and 2. Higher values like 0.8 will make the output more random,
