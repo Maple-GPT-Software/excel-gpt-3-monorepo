@@ -25,6 +25,7 @@ export enum ChatReducerActionTypes {
   ADD_GPT_COMPLETION_FAIL = 'ADD_GPT_COMPLETION_FAIL',
   RATE_COMPLETION_OPTIMISTIC = 'RATE_COMPLETION_OPTIMISTIC',
   RATE_COMPLETION_FAILED = 'RATE_COMPLETION_FAILED',
+  CLEAR_MESSAGES = 'CLEAR_MESSAGES',
 }
 
 export type ChatActions =
@@ -46,6 +47,9 @@ export type ChatActions =
       type: ChatReducerActionTypes.RATE_COMPLETION_FAILED;
       /** the id of the completion who's rating needs to be reset */
       payload: string;
+    }
+  | {
+      type: ChatReducerActionTypes.CLEAR_MESSAGES;
     };
 
 const chatReducer = (draft: ChatState, action: ChatActions) => {
@@ -106,7 +110,9 @@ const chatReducer = (draft: ChatState, action: ChatActions) => {
 
       draft.messages = resetFailedCompletionRating;
       break;
-      break;
+    case ChatReducerActionTypes.CLEAR_MESSAGES:
+      /** clear chat */
+      draft.messages = [];
     default:
       break;
   }

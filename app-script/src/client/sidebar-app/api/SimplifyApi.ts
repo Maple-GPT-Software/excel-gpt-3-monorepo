@@ -43,12 +43,17 @@ class SimplifyApiClient extends AuthenticatedRequestor {
   }
 
   async getCompletion(prompt: string): Promise<GPTCompletion> {
-    const response = await this.post(`/${MESSAGE_BASE}`, { prompt });
+    const response = await this.post(`/${MESSAGE_BASE}`, {
+      prompt,
+      source: 'APPSCRIPT',
+    });
 
     if (response.status === 500) {
       throw new Error('Unexpected Error. Please try again.');
     } else if (response.status === 403) {
       throw new Error('Your subscription has expired.');
+    } else if (!response.ok) {
+      throw new Error('Unexpected Error. Please try again.');
     }
 
     const completion = await response.json();

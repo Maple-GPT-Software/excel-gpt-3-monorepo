@@ -106,7 +106,8 @@ const RateCompletion: React.FC<RateCompletionFormProps> = (props) => {
 
   if (rating) {
     return (
-      <div className="like-dislike-container">
+      <div className="like-dislike-container" style={{ alignItems: 'center' }}>
+        <p>Thank you! </p>
         <Icon
           pathName={`${rating === 'LIKE' ? 'THUMB_UP' : 'THUMB_DOWN'}`}
           styles={{ cursor: 'not-allowed' }}

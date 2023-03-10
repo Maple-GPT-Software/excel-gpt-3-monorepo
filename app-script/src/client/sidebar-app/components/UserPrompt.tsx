@@ -58,6 +58,8 @@ const UserPrompt = (props: ChatInputProps) => {
   const inputExceedsMaximum = totalInputCharacters > MAXIMUM_ALLOWED_CHARACTERS;
 
   async function handleSubmit() {
+    /** 5 is a minimum enforced by backend */
+    // if (!input || inputExceedsMaximum || totalInputCharacters < 5) return;
     if (!input || inputExceedsMaximum) return;
 
     const clientUserPrompt = formatUserInputs(input, dataTable, formula);
@@ -152,6 +154,15 @@ const UserPrompt = (props: ChatInputProps) => {
   function removeFormula() {
     setFormula('');
   }
+
+  function clearConversationHandler() {
+    dispatch({ type: ChatReducerActionTypes.CLEAR_MESSAGES });
+    setInput('');
+    setDataTable('');
+    setFormula('');
+    setIsMenuOpen(false);
+  }
+
   return (
     <div className="prompt-wrapper">
       <div className="text-area-wrapper" style={{ position: 'relative' }}>
@@ -165,16 +176,16 @@ const UserPrompt = (props: ChatInputProps) => {
           disabled={shouldDisableTextarea}
           placeholder="I want a formula that..."
         />
-        {!(dataTable && formula) && (
-          // menu "icon" to open popup
-          <button
-            aria-label="Open message attachments menu"
-            className="button-round attachment-button"
-            onClick={() => setIsMenuOpen(true)}
-          >
-            +
-          </button>
-        )}
+        {/* {!(dataTable && formula) && ( */}
+        {/* // menu "icon" to open popup */}
+        <button
+          aria-label="Open message attachments menu"
+          className="button-round attachment-button"
+          onClick={() => setIsMenuOpen(true)}
+        >
+          +
+        </button>
+        {/* )} */}
         {/* CHARACTER LIMIT COUNTER */}
         <p
           className="character-count"
@@ -192,30 +203,37 @@ const UserPrompt = (props: ChatInputProps) => {
             ) : (
               <>
                 {!formula && (
-                  <div onClick={getSelectedFormulaHandler}>
+                  <button
+                    className="prompt-options-menu-button"
+                    onClick={getSelectedFormulaHandler}
+                  >
                     <Icon
                       pathName="ARROW_RIGHT_ON_RECT"
                       width={18}
                       height={18}
                     />
                     <p>Insert selected formula</p>
-                  </div>
+                  </button>
                 )}
                 {!dataTable && (
-                  <div onClick={getSelectedRangeValuesHandler}>
+                  <button
+                    className="prompt-options-menu-button"
+                    onClick={getSelectedRangeValuesHandler}
+                  >
                     <Icon
                       pathName="ARROW_RIGHT_ON_RECT"
                       width={18}
                       height={18}
                     />
                     <p>Insert selected values</p>
-                  </div>
+                  </button>
                 )}
-                {dataTable && formula && (
-                  <p style={{ position: 'absolute', bottom: 25 }}>
-                    only one formula and table can be attached to your message
-                  </p>
-                )}
+                <button
+                  className="clear-conversation-wrapper"
+                  onClick={clearConversationHandler}
+                >
+                  <p>Clear conversation</p>
+                </button>
               </>
             )}
           </div>
