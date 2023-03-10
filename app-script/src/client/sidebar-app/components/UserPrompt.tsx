@@ -1,11 +1,13 @@
 // NPM
 import React, { useState, useRef } from 'react';
 // UTILS
+import SimplifyApi from '../api/SimplifyApi';
 import { serverFunctions } from '../../utils/serverFunctions';
 // TYPES
-import { ChatActions } from '../Chat';
+import { ChatActions, ChatReducerActionTypes } from '../Chat';
 import { ValueRangeObj } from '../types';
 // HOOKS
+import { useAuthContext } from '../AuthProvider';
 import useAutosizeTextArea from '../hooks/useAutosizeTextArea';
 import useOnClickOutside from '../hooks/useOnClickOutside';
 // COMPONENTS
@@ -14,10 +16,14 @@ import CodeBlockMessage from './CodeBlockMessage';
 import Icon from './Icon';
 import LoadingEllipsis from './LoadingEllipsis';
 // PROJECT MODULES
-import { USER_PROMPT_ENHANCEMENTS, USER_RANGE } from '../constants';
+import {
+  CSV,
+  USER_RANGE,
+  FORMULA,
+  MAXIMUM_ALLOWED_CHARACTERS,
+} from '../constants';
 
 import './UserPrompt.style.css';
-import { USER_FORMULA } from '../constants';
 
 interface ChatInputProps {
   shouldDisableTextarea: boolean;
@@ -26,11 +32,11 @@ interface ChatInputProps {
 }
 
 const UserPrompt = (props: ChatInputProps) => {
+  const { accessToken } = useAuthContext();
   const { shouldDisableTextarea, dispatch, scrollToBottomOfChat } = props;
 
   const [input, setInput] = useState('');
   const [dataTable, setDataTable] = useState<ValueRangeObj | ''>('');
-  // formula from SpreadsheetApp always starts with "="
   const [formula, setFormula] = useState('');
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -43,12 +49,30 @@ const UserPrompt = (props: ChatInputProps) => {
   useAutosizeTextArea(textAreaRef?.current, input);
   useOnClickOutside(propMenuWrapperRef, () => setIsMenuOpen(false));
 
+  const totalInputCharacters = calculateUserInputLength(
+    input,
+    dataTable,
+    formula
+  );
+
+  const inputExceedsMaximum = totalInputCharacters > MAXIMUM_ALLOWED_CHARACTERS;
+
   async function handleSubmit() {
-    if (!input) return;
+    /** 5 is a minimum enforced by backend */
+    // if (!input || inputExceedsMaximum || totalInputCharacters < 5) return;
+    if (!input || inputExceedsMaximum) return;
+
+    const clientUserPrompt = formatUserInputs(input, dataTable, formula);
+
+    // re-initialize input state
+    setInput('');
+    setDataTable('');
+    setFormula('');
+
     dispatch({
-      type: 'ADD_USER_PROMPT',
+      type: ChatReducerActionTypes.ADD_USER_PROMPT,
       // TODO: format data table and formula
-      payload: formatUserInputs(input, dataTable, formula),
+      payload: clientUserPrompt,
     });
 
     // scroll to bottom of chat container after user's prompt is added
@@ -57,32 +81,28 @@ const UserPrompt = (props: ChatInputProps) => {
       scrollToBottomOfChat();
     });
 
-    // TODO: call API here
+    try {
+      // replace range with USER_RANGE so we can easily figure out if the user
+      // added a data table via the prompt enhacements feature
+      const completion = await SimplifyApi(accessToken).getCompletion(
+        clientUserPrompt.replaceAll('%', '')
+      );
 
-    // ONLY FOR TESTING
-    setTimeout(() => {
       dispatch({
-        type: 'ADD_GPT_COMPLETION_SUCCESS',
-        payload: {
-          choices: [
-            { finish_reason: 'success', index: 0, text: 'some response' },
-          ],
-          id: `${Math.random()}`,
-          model: 'DEVELOPMENT_MODEL',
-          object: 'DEVELOPMENT_OBJECT',
-        },
+        type: ChatReducerActionTypes.ADD_GPT_COMPLETION_SUCCESS,
+        payload: completion,
       });
-      // scroll to bottom of chat container after completion is added
-      // wrapped in setTimeout so that immer dispatch updates chat first
+    } catch (error: any) {
+      dispatch({
+        type: ChatReducerActionTypes.ADD_GPT_COMPLETION_FAIL,
+        payload:
+          error.message ?? 'Unexpected Error. Pleaser retry your request.',
+      });
+    } finally {
       setTimeout(() => {
         scrollToBottomOfChat();
       });
-    }, 500);
-
-    // re-initialize input state
-    setInput('');
-    setDataTable('');
-    setFormula('');
+    }
   }
 
   /**
@@ -107,7 +127,6 @@ const UserPrompt = (props: ChatInputProps) => {
     try {
       setIsAppsheetFetching(true);
       const rangeValueObj = await serverFunctions.getSelectedRangeValues();
-      console.log(rangeValueObj);
       if (rangeValueObj) {
         setDataTable(rangeValueObj);
       }
@@ -136,6 +155,14 @@ const UserPrompt = (props: ChatInputProps) => {
     setFormula('');
   }
 
+  function clearConversationHandler() {
+    dispatch({ type: ChatReducerActionTypes.CLEAR_MESSAGES });
+    setInput('');
+    setDataTable('');
+    setFormula('');
+    setIsMenuOpen(false);
+  }
+
   return (
     <div className="prompt-wrapper">
       <div className="text-area-wrapper" style={{ position: 'relative' }}>
@@ -147,16 +174,25 @@ const UserPrompt = (props: ChatInputProps) => {
           onKeyDown={handleInputKeyDown}
           onChange={ønChangeHandler}
           disabled={shouldDisableTextarea}
+          placeholder="I want a formula that..."
         />
-        {!(dataTable && formula) && (
-          // menu "icon" to open popup
-          <div
-            className="prompt-menu-wrapper"
-            onClick={() => setIsMenuOpen(true)}
-          >
-            <div className="prompt-menu">...</div>
-          </div>
-        )}
+        {/* {!(dataTable && formula) && ( */}
+        {/* // menu "icon" to open popup */}
+        <button
+          aria-label="Open message attachments menu"
+          className="button-round attachment-button"
+          onClick={() => setIsMenuOpen(true)}
+        >
+          +
+        </button>
+        {/* )} */}
+        {/* CHARACTER LIMIT COUNTER */}
+        <p
+          className="character-count"
+          style={{
+            backgroundColor: inputExceedsMaximum ? '#ef4444' : '#22c55e',
+          }}
+        >{`${totalInputCharacters}/400`}</p>
         {/* MENU FOR TO SELECT INSERT FORMULA OR RANGE */}
         {isMenuOpen && (
           <div ref={propMenuWrapperRef} className="prompt-options-menu">
@@ -167,30 +203,37 @@ const UserPrompt = (props: ChatInputProps) => {
             ) : (
               <>
                 {!formula && (
-                  <div onClick={getSelectedFormulaHandler}>
+                  <button
+                    className="prompt-options-menu-button"
+                    onClick={getSelectedFormulaHandler}
+                  >
                     <Icon
                       pathName="ARROW_RIGHT_ON_RECT"
                       width={18}
                       height={18}
                     />
                     <p>Insert selected formula</p>
-                  </div>
+                  </button>
                 )}
                 {!dataTable && (
-                  <div onClick={getSelectedRangeValuesHandler}>
+                  <button
+                    className="prompt-options-menu-button"
+                    onClick={getSelectedRangeValuesHandler}
+                  >
                     <Icon
                       pathName="ARROW_RIGHT_ON_RECT"
                       width={18}
                       height={18}
                     />
-                    <p>Insert selected range</p>
-                  </div>
+                    <p>Insert selected values</p>
+                  </button>
                 )}
-                {dataTable && formula && (
-                  <p style={{ position: 'absolute', bottom: 25 }}>
-                    only one formula and range can be attached to your message
-                  </p>
-                )}
+                <button
+                  className="clear-conversation-wrapper"
+                  onClick={clearConversationHandler}
+                >
+                  <p>Clear conversation</p>
+                </button>
               </>
             )}
           </div>
@@ -202,6 +245,7 @@ const UserPrompt = (props: ChatInputProps) => {
       {dataTable && (
         <div className="attachment-wrapper">
           <button
+            className="button-round"
             aria-label="remove data table"
             type="button"
             onClick={removeDataTable}
@@ -216,6 +260,7 @@ const UserPrompt = (props: ChatInputProps) => {
       {formula && (
         <div className="attachment-wrapper">
           <button
+            className="button-round"
             aria-label="remove data table"
             type="button"
             onClick={removeFormula}
@@ -236,17 +281,29 @@ function formatUserInputs(
   datatable: ValueRangeObj | '',
   formula: string
 ) {
-  // we add this string regardless if there are no enhancements
-  // we have a utility function that will take it out for display purposes
-  let formattedInputs = input + ` ${USER_PROMPT_ENHANCEMENTS}`;
+  let formattedInputs = input + `\n`;
 
   if (datatable) {
-    formattedInputs += ` ${USER_RANGE}=${datatable.range} USER_DATA_TABLE=${datatable.values}`;
+    formattedInputs += `${USER_RANGE}=${datatable.range} ${CSV}${datatable.values}\n`;
   }
 
   if (formula) {
-    formattedInputs += ` ${USER_FORMULA}${formula}`;
+    formattedInputs += `${FORMULA}${formula}`;
   }
 
   return formattedInputs;
+}
+
+function calculateUserInputLength(
+  input: string,
+  dataTable: ValueRangeObj | '',
+  formula: string
+) {
+  let totalLength = input.length + formula.length;
+
+  if (typeof dataTable === 'object') {
+    totalLength += dataTable.range.length + dataTable.values.length;
+  }
+
+  return totalLength;
 }

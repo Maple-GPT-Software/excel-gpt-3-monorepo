@@ -1,10 +1,10 @@
 {
-  "name": "react-google-apps-script",
-  "version": "2.1.1",
-  "description": "Starter project for using React with Google Apps Script",
+  "name": "excel-simplify-app-script",
+  "version": "1.0.0",
+  "description": "App script for querying AI",
   "repository": {
     "type": "git",
-    "url": "https://github.com/enuchi/React-Google-Apps-Script.git"
+    "url": "https://github.com/Excel-GPT-3/excel-gpt-3-monorepo"
   },
   "scripts": {
     "test:integration": "jest --forceExit test/local-development.test",
@@ -36,9 +36,9 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.2",
     "immer": "^9.0.17",
-    "react": "^18.2.0",
+    "preact": "^10.13.1",
+    "preact-compat": "^3.19.0",
     "react-bootstrap": "^2.4.0",
-    "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",
     "use-immer": "^0.8.1"
   },
@@ -57,7 +57,8 @@
     "@effortlessmotion/html-webpack-inline-source-plugin": "^1.0.3",
     "@firebase/auth-types": "^0.12.0",
     "@google/clasp": "^2.4.1",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
+    "@prefresh/core": "^1.4.1",
+    "@prefresh/webpack": "^3.3.4",
     "@types/expect-puppeteer": "^5.0.0",
     "@types/jest-environment-puppeteer": "^5.0.2",
     "@types/puppeteer": "^5.4.6",

@@ -3,13 +3,15 @@ import validator from 'validator';
 import Stripe from 'stripe';
 /** base user type */
 export interface UserType {
+  /** corresponds to uid from firebase auth */
   userId: string;
   email: string;
   name: string;
-  // TODO: remove this from schema
-  signUpSource: string;
+  /** e.g, Concordia */
   referrer: string;
-  dailyRequests?: number;
+  /** terms and conditions and the version the user has accepted */
+  hasAcceptedTerms: boolean;
+  acceptedTermsVersion: number;
   /**
    * We don't have to keep all the metadata associated with a subscription because Stripe's client facing SDK has no rate limiting. Server side API however has a limit of 100 reads/min.
    */
@@ -21,8 +23,6 @@ export interface UserType {
    * possible statuses: paid, incomplete, trialing, active, past_due, canceled. We don't allow users to pause their subscription.
    */
   stripeStatus?: Stripe.Subscription.Status;
-  // TODO: hasAcceptedTerms
-  // TODO: acceptedTermsVersion
 }
 
 /**
@@ -57,30 +57,27 @@ const userSchema = new Schema<UserType, UserModel>({
     type: String,
     required: true,
   },
-  /** the client app they signed up from */
-  signUpSource: {
-    type: String,
-    required: true,
-    lowercase: true,
-  },
-  /** who referred them */
   referrer: {
     type: String,
     required: false,
     lowercase: true,
   },
-  /** used for rate limiting the user */
-  dailyRequests: {
+  hasAcceptedTerms: {
+    type: Boolean,
+    required: true,
+    lowercase: true,
+  },
+  acceptedTermsVersion: {
     type: Number,
     required: true,
-    default: 0,
+    lowercase: true,
   },
   stripeCustomerId: {
     type: String,
     required: false,
   },
   stripeCurrentPeriodEnd: {
-    type: String,
+    type: Number,
     required: false,
   },
   stripeStatus: {
@@ -92,15 +89,14 @@ const userSchema = new Schema<UserType, UserModel>({
 /** Remove properties before Document is sent to client */
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
+
   delete obj._id;
   delete obj.__v;
   delete obj.createdAt;
   delete obj.updatedAt;
   delete obj.referrer;
   delete obj.signUpSource;
-  delete obj.dailyRequests;
-  delete obj.stripeCurrentPeriodEnd;
-  delete obj.stripeStatus;
+
   return obj;
 };
 

@@ -9,5 +9,11 @@
           ".clasp.json"
       ],
       "url": "http://json.schemastore.org/clasp"
-  }]
+}
+],
+"workbench.colorCustomizations": {
+"activityBar.background": "#1C2D4E",
+"titleBar.activeBackground": "#273F6E",
+"titleBar.activeForeground": "#F8FAFD"
+}
 }

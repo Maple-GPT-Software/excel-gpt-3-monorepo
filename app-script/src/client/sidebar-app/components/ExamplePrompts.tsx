@@ -1,5 +1,4 @@
 import React from 'react';
-import { serverFunctions } from '../../utils/serverFunctions';
 
 import './ExamplePrompts.style.css';
 
@@ -11,18 +10,19 @@ function ExamplePrompts() {
         "I have a column of numbers, how do I calculate the average?"
       </p>
       <p className="example-prompt-element">
-        "How do I sort a column of names in descending order?"
+        "How do I sort a column of names from a to z?"
       </p>
       <p className="example-prompt-element">"Explain how VLOOKUP works"</p>
       <p className="example-prompt-element">
-        If you're not sure where to start
-        <span
-          className="modal-trigger"
-          onClick={serverFunctions.openHelpDialog}
+        If you're not sure where to start? See our {/* TODO: real link */}
+        <a
+          style={{ color: 'var(--primary-main)', textDecoration: 'none' }}
+          href="https://google.com"
+          target="_blank"
         >
-          {' '}
-          checkout our guide
-        </span>
+          guide
+        </a>
+        .
       </p>
     </div>
   );

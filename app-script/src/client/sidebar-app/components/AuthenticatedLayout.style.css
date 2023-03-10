@@ -6,43 +6,87 @@
 }
 
 .nav {
+  padding: 0 12px;
   background-color: var(--primary-dark);
   display: flex;
   justify-content: space-between;
 }
 
+.nav-left-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.nav-left-wrapper .trial-warning {
+  width: 100px;
+  font-size: 12px;
+  color: white;
+}
+
+.nav-left-wrapper a {
+  padding: 6px 12px;
+  color: white;
+  border: solid thin white;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
 .nav-right-wrapper {
   display: flex;
   align-items: center;
-  padding-right: 12px;
 }
 
 .nav-right-wrapper .button-logout {
-  padding: 6px 8px;
-  height: fit-content;
-  border: solid 1px #e2e8f0;
-  background-color: transparent;
-  color: white;
-  font-weight: 100;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.nav-right-wrapper .button-logout:hover {
-  box-shadow: 2px 2px 8px 1px #292524
-}
+/* .nav-right-wrapper .button-logout:hover {
+  box-shadow: 2px 2px 8px 1px #292524;
+} */
 
 .nav-right-wrapper .nav-tooltip-button {
-    margin-right: 12px;
-    cursor: 'pointer';
-    background-color: transparent;
-    border: none;
-    color: white;
-    font-size: 16px;
-    border: solid thin white;
-    border-radius: 12px;
-    cursor: pointer;
+  margin-right: 12px;
+  cursor: 'pointer';
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  border: solid thin white;
+  border-radius: 12px;
+  cursor: pointer;
 }
 
 .main-content {
   max-width: 100vw;
+  /* 45px is height of navbar */
+  height: calc(100vh - 45px);
 }
 
+/* LOGOUT ICON */
+.gg-log-off {
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  border-radius: 16px;
+  border: 2px solid;
+  transform: scale(var(--ggs, 1));
+  width: 16px;
+  height: 16px;
+  border-top: 2px solid transparent;
+  color: white;
+}
+.gg-log-off::before {
+  content: '';
+  display: block;
+  box-sizing: border-box;
+  position: absolute;
+  border-radius: 3px;
+  height: 8px;
+  width: 2px;
+  background: currentColor;
+  left: 5px;
+  bottom: 6px;
+  color: white;
+}

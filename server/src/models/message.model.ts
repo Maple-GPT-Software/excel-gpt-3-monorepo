@@ -1,18 +1,23 @@
+import { ClientSources } from '@src/types';
 import { Model, Schema, model } from 'mongoose';
-import validator from 'validator';
 
-/**
- * completion type
- */
+export enum CompletionRating {
+  LIKE = 'LIKE',
+  DISLIKE = 'DISLIKE',
+}
+
 export interface MessageType {
-  /** the user that created this message */
+  /** the uid decoded from firebase auth token */
   userId: string;
   prompt: string;
   completion: string;
   promptTokens: number;
   completionTokens: number;
   totalTokens: number;
-  rating?: string;
+  model: string;
+  rating?: CompletionRating | '';
+  source: ClientSources;
+  promptVersion: number;
 }
 
 /**
@@ -50,10 +55,25 @@ const messageSchema = new Schema<MessageType, MessageModel>(
       type: Number,
       required: true,
     },
+    model: {
+      type: String,
+      /** its better to leave out enum check for now because openai is rapidly iterating and we might get a random bug if they return a different model name */
+      // enum: [...Object.values(OpenAiModels)],
+      required: true,
+    },
     rating: {
       type: String,
-      enum: ['LIKE', 'DISLIKE', 'N/A'],
-      default: 'N/A',
+      enum: [...Object.values(CompletionRating), ''],
+      default: '',
+    },
+    source: {
+      type: String,
+      enum: [...Object.values(ClientSources)],
+      required: true,
+    },
+    promptVersion: {
+      type: Number,
+      required: true,
     },
   },
   {
@@ -65,36 +85,43 @@ const messageSchema = new Schema<MessageType, MessageModel>(
 messageSchema.methods.toJSON = function () {
   const obj = this.toObject();
 
-  obj.id = obj._id.toString();
+  obj.id = obj._id;
+  // preserve special characters such as "\n" so that clients can split up
+  // completion and render formulas appropriately
+  obj.completion = encodeURI(obj.completion);
 
   delete obj._id;
   delete obj.__v;
+  delete obj._doc;
   delete obj.prompt;
-  delete obj.tok;
   delete obj.promptTokens;
   delete obj.completionTokens;
   delete obj.totalTokens;
+  delete obj.model;
+  delete obj.source;
+  delete obj.promptVersion;
+
   return obj;
 };
 
 /**
  * Check if the user can rate the message based on their userId
- * @param {string} messageId - the message's id
+ * @param {string} id - the message's id
  * @param {string} userId - the user's id
  */
-messageSchema.statics.canRateMessage = async function (messageId: string, userId: string) {
-  const message = await this.findById(messageId);
-  console.log(messageId, userId);
+messageSchema.statics.canRateMessage = async function (id: string, userId: string) {
+  const message = await this.findById(id);
+
   return userId === message?.userId;
 };
 
 /**
  * Check if the user can rate the message based on their userId
- * @param {string} messageId - the message's id
+ * @param {string} id - the message's id
  */
-messageSchema.statics.isMessageUnrated = async function (messageId: string) {
-  const message = await this.findById(messageId);
-  return message?.rating === 'N/A';
+messageSchema.statics.isMessageUnrated = async function (id: string) {
+  const message = await this.findById(id);
+  return !message?.rating;
 };
 
 export const Message = model<MessageType, MessageModel>('Message', messageSchema);

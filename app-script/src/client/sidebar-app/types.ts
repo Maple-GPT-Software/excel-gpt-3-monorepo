@@ -1,7 +1,5 @@
-import {FirebaseAuth} from '@firebase/auth-types';
+import { FirebaseAuth } from '@firebase/auth-types';
 
-// TODO: this is the user object our REST API will return
-// when we send an access to the /profile endpoint
 interface User {
   // OAuth accessToken that is valid for 1 hour
   accessToken: string;
@@ -9,7 +7,6 @@ interface User {
   displayName: string;
   // user's id in firebase project but not uuid of user's profile
   uid: string;
-  // TODO: other properties for stripe (subscription etc...)
 }
 
 // We only care about the access token
@@ -28,15 +25,27 @@ declare global {
     getAuth: () => FirebaseAuth;
   }
 }
+
+export enum CompletionRating {
+  LIKE = 'LIKE',
+  DISLIKE = 'DISLIKE',
+}
+
+/** the completion we get back from the back-end */
 export interface GPTCompletion {
-  choices: { finish_reason: string; index: number; text: string }[];
+  message: string;
+  /** completion's id */
   id: string;
-  model: string;
-  object: string;
+  /**
+   * we can optimistically update the rating, if server doesn't answer with
+   * 200 we can undo the optimistic update
+   */
+  rating: CompletionRating | '';
+  status: 'success' | 'fail';
 }
 
 // Object returns by getSelectedRangeValues
 export interface ValueRangeObj {
-  range: string,
-  values: string
+  range: string;
+  values: string;
 }

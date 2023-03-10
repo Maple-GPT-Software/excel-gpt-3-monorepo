@@ -1,6 +1,3 @@
-import { NextFunction, RequestHandler } from 'express';
-import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
-
 // ENUM FOR ENVIRONMENT
 export enum Environment {
   PROD = 'production',
@@ -36,4 +33,10 @@ export enum StripeWebhooks {
    *  - status: canceled
    */
   SubscriptionDeleted = 'customer.subscription.deleted',
+}
+
+export enum ClientSources {
+  APPSCRIPT = 'APPSCRIPT',
+  WEBAPP = 'WEBAPP',
+  EXCEL = 'EXCEL',
 }

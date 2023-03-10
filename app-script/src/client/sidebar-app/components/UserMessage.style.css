@@ -1,8 +1,14 @@
 .user-message-wrapper {
-    padding: 16px;
-    /* background-color: var(--grey-light); */
+  padding: 16px;
+  /* background-color: var(--grey-light); */
 }
 
-.user-message-wrapper .table-wrapper, .bot-message-code-wrapper {
-    margin-top: 1rem;
+.user-message-wrapper .table-wrapper,
+.bot-message-code-wrapper {
+  margin-top: 1rem;
+}
+
+.user-message-wrapper p {
+  font-size: 14px;
+  line-height: 16px;
 }

@@ -22,6 +22,8 @@ import * as stripeService from '@src/services/stripe.service';
 import logger from './config/logger';
 import stripe from './config/stripe';
 import { StripeWebhooks } from './types';
+import toJSONMiddleware from './middleware/toJSONMiddleware';
+// !IMPORTANT start server with pm2
 
 // TODO: only allow specific origins
 // const corsOptions = {
@@ -121,6 +123,8 @@ app.use(firebaseAuth);
 
 // v1 api routes
 app.use('/', AppRoutes);
+
+app.use(toJSONMiddleware);
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {

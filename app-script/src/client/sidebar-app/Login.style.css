@@ -1,47 +1,47 @@
 .auth-wrapper {
-    height: 100%;
-    width: 100%;
-    display: grid;
-    grid-template-rows: 25% 50% 25%;
-    grid-template-columns: 100%;
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: 25% 50% 25%;
+  grid-template-columns: 100%;
 }
 
 .auth-wrapper > h1 {
-    text-align: center;
-    align-self: center;
-    font-size: 24px;
+  text-align: center;
+  align-self: center;
+  font-size: 24px;
 }
 
 .auth-wrapper .auth-main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    align-self: center;
+  grid-row: 2/3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
 }
 
 .auth-wrapper .auth-button {
-    background-color: transparent;
-    margin-bottom: 2rem;
-    border-radius: 20px;
-    border: solid thin #D1D5DB;
+  background-color: transparent;
+  margin-bottom: 2rem;
+  border-radius: 20px;
+  border: solid thin #d1d5db;
 }
 
 .auth-wrapper .auth-button:focus {
-    border-color: black;
+  border-color: black;
 }
 
 .auth-wrapper .auth-button svg {
-    margin-right: 6px;
+  margin-right: 6px;
 }
 
 .auth-wrapper .auth-link {
-    text-decoration: none;
-    color: unset;
+  text-decoration: none;
+  color: unset;
 }
 
 .auth-wrapper .auth-link > a {
-    color: var(--primary-dark);
-    font-weight: 500;
-    text-decoration: none;
+  color: var(--primary-dark);
+  font-weight: 500;
+  text-decoration: none;
 }
-
