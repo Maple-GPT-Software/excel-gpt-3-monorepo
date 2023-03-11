@@ -29,4 +29,4 @@ export default function RootLayout({ children }: RootLayoutProps) {
   );
 }
 
-import { Providers } from '../Provider/providers';
+import { Providers } from '../providers/providers';

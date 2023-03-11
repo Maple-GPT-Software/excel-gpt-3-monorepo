@@ -1,36 +1,33 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { signInWithGoogle } from '@/service/firebase';
 
 import Link from 'next/link';
 import { useQuery } from 'react-query';
 import settings from '@/settings';
-// import { useEffect } from 'react';
+import SimplifyApi from '@/api/SimplifyApi';
+import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
 
 const SignupPage = () => {
-  const signIn = async () => {
-    try {
-      const response = await signInWithGoogle();
-      console.log(response.user);
+  const [signupErrorMessage, setSignUpErrorMEssage] = useState();
+  const router = useRouter();
 
-      // if (userExist) {
-      //   // navigate to signin
-      // } else {
-      //   // navigate to registration page
-      // }
-      /*
-        check if user exists server call /login send access token
-        pop up modal to agree with terms and condition
-      */
-    } catch (e) {
+  const signUpPopup = async () => {
+    try {
+      const { user } = await signInWithGoogle();
+      const accessToken = await user.getIdToken();
+      const profile = await SimplifyApi(accessToken).login();
+
+      router.push('/');
+    } catch (e: any) {
+      /** user does not exist, re-direct to */
+      if (e.response.status === 404) {
+        router.push('/registration');
+      }
       // move to sign up (registration)
       console.error(e); // toast
     }
-  };
-
-  const onClickHandler = (event: { preventDefault: () => void }) => {
-    event.preventDefault();
-    signIn();
   };
 
   return (
@@ -44,7 +41,7 @@ const SignupPage = () => {
                   Create your account
                 </h3>
                 <button
-                  onClick={(e) => onClickHandler(e)}
+                  onClick={signUpPopup}
                   className="mb-6 flex w-full items-center justify-center rounded-md bg-white p-3 text-base font-medium text-body-color shadow-one hover:text-primary dark:bg-[#242B51] dark:text-body-color dark:shadow-signUp dark:hover:text-white"
                 >
                   <span className="mr-3">
