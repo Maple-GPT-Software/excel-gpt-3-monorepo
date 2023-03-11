@@ -4,14 +4,16 @@ import httpStatus from 'http-status';
 import catchAsync from '@src/utils/catchAsync';
 import * as userService from '@src/services/user.service';
 import ApiError from '@src/utils/ApiError';
+import { TERMS_AND_CONDITION_VERSION } from '@src/constants';
 
-// TODO: CRON job to schedule email to be sent after sign-up
 export const signup = catchAsync(async (req: Request, res: Response) => {
   const newUser = {
     userId: req.decodedFirebaseToken.uid,
     email: req.decodedFirebaseToken.email,
-    name: req.decodedFirebaseToken.name,
+    name: req.body.name,
     signUpSource: req.body.signUpSource,
+    hasAcceptedTerms: req.body.hasAcceptedTerms,
+    acceptedTermsVersion: TERMS_AND_CONDITION_VERSION,
     referrer: req.body.referrer ?? '',
   };
   const user = await userService.createUser(newUser);

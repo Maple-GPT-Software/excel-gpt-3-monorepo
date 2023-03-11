@@ -1,14 +1,22 @@
 import express from 'express';
 
 import * as messageController from '@src/controllers/message.controller';
+import subscriptionCheck from '@src/middleware/subscriptionCheck';
+import validate from '@src/middleware/validate';
+import * as messageValidation from '@src/validations/message.validation';
+import * as rateLimitMiddleware from '@src/middleware/rateLimit';
 
 const router = express.Router();
 
-// TODO: middleware to check if the user has an active subscription w Stripe
+router.use(subscriptionCheck);
 
-router.post('/', messageController.createMessage);
+router.post(
+  '/',
+  rateLimitMiddleware.dailyMessagesLimiter,
+  validate(messageValidation.createMessage),
+  messageController.createMessage
+);
 
-// model validate if payload is valid, e.g "LIKE" or "DISLIKE"
-router.patch('/rate/:id', messageController.rateMessage);
+router.patch('/rate/:id', validate(messageValidation.rateMessage), messageController.rateMessage);
 
 export default router;

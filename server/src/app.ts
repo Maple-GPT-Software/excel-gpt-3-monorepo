@@ -1,5 +1,7 @@
+/// <reference types="stripe-event-types" />
 /** NPM */
 import express from 'express';
+import Stripe from 'stripe';
 import helmet from 'helmet';
 import xss from 'xss-clean';
 import mongoSanitize from 'express-mongo-sanitize';
@@ -11,10 +13,17 @@ import * as morgan from '@src/config/morgan';
 /** Middlewares */
 import firebaseAuth from '@src/middleware/firebaseAuth';
 import { errorHandler, errorConverter } from './middleware/error';
+// FUTURE: rate limiting
 // import { authLimiter } from "./middlewares/rateLimiter";
 /** Modules */
 import AppRoutes from '@src/routes';
 import ApiError from '@src/utils/ApiError';
+import * as stripeService from '@src/services/stripe.service';
+import logger from './config/logger';
+import stripe from './config/stripe';
+import { StripeWebhooks } from './types';
+import toJSONMiddleware from './middleware/toJSONMiddleware';
+// !IMPORTANT start server with pm2
 
 // TODO: only allow specific origins
 // const corsOptions = {
@@ -33,6 +42,53 @@ if (config.env !== 'test') {
 
 // set security HTTP headers
 app.use(helmet());
+
+// https://codingpr.com/stripe-webhook/
+app.post('/webhook', express.raw({ type: 'application/json' }), (request, response) => {
+  const sig = request.headers['stripe-signature'] as string | string[];
+
+  let event;
+
+  try {
+    // verifying the signature sent by Stripe
+    event = stripe.webhooks.constructEvent(request.body, sig, config.stripeEndpointSecret) as Stripe.DiscriminatedEvent;
+  } catch (error: unknown) {
+    // @ts-ignore
+    logger.debug(`⚠️  Webhook signature verification failed.`, err.message);
+    response.status(400).send();
+    return;
+  }
+
+  switch (event.type) {
+    case StripeWebhooks.CustomerCreated:
+      const customer = event.data.object;
+      // note: customer.email is string|null but when we create the customer with Stripe
+      // we specify the user's email that should be used to uniquely identify the customer
+      stripeService.addCustomerId(customer.email as string, customer.id);
+      break;
+    case StripeWebhooks.SubscriptionCreated:
+      // FUTURE: email user with thank you, installation guide
+      stripeService.updateSubscription(event.data.object);
+      break;
+    case StripeWebhooks.SubscriptionUpdated:
+      stripeService.updateSubscription(event.data.object);
+      break;
+    case StripeWebhooks.SubscriptionDeleted:
+      // FUTURE: email user for feedback as to why they are cancelling
+      stripeService.updateSubscription(event.data.object);
+      break;
+
+    // FUTURE: https://stripe.com/docs/api/events/types#event_types-customer.subscription.trial_will_end
+
+    /** We set the checkout lifespan to 30 minutes. We can use this to follow up with the user  */
+    // case 'checkout.session.expired':
+    default:
+      break;
+  }
+
+  // Return a 200 response to acknowledge receipt of the event
+  response.send();
+});
 
 // parse json request body
 app.use(express.json());
@@ -56,7 +112,7 @@ app.options('*', cors());
  */
 app.use(firebaseAuth);
 
-// TODO: refactor this middleware to allow email + password signup
+// FUTURE_WORK: refactor this middleware to allow email + password signup
 // app.use(passport.initialize());
 // passport.use('jwt', jwtStrategy);
 
@@ -67,6 +123,8 @@ app.use(firebaseAuth);
 
 // v1 api routes
 app.use('/', AppRoutes);
+
+app.use(toJSONMiddleware);
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {

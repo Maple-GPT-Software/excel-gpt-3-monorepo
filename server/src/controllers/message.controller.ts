@@ -2,23 +2,27 @@ import { Response, Request } from 'express';
 
 import httpStatus from 'http-status';
 import catchAsync from '@src/utils/catchAsync';
-import ApiError from '@src/utils/ApiError';
-import getCompletion from '../services/openai.service';
-import { createUserMessage, rateUserMessage } from '../services/message.service';
+
+import * as openAIService from '@src/services/openai.service';
+import * as messageService from '@src/services/message.service';
+import { BASE_PROMP_VERSION } from '@src/constants';
 
 export const createMessage = catchAsync(async (req: Request, res: Response) => {
-  const prompt = req.body.prompt;
+  const { prompt, source } = req.body;
   const userId = req.decodedFirebaseToken.uid;
 
-  const completion = await getCompletion(prompt, userId);
+  const completion: any = await openAIService.getCompletion(prompt, userId);
 
-  const message = await createUserMessage({
+  const message = await messageService.createUserMessage({
     userId,
     prompt,
-    completion: completion.choices[0].text ?? '',
+    model: completion.model,
+    completion: completion.choices[0].message.content ?? '',
     promptTokens: completion.usage?.prompt_tokens ?? 0,
-    completionTokens: completion.usage?.prompt_tokens ?? 0,
-    totalTokens: completion.usage?.prompt_tokens ?? 0,
+    completionTokens: completion.usage?.completion_tokens ?? 0,
+    totalTokens: completion.usage?.total_tokens ?? 0,
+    source,
+    promptVersion: BASE_PROMP_VERSION,
   });
 
   res.send(message);
@@ -29,7 +33,6 @@ export const rateMessage = catchAsync(async (req: Request, res: Response) => {
   const userId = req.decodedFirebaseToken.uid;
   const { id } = req.params;
 
-  await rateUserMessage({ messageId: id, userId, rating });
-
+  await messageService.rateUserMessage({ id, userId, rating });
   res.status(httpStatus.ACCEPTED).send();
 });

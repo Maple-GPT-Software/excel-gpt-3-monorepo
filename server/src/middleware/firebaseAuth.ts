@@ -17,7 +17,7 @@ const firebaseAuth: RequestHandler = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      next(new ApiError(httpStatus.FORBIDDEN, 'Please login'));
+      next(new ApiError(httpStatus.FORBIDDEN, 'You are not logged in'));
       return;
     }
 

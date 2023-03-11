@@ -1,44 +1,45 @@
 .bot-message-code-wrapper {
-    background-color: black;
-    color: white;
-    border-radius: 6px;
+  background-color: black;
+  color: white;
+  border-radius: 6px;
 }
 
 .bot-message-code-header {
-    padding: 6px 6px;
-    min-height: 18px;
-    background-color: #333540;
-    color: white;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    display: flex;
-    justify-content: flex-end;
-    position: relative;
+  padding: 6px 6px;
+  min-height: 18px;
+  background-color: #333540;
+  color: white;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
 }
 
 .bot-message-code-header > button {
-    background-color: transparent;
-    color: gainsboro;
-    border: solid thin gainsboro;
-    border-radius: 2px;
-    font-size: 12px;
-    cursor: pointer;
+  background-color: transparent;
+  color: gainsboro;
+  border: solid thin gainsboro;
+  border-radius: 2px;
+  font-size: 12px;
+  cursor: pointer;
 }
 
-.bot-message-code-header >button:hover {
-    color: white;
+.bot-message-code-header > button:hover {
+  color: white;
 }
 
 .bot-message-code-wrapper .bot-message-code-container {
-    padding: 12px 6px;
+  overflow: scroll;
+  padding: 12px 6px;
 }
 
 .bot-message-code-header .lds-ellipsis {
-    position: absolute;
-    right: 80px;
-    top: 10px
+  position: absolute;
+  right: 80px;
+  top: 10px;
 }
 
 .bot-message-code-header .lds-ellipsis div {
-    background-color: white;
+  background-color: white;
 }

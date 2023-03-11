@@ -2,9 +2,7 @@
 import React, { useRef, useCallback } from 'react';
 import { useImmerReducer } from 'use-immer';
 // TYPES
-import { GPTCompletion } from './types';
-// HOOKS
-import { useAuthContext } from './AuthProvider';
+import { CompletionRating, GPTCompletion } from './types';
 // COMPONENTS
 import UserPrompt from './components/UserPrompt';
 import UserMessage from './components/UserMessage';
@@ -16,92 +14,111 @@ import './Chat.style.css';
 export type UserInput = string;
 
 export interface ChatState {
+  /** the state of the application. Fetching when we're waiting for the AI to answer */
   status: 'FETCHING' | 'SUCCESS' | 'FAIL';
   messages: (GPTCompletion | UserInput)[];
 }
 
+export enum ChatReducerActionTypes {
+  ADD_USER_PROMPT = 'ADD_USER_PROMPT',
+  ADD_GPT_COMPLETION_SUCCESS = 'ADD_GPT_COMPLETION_SUCCESS',
+  ADD_GPT_COMPLETION_FAIL = 'ADD_GPT_COMPLETION_FAIL',
+  RATE_COMPLETION_OPTIMISTIC = 'RATE_COMPLETION_OPTIMISTIC',
+  RATE_COMPLETION_FAILED = 'RATE_COMPLETION_FAILED',
+  CLEAR_MESSAGES = 'CLEAR_MESSAGES',
+}
+
 export type ChatActions =
-  | { type: 'ADD_USER_PROMPT'; payload: UserInput }
-  | { type: 'ADD_GPT_COMPLETION_SUCCESS'; payload: GPTCompletion }
-  | { type: 'ADD_GPT_COMPLETION_FAIL'; payload: GPTCompletion };
+  | { type: ChatReducerActionTypes.ADD_USER_PROMPT; payload: UserInput }
+  | {
+      type: ChatReducerActionTypes.ADD_GPT_COMPLETION_SUCCESS;
+      payload: GPTCompletion;
+    }
+  | {
+      type: ChatReducerActionTypes.ADD_GPT_COMPLETION_FAIL;
+      payload: string;
+    }
+  | {
+      type: ChatReducerActionTypes.RATE_COMPLETION_OPTIMISTIC;
+      /** the id of the completion being rated */
+      payload: { id: string; rating: CompletionRating };
+    }
+  | {
+      type: ChatReducerActionTypes.RATE_COMPLETION_FAILED;
+      /** the id of the completion who's rating needs to be reset */
+      payload: string;
+    }
+  | {
+      type: ChatReducerActionTypes.CLEAR_MESSAGES;
+    };
 
 const chatReducer = (draft: ChatState, action: ChatActions) => {
   switch (action.type) {
-    case 'ADD_USER_PROMPT':
+    case ChatReducerActionTypes.ADD_USER_PROMPT:
       draft.status = 'FETCHING';
       draft.messages.push(action.payload);
       // when the user adds a prompt we add a temporary completion so that a loading state can be shown
-      // we mirror the behaviour of recipient is typing
-      // when the API call completes we'll remove it and push response as the last entry in the array
+      // when the API call completes we'll remove it and push response as the last entry in the messages array
       draft.messages.push({
-        choices: [],
+        message: '',
         id: `${Math.random()}`,
-        model: 'DUMMY_MODEL',
-        object: 'DUMMY_OBJECT',
+        rating: '',
+        status: 'success',
       });
       break;
-    case 'ADD_GPT_COMPLETION_SUCCESS':
+    case ChatReducerActionTypes.ADD_GPT_COMPLETION_SUCCESS:
       draft.status = 'SUCCESS';
       draft.messages.pop();
-      // TODO: replace with action.payload
+      draft.messages.push(action.payload);
+      break;
+    case ChatReducerActionTypes.ADD_GPT_COMPLETION_FAIL:
+      draft.status = 'FAIL';
+      /** remove most recent placeholder message */
+      draft.messages.pop();
       draft.messages.push({
-        choices: [
-          {
-            finish_reason: 'success',
-            index: 0,
-            text: 'CODE_BLOCK\n=AVERAGE(range)',
-          },
-        ],
+        message: action.payload,
         id: `${Math.random()}`,
-        // TODO: SPECIFY MODEL
-        model: 'DEVELOPMENT_MODEL',
-        object: 'DEVELOPMENT_OBJECT',
+        rating: '',
+        status: 'fail',
       });
       break;
-    case 'ADD_GPT_COMPLETION_FAIL':
-      draft.status = 'FAIL';
-      draft.messages.pop();
-      // TODO: replace with action.payload
-      draft.messages.push({
-        choices: [
-          { finish_reason: 'success', index: 0, text: 'some response' },
-        ],
-        id: `${Math.random()}`,
-        model: 'DEVELOPMENT_MODEL',
-        object: 'DEVELOPMENT_OBJECT',
+    case ChatReducerActionTypes.RATE_COMPLETION_OPTIMISTIC:
+      const { id, rating } = action.payload;
+      const updatedCompletions = draft.messages.map((message) => {
+        if (typeof message === 'string') {
+          return message;
+        } else if (message.id === id) {
+          return { ...message, rating };
+        }
+
+        return message;
       });
+
+      draft.messages = updatedCompletions;
+      break;
+    case ChatReducerActionTypes.RATE_COMPLETION_FAILED:
+      const failedMessageId = action.payload;
+      const resetFailedCompletionRating = draft.messages.map((message) => {
+        if (typeof message === 'string') {
+          return message;
+        } else if (message.id === failedMessageId) {
+          return { ...message, rating };
+        }
+
+        return message;
+      });
+
+      draft.messages = resetFailedCompletionRating;
+      break;
+    case ChatReducerActionTypes.CLEAR_MESSAGES:
+      /** clear chat */
+      draft.messages = [];
+    default:
       break;
   }
 };
 
-async function getCompletion(prompt: string): Promise<GPTCompletion> {
-  // TODO: base URL
-  // return await fetch(`${settings.promptBaseUrl}`, {
-  return await fetch(`localhost:3000`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      // TODO: version number and custom header
-      Client: 'google-sheet-version',
-    },
-    body: JSON.stringify({ prompt }),
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => data);
-}
-
-function scrollToBottom(element: HTMLElement) {
-  element.scroll({
-    behavior: 'auto',
-    top: element.scrollHeight,
-  });
-}
-
 function Chat() {
-  const { signOut } = useAuthContext();
-
   const promptWrapperRef = useRef<HTMLDivElement>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
   const [chatState, dispatch] = useImmerReducer<ChatState, ChatActions>(
@@ -112,7 +129,6 @@ function Chat() {
     }
   );
 
-  // TODO: scrolling to bottom after user prompt/completion is added
   const handleScrollToChatBottom = useCallback(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
@@ -127,7 +143,11 @@ function Chat() {
               return <UserMessage key={index} prompt={message as UserInput} />;
             } else {
               return (
-                <BotMessage key={index} completion={message as GPTCompletion} />
+                <BotMessage
+                  dispatch={dispatch}
+                  key={index}
+                  completion={message as GPTCompletion}
+                />
               );
             }
           })}

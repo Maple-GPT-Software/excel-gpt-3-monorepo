@@ -5,20 +5,24 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { User } from './types';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import Login from './Login';
-import SignUp from './SignUp';
-import Chat from './Chat';
 import Refresh from './Refresh';
-import { CHAT_ROUTE, LOGIN_ROUTE, SIGNUP_ROUTE } from './constants';
+import { CHAT_ROUTE } from './constants';
 import AuthenticatedLayout from './components/AuthenticatedLayout';
+import SimplifyApi, { SimplifyUserProfile } from './api/SimplifyApi';
+
+/**
+ * WARNING! When making changes to this component you have to restart the dev server :(
+ * because the app refreshes in a loop
+ * However component that are children of <Routes /> are not affected by the refresh loop
+ */
 
 const AuthContext = createContext<
   | {
-      user: User | undefined;
+      userProfile: SimplifyUserProfile | undefined;
+      accessToken: string;
       loginWithGoogle: () => void;
-      signUpWithGoogle: () => void;
       signOut: () => void;
     }
   | undefined
@@ -44,61 +48,99 @@ interface AuthProviderProps {
  * If the user was previously logged in we refresh their accessToken using firebase's SDK
  */
 function AuthProvider({ children }: AuthProviderProps) {
-  // const [user, setUser] = useState<User | undefined>(undefined);
-  const [user, setUser] = useState<any>(undefined);
-  //   const [location, setLocation] = useLocation();
+  const [userProfile, setUserProfile] = useState<
+    SimplifyUserProfile | undefined
+  >(undefined);
+  const [accessToken, setAccessToken] = useState<string>('');
+  const [waitingForFirebase, setWaitingForFirebase] = useState(false);
+  const [authErrorMessage, setAuthErrorMessage] = useState('');
   const navgiate = useNavigate();
 
-  async function loginWithGoogle() {
-    navgiate('/');
-    const user = await window.googleAuthPopUp();
-
-    // TODO: get actual user profile from API and set it as user state
-    setUser(user);
+  function loginWithGoogle() {
+    setWaitingForFirebase(true);
+    window.googleAuthPopUp();
   }
 
-  async function signUpWithGoogle() {
-    navgiate('/');
-    const user = await window.googleAuthPopUp();
-
-    // TODO:
-    setUser(user);
-  }
-
-  async function signOut() {
-    const auth = await window.getAuth();
+  function signOut() {
+    const auth = window.getAuth();
     auth.signOut();
-    setUser(undefined);
-    navgiate(LOGIN_ROUTE);
   }
 
   useEffect(() => {
     // https://medium.com/geekculture/firebase-auth-with-react-and-typescript-abeebcd7940a
     // TODO: unsubscribe from onAuthStateChanged
-    window.getAuth().onAuthStateChanged((user) => {
+    window.getAuth().onAuthStateChanged(async (user) => {
       if (user) {
-        // TODO: verify user and refresh token
-        // we can also schedule a refrehs of the user's id token
-        // using getIdToken()
-        console.log('logged in user is: ', user);
-        setUser(user);
-        navgiate(CHAT_ROUTE);
+        const accessToken = await user.getIdToken();
+
+        try {
+          const profile = await SimplifyApi(accessToken).getUserProfile();
+          setWaitingForFirebase(false);
+          setUserProfile(profile);
+          navgiate(CHAT_ROUTE);
+        } catch (error: any) {
+          const { message } = error;
+          console.log(message);
+        }
       } else {
-        navgiate(LOGIN_ROUTE);
+        setWaitingForFirebase(false);
+        setUserProfile(undefined);
+        setAccessToken('');
+        navgiate('/');
       }
     });
   }, []);
 
-  console.log('inside AuthProvider');
+  useEffect(() => {
+    window.getAuth().onIdTokenChanged((user) => {
+      // the case where the user has logged out is handled by onAuthStateChanged listener
+      // we get this event when the user first logs in and when firebase periodically refreshes the user's token
+      if (user) {
+        user
+          .getIdToken()
+          .then((token) => {
+            setAccessToken(token);
+          })
+          .catch((e) => {
+            // firebase API call fails
+            signOut();
+          })
+          .finally(() => {
+            setWaitingForFirebase(false);
+          });
+      }
+    });
+  });
+
+  /** Refresh access token every 50 minutes */
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const user = window.getAuth().currentUser;
+
+      if (user) {
+        const token = await user.getIdToken();
+        setAccessToken(token);
+      }
+    }, 50 * 60 * 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <AuthContext.Provider
-      value={{ user, signUpWithGoogle, loginWithGoogle, signOut }}
+      value={{
+        userProfile,
+        accessToken,
+        loginWithGoogle,
+        signOut,
+      }}
     >
+      {/* when modal popups we have to wait for user to confirm their login w firebase */}
+      {waitingForFirebase && <Refresh />}
       <Routes>
-        <Route path="/" element={<Refresh />} />
-        <Route path={LOGIN_ROUTE} element={<Login />} />
-        <Route path={SIGNUP_ROUTE} element={<SignUp />} />
+        <Route index element={<Login />} />
         <Route path={CHAT_ROUTE} element={<AuthenticatedLayout />} />
       </Routes>
     </AuthContext.Provider>
