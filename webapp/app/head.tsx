@@ -1,3 +1,4 @@
+/** App wide head for app wide metadata  */
 export default function Head() {
   return (
     <>

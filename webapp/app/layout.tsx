@@ -1,12 +1,10 @@
 'use client';
 
-import Footer from '@/components/Footer';
-import Header from '@/components/Header';
-// import ScrollToTop from "@/components/ScrollToTop";
-import 'node_modules/react-modal-video/css/modal-video.css';
 import { ReactNode } from 'react';
+
+import 'node_modules/react-modal-video/css/modal-video.css';
 import '../styles/index.css';
-import Head from '@/app/head';
+import Head from '@/app/Head';
 
 type RootLayoutProps = {
   children: ReactNode;
@@ -17,16 +15,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html suppressHydrationWarning lang="en">
       <Head />
 
-      <body className="dark:bg-black">
-        <Providers>
-          <Header />
-          {children}
-          <Footer />
-          {/* <ScrollToTop /> */}
-        </Providers>
-      </body>
+      <body className="dark:bg-black">{children}</body>
     </html>
   );
 }
-
-import { Providers } from '../providers/providers';

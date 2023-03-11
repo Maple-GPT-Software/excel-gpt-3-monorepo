@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@firebase/auth-types': ^0.12.0
   '@mdi/svg': ^7.1.96
   '@next/bundle-analyzer': ^13.2.1
   '@next/font': 13.1.6
@@ -52,6 +53,7 @@ dependencies:
   typescript: 4.9.5
 
 devDependencies:
+  '@firebase/auth-types': 0.12.0
   '@next/bundle-analyzer': 13.2.1
   '@types/react-modal-video': 1.2.0
   autoprefixer: 10.4.13_postcss@8.4.21
@@ -228,6 +230,13 @@ packages:
   /@firebase/auth-interop-types/0.2.1:
     resolution: {integrity: sha512-VOaGzKp65MY6P5FI84TfYKBXEPi6LmOCSMMzys6o2BN2LOsqy7pCuZCup7NYnfbk5OkkQKzvIfHOzTm0UDpkyg==}
     dev: false
+
+  /@firebase/auth-types/0.12.0:
+    resolution: {integrity: sha512-pPwaZt+SPOshK8xNoiQlK5XIrS97kFYc3Rc7xmy373QsOJ9MmqXxLaYssP5Kcds4wd2qK//amx/c+A8O2fVeZA==}
+    peerDependencies:
+      '@firebase/app-types': 0.x
+      '@firebase/util': 1.x
+    dev: true
 
   /@firebase/auth-types/0.12.0_rls6ojzmqtv4do6kouxcb5gfn4:
     resolution: {integrity: sha512-pPwaZt+SPOshK8xNoiQlK5XIrS97kFYc3Rc7xmy373QsOJ9MmqXxLaYssP5Kcds4wd2qK//amx/c+A8O2fVeZA==}

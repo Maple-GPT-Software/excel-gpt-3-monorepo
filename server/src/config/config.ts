@@ -11,7 +11,7 @@ const envVarsSchema = Joi.object()
     NODE_ENV: Joi.string().valid(Environment.PROD, Environment.DEV, Environment.TEST).required(),
     PORT: Joi.number().default(3000),
     MONGODB_URL_PROD: Joi.string().required().description('Mongo PROD url required'),
-    MONGODB_URL_DEV: Joi.string().required().description('Mongo Dev url required'),
+    MONGODB_URL_DEV: Joi.string().optional().description('Mongo Dev url required'),
     OPEN_AI: Joi.string().required(),
     FIREBASE_TYPE: Joi.string().required(),
     FIREBASE_PROJECT_ID: Joi.string().required(),
@@ -23,8 +23,8 @@ const envVarsSchema = Joi.object()
     FIREBASE_TOKEN_URI: Joi.string().required(),
     FIREBASE_AUTH_PROVIDER_X509_CERT_URL: Joi.string().required(),
     FIREBASE_CLIENT_X509_CERT_URL: Joi.string().required(),
-    STRIPE_TEST_SECRET_KEY: Joi.string().required(),
-    STRIPE_TEST_ENDPOINT_SECRET: Joi.string().required(),
+    STRIPE_TEST_SECRET_KEY: Joi.string().optional(),
+    STRIPE_TEST_ENDPOINT_SECRET: Joi.string().optional(),
     STRIPE_PROD_SECRET_KEY: Joi.string().required(),
     STRIPE_PROD_ENDPOINT_SECRET: Joi.string().required(),
   })
@@ -47,7 +47,6 @@ export default {
     // https://www.mongodb.com/community/forums/t/option-usecreateindex-is-not-supported/123048/4
   },
   openAi: envVars.OPEN_AI,
-  // https://answers.netlify.com/t/how-to-add-a-json-file-to-my-site-without-adding-it-to-github/82468/4
   firebase: {
     type: envVars.FIREBASE_TYPE,
     project_id: envVars.FIREBASE_PROJECT_ID,
