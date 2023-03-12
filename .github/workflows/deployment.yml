@@ -11,10 +11,10 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout repository
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
       - run: cd server
       - name: Deploy server to heroku
-      - uses: akhileshns/heroku-deploy@v3.12.13
+        uses: akhileshns/heroku-deploy@v3.12.13
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
