@@ -8,6 +8,7 @@ on:
     
 jobs:
   unit-tests:
+    name: Unit Tests
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     strategy:
