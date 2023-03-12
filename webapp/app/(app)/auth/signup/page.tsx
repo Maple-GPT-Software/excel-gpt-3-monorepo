@@ -5,16 +5,19 @@ import { signInWithGoogle } from '@/service/firebase';
 import Link from 'next/link';
 
 import SimplifyApi from '@/api/SimplifyApi';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { AxiosError } from 'axios';
 import { FirebaseError } from 'firebase/app';
 import { AuthErrorCodes } from 'firebase/auth';
 import Image from 'next/image';
 import { REGISTRATION_ROUTE } from '@/constants';
+import { useCreateQueryString } from '@/utils/createQueryString';
 
 const SignupPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
+  const hasSignUpSourcePremium = useSearchParams().has('signUpSourcePremium');
+  const createQueryString = useCreateQueryString();
 
   /**
    * this function either re-directs to registration if the user signups for the first time, re-directs to the dashboard if they've already signed up or displays an error message for firebase popup errors or any unhandled errors
@@ -39,13 +42,22 @@ const SignupPage = () => {
     }
   }
 
-  const signUpPopup = async () => {
+  const signUpPopup = async (signUpSource: boolean) => {
     try {
       const { user } = await signInWithGoogle();
       const accessToken = await user.getIdToken();
       const profile = await SimplifyApi(accessToken).login();
 
-      router.push('/');
+      if (profile) {
+        router.push('/signin');
+        return;
+      }
+
+      router.push(
+        '/registration' +
+          '?' +
+          createQueryString('signUpSource', `${hasSignUpSourcePremium}` + createQueryString('user', JSON.stringify(user)))
+      );
     } catch (e: any) {
       signUpErrorHandler(e);
     }
@@ -61,7 +73,7 @@ const SignupPage = () => {
                 <h3 className="mb-14 text-center text-2xl  text-black dark:text-white sm:text-3xl">Create your account</h3>
                 {errorMessage && <p className="mb-4 text-center text-red-500">{errorMessage}</p>}
                 <button
-                  onClick={signUpPopup}
+                  onClick={() => signUpPopup(hasSignUpSourcePremium)}
                   className="text-body-color hover:text-primary dark:text-body-color mb-6 flex w-full items-center justify-center rounded-md bg-white p-3 text-base font-medium shadow-one dark:bg-[#242B51] dark:shadow-signUp dark:hover:text-white"
                 >
                   <span className="mr-3">
