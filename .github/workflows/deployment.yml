@@ -1,0 +1,22 @@
+name: Deploy server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-server:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+      - uses: actions/checkout@v2
+      - name: Deploy server to heroku
+      - run: cd server
+      - uses: akhileshns/heroku-deploy@v3.12.13
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          appdir: "server"

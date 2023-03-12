@@ -1,0 +1,24 @@
+name: Test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  unit-tests:
+    name: Jest-Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          cd server
+          pnpm install
+      - name: Run unit tests
+        run: |
+          cd server
+          pnpm test
