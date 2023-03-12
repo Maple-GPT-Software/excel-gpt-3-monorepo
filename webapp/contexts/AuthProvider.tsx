@@ -46,6 +46,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
+      /** if the user was previously logged user !== null */
       if (user) {
         setFirebaseUser(user as User);
       } else {
