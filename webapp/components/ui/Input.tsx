@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { e } from 'easy-tailwind';
-import { UseFormRegister } from 'react-hook-form';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
