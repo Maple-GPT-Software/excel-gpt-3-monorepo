@@ -1,4 +1,4 @@
-name: Deploy server
+name: Deploy
 
 on:
   push:
@@ -9,6 +9,7 @@ on:
 
 jobs:
   deploy-server:
+    name: Heroku server
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
