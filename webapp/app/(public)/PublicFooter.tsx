@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-const Footer = () => {
+const PublicFooter = () => {
   return (
     <>
       <footer className="wow fadeInUp bg-primary relative z-10 bg-opacity-5 pt-16 md:pt-20 lg:pt-24" data-wow-delay=".1s">
@@ -372,4 +372,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default PublicFooter;

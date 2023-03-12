@@ -1,20 +1,50 @@
+'use client';
+import React, { useState } from 'react';
+import { signInWithGoogle } from '@/service/firebase';
+
 import Link from 'next/link';
+import { useQuery } from 'react-query';
+import settings from '@/settings';
+import SimplifyApi from '@/api/SimplifyApi';
+import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
 
 const SignupPage = () => {
+  const [signupErrorMessage, setSignUpErrorMEssage] = useState();
+  const router = useRouter();
+
+  const signUpPopup = async () => {
+    try {
+      const { user } = await signInWithGoogle();
+      const accessToken = await user.getIdToken();
+      const profile = await SimplifyApi(accessToken).login();
+
+      router.push('/');
+    } catch (e: any) {
+      /** user does not exist, re-direct to */
+      if (e.response.status === 404) {
+        router.push('/registration');
+      }
+      // move to sign up (registration)
+      console.error(e); // toast
+    }
+  };
+
   return (
     <>
       <section id="signup" className="relative z-10 overflow-hidden pt-36 pb-16 md:pb-20 lg:pt-[180px] lg:pb-28">
         <div className="container">
           <div className="-mx-4 flex flex-wrap">
             <div className="w-full px-4">
-              <div className="mx-auto max-w-[500px] rounded-md bg-primary bg-opacity-5 py-10 px-6 dark:bg-dark sm:p-[60px]">
-                <h3 className="mb-14 text-center text-2xl font-bold text-black dark:text-white sm:text-3xl">
-                  Create your account
-                </h3>
-                <button className="mb-6 flex w-full items-center justify-center rounded-md bg-white p-3 text-base font-medium text-body-color shadow-one hover:text-primary dark:bg-[#242B51] dark:text-body-color dark:shadow-signUp dark:hover:text-white">
+              <div className="mx-auto max-w-[500px] rounded-md  bg-green-600 bg-opacity-5 py-10 px-6 font-thin dark:bg-dark sm:p-[60px]">
+                <h3 className="mb-14 text-center text-2xl  text-black dark:text-white sm:text-3xl">Create your account</h3>
+                <button
+                  onClick={signUpPopup}
+                  className="text-body-color hover:text-primary dark:text-body-color mb-6 flex w-full items-center justify-center rounded-md bg-white p-3 text-base font-medium shadow-one dark:bg-[#242B51] dark:shadow-signUp dark:hover:text-white"
+                >
                   <span className="mr-3">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <g clip-path="url(#clip0_95:967)">
+                      <g clipPath="url(#clip0_95:967)">
                         <path
                           d="M20.0001 10.2216C20.0122 9.53416 19.9397 8.84776 19.7844 8.17725H10.2042V11.8883H15.8277C15.7211 12.539 15.4814 13.1618 15.1229 13.7194C14.7644 14.2769 14.2946 14.7577 13.7416 15.1327L13.722 15.257L16.7512 17.5567L16.961 17.5772C18.8883 15.8328 19.9997 13.266 19.9997 10.2216"
                           fill="#4285F4"
@@ -141,11 +171,11 @@ const SignupPage = () => {
                 </form> */}
                 <label
                   htmlFor="checkboxLabel"
-                  className="flex cursor-pointer select-none text-sm font-medium text-body-color"
+                  className="text-body-color flex cursor-pointer select-none text-sm font-medium"
                 >
                   <div className="relative">
                     <input type="checkbox" id="checkboxLabel" className="sr-only" />
-                    <div className="box mr-4 mt-1 flex h-5 w-5 items-center justify-center rounded border border-body-color border-opacity-20 dark:border-white dark:border-opacity-10">
+                    <div className="box border-body-color mr-4 mt-1 flex h-5 w-5 items-center justify-center rounded border border-opacity-20 dark:border-white dark:border-opacity-10">
                       <span className="opacity-0">
                         <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
@@ -160,16 +190,16 @@ const SignupPage = () => {
                   </div>
                   <span>
                     By creating account means you agree to the
-                    <a href="#0" className="text-primary hover:underline">
+                    <a href="#0" className="text-green-600 hover:underline">
                       Terms and Conditions
                     </a>
                     , and our
-                    <a href="#0" className="text-primary hover:underline">
+                    <a href="#0" className="text-green-600 hover:underline">
                       Privacy Policy
                     </a>
                   </span>
                 </label>
-                <p className="pt-11 text-center text-base font-medium text-body-color">
+                <p className="text-body-color pt-11 text-center text-base font-medium">
                   Already using Startup?
                   <Link href="/signin" className="text-primary hover:underline">
                     Sign in
