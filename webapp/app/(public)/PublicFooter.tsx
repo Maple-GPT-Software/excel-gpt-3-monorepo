@@ -4,7 +4,7 @@ import Link from 'next/link';
 const PublicFooter = () => {
   return (
     <>
-      <footer className="wow fadeInUp relative z-10 bg-primary bg-opacity-5 pt-16 md:pt-20 lg:pt-24" data-wow-delay=".1s">
+      <footer className="wow fadeInUp bg-primary relative z-10 bg-opacity-5 pt-16 md:pt-20 lg:pt-24" data-wow-delay=".1s">
         <div className="container">
           {/* <div className="-mx-4 flex flex-wrap">
             <div className="w-full px-4 md:w-1/2 lg:w-4/12 xl:w-5/12">
@@ -92,7 +92,7 @@ const PublicFooter = () => {
 
             <div className="w-full px-4 sm:w-1/2 md:w-1/2 lg:w-2/12 xl:w-2/12">
               <div className="mb-12 lg:mb-16">
-                <h2 className="mb-10 text-xl font-bold text-black dark:text-white">
+                <h2 className="mb-10 text-xl  text-black dark:text-white">
                   Useful Links
                 </h2>
                 <ul>
@@ -129,7 +129,7 @@ const PublicFooter = () => {
 
             <div className="w-full px-4 sm:w-1/2 md:w-1/2 lg:w-2/12 xl:w-2/12">
               <div className="mb-12 lg:mb-16">
-                <h2 className="mb-10 text-xl font-bold text-black dark:text-white">
+                <h2 className="mb-10 text-xl  text-black dark:text-white">
                   Terms
                 </h2>
                 <ul>
@@ -166,7 +166,7 @@ const PublicFooter = () => {
 
             <div className="w-full px-4 md:w-1/2 lg:w-4/12 xl:w-3/12">
               <div className="mb-12 lg:mb-16">
-                <h2 className="mb-10 text-xl font-bold text-black dark:text-white">
+                <h2 className="mb-10 text-xl  text-black dark:text-white">
                   Support & Help
                 </h2>
                 <ul>
@@ -204,7 +204,7 @@ const PublicFooter = () => {
         </div>
         <div className="bg-primary/10 py-8">
           <div className="container">
-            <p className="text-center text-base text-body-color dark:text-white">
+            <p className="text-body-color text-center text-base dark:text-white">
               Produced by ExcelSimplify <span>&#169;</span> 2023
             </p>
           </div>

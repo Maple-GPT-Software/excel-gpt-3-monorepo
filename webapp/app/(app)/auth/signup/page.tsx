@@ -36,13 +36,11 @@ const SignupPage = () => {
         <div className="container">
           <div className="-mx-4 flex flex-wrap">
             <div className="w-full px-4">
-              <div className="mx-auto max-w-[500px] rounded-md bg-primary bg-opacity-5 py-10 px-6 dark:bg-dark sm:p-[60px]">
-                <h3 className="mb-14 text-center text-2xl font-bold text-black dark:text-white sm:text-3xl">
-                  Create your account
-                </h3>
+              <div className="mx-auto max-w-[500px] rounded-md  bg-green-600 bg-opacity-5 py-10 px-6 font-thin dark:bg-dark sm:p-[60px]">
+                <h3 className="mb-14 text-center text-2xl  text-black dark:text-white sm:text-3xl">Create your account</h3>
                 <button
                   onClick={signUpPopup}
-                  className="mb-6 flex w-full items-center justify-center rounded-md bg-white p-3 text-base font-medium text-body-color shadow-one hover:text-primary dark:bg-[#242B51] dark:text-body-color dark:shadow-signUp dark:hover:text-white"
+                  className="text-body-color hover:text-primary dark:text-body-color mb-6 flex w-full items-center justify-center rounded-md bg-white p-3 text-base font-medium shadow-one dark:bg-[#242B51] dark:shadow-signUp dark:hover:text-white"
                 >
                   <span className="mr-3">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -173,11 +171,11 @@ const SignupPage = () => {
                 </form> */}
                 <label
                   htmlFor="checkboxLabel"
-                  className="flex cursor-pointer select-none text-sm font-medium text-body-color"
+                  className="text-body-color flex cursor-pointer select-none text-sm font-medium"
                 >
                   <div className="relative">
                     <input type="checkbox" id="checkboxLabel" className="sr-only" />
-                    <div className="box mr-4 mt-1 flex h-5 w-5 items-center justify-center rounded border border-body-color border-opacity-20 dark:border-white dark:border-opacity-10">
+                    <div className="box border-body-color mr-4 mt-1 flex h-5 w-5 items-center justify-center rounded border border-opacity-20 dark:border-white dark:border-opacity-10">
                       <span className="opacity-0">
                         <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
@@ -192,16 +190,16 @@ const SignupPage = () => {
                   </div>
                   <span>
                     By creating account means you agree to the
-                    <a href="#0" className="text-primary hover:underline">
+                    <a href="#0" className="text-green-600 hover:underline">
                       Terms and Conditions
                     </a>
                     , and our
-                    <a href="#0" className="text-primary hover:underline">
+                    <a href="#0" className="text-green-600 hover:underline">
                       Privacy Policy
                     </a>
                   </span>
                 </label>
-                <p className="pt-11 text-center text-base font-medium text-body-color">
+                <p className="text-body-color pt-11 text-center text-base font-medium">
                   Already using Startup?
                   <Link href="/signin" className="text-primary hover:underline">
                     Sign in

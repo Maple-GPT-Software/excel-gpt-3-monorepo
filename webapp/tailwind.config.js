@@ -1,3 +1,5 @@
+const colors = require('tailwindcss/colors');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./app/**/*.{js,ts,jsx,tsx}', './pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
@@ -11,14 +13,13 @@ module.exports = {
       current: 'currentColor',
       transparent: 'transparent',
       white: '#FFFFFF',
-      black: '#090E34',
       dark: '#1D2144',
-      // TODO: primaryLight, primaryDark
-      // is there any way to use the green-600 here or do we have to use the HEX?
-      primary: '#16a34a',
-      yellow: '#FBB040',
-      'body-color': '#959CB1',
-      darkGreen: '#16a34a',
+      yellow: {
+        500: colors.yellow[500],
+      },
+      slate: colors.slate,
+      green: colors.green,
+      black: colors.black,
     },
     screens: {
       xs: '450px',

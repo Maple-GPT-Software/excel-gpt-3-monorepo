@@ -42,7 +42,7 @@ export default function PublicNav() {
     <>
       <header
         className={clsx('header top-0 left-0 z-40 flex w-full items-center bg-transparent ', {
-          '!fixed !z-[9999] !bg-white !bg-opacity-80 shadow-sticky backdrop-blur-sm !transition dark:!bg-primary dark:!bg-opacity-20':
+          'dark:!bg-primary !fixed !z-[9999] !bg-white !bg-opacity-80 shadow-sticky backdrop-blur-sm !transition dark:!bg-opacity-20':
             sticky,
           absolute: !sticky,
         })}
@@ -66,14 +66,14 @@ export default function PublicNav() {
                   onClick={navbarToggleHandler}
                   id="navbarToggler"
                   aria-label="Mobile Menu"
-                  className="absolute right-4 top-1/2 block translate-y-[-50%] rounded-lg px-3 py-[6px] ring-primary focus:ring-2 lg:hidden"
+                  className="ring-primary absolute right-4 top-1/2 block translate-y-[-50%] rounded-lg px-3 py-[6px] focus:ring-2 lg:hidden"
                 >
                   <HamburgerMenuIcon className="h-8 w-8" />
                 </button>
                 <nav
                   id="navbarCollapse"
                   className={clsx(
-                    'navbar y-4 border-gray-200 absolute right-4 right-0 z-30 w-[250px] rounded border-[.5px] border-solid border-body-color/50 bg-white px-6 duration-300 dark:border-body-color/20 dark:bg-dark lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100',
+                    'navbar y-4 border-gray-200 border-body-color/50 dark:border-body-color/20 absolute right-4 right-0 z-30 w-[250px] rounded border-[.5px] border-solid bg-white px-6 duration-300 dark:bg-dark lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100',
                     {
                       'visibility top-full opacity-100': isNavbarOpen,
                       'invisible top-[120%] opacity-0': !isNavbarOpen,
@@ -98,15 +98,12 @@ export default function PublicNav() {
                 </nav>
               </div>
               <div className="flex items-center justify-end pr-16 lg:pr-0">
-                <Link
-                  href={SIGN_IN_ROUTE}
-                  className="hidden py-3 px-7 text-base font-bold text-dark hover:opacity-70 dark:text-white md:block"
-                >
+                <Link href={SIGN_IN_ROUTE} className="py-3 px-7 text-base  text-dark hover:opacity-70 dark:text-white">
                   Sign In
                 </Link>
                 <Link
                   href={SIGN_UP_ROUTE}
-                  className="ease-in-up hidden rounded-md bg-primary py-3 px-8 text-base font-bold text-white transition duration-300 hover:bg-opacity-90 hover:shadow-signUp md:block md:px-9 lg:px-6 xl:px-9"
+                  className="ease-in-up rounded-md bg-green-600 py-3 px-8 text-base  text-white transition duration-300 hover:bg-opacity-90 hover:shadow-signUp md:px-9 lg:px-6 xl:px-9"
                 >
                   Sign Up
                 </Link>
