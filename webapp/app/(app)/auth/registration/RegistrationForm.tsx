@@ -5,62 +5,83 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useAuthContext } from '@/contexts/AuthProvider';
 import { Button } from '@/components/ui/Button';
 import MDIIcon from '@/components/ui/Icon';
+import { useForm } from 'react-hook-form';
 
 import { mdiChevronRight } from '@mdi/js';
 import { mdiCheck } from '@mdi/js';
 
+interface RegistrationForm {
+  fullName: string;
+  email: string;
+  hasCheckedTerms: boolean;
+}
+
 function RegistrationForm() {
   const { firebaseUser } = useAuthContext();
   const [isLoading, setShowLoading] = useState();
-  const nameInputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    if (nameInputRef.current) {
-      nameInputRef.current.value = firebaseUser.displayName ?? '';
-      nameInputRef.current.focus();
-    }
-  }, []);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<RegistrationForm>({
+    defaultValues: {
+      fullName: firebaseUser.displayName ?? '',
+      email: firebaseUser.email ?? '',
+      // hasCheckedTerms: false,
+    },
+  });
+
+  function onSubmit(data: any) {
+    console.log(data);
+  }
 
   return (
-    <div className="flex h-full flex-col justify-center px-8">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex h-full flex-col justify-center px-8">
       <h3 className="mb-8 text-2xl font-light">Set up your account</h3>
       <div>
-        <label htmlFor="name">
+        <label htmlFor="fullName">
           <p>Full Name</p>
-          <Input ref={nameInputRef} id="name" className="mb-4 mt-2" />
+          <Input {...register('fullName', { required: true, minLength: 3 })} className="mb-4 mt-2" />
+          {errors?.fullName?.message === 'minLength' && <p role="alert">Minimum length is 3 characters</p>}
         </label>
         <label htmlFor="email">
           <p>Email</p>
-          <Input className="mb-4 mt-2" id="email" disabled value={firebaseUser.email ?? ''} />
+          <Input
+            {...(register('email'), { required: true })}
+            className="mb-4 mt-2"
+            disabled
+            value={firebaseUser.email ?? ''}
+          />
+          {errors.email?.type === 'required' && <p>Email is required</p>}
         </label>
       </div>
-      <label htmlFor="checkboxLabel" className="text-body-color flex cursor-pointer select-none text-sm font-medium">
+      <label
+        htmlFor="checkboxLabel"
+        className="text-body-color flex cursor-pointer select-none flex-col text-sm font-medium"
+      >
         {/* TODO:  https://ui.shadcn.com/docs/primitives/checkbox */}
         {/* we need the checkbox to show */}
-        <div className="relative">
-          <input type="checkbox" id="checkboxLabel" className="sr-only" />
-          <div className="box border-body-color flex h-5 w-5 items-center justify-center rounded border border-opacity-20 dark:border-white dark:border-opacity-10">
-            <span className="rounded border border-solid border-slate-500 opacity-0">
-              <MDIIcon className="fill-green" path={mdiCheck} size={0.5} />
-            </span>
-          </div>
+        <div>
+          <input {...register('hasCheckedTerms', { required: true })} type="checkbox" id="checkboxLabel" />
+          <span>
+            I agree to
+            <a href="#0" className="text-green-600 hover:underline">
+              Terms of Service
+            </a>{' '}
+            and{' '}
+            <a href="#0" className="text-green-600 hover:underline">
+              Privacy Policy
+            </a>
+          </span>
         </div>
-        <span>
-          I agree to
-          <a href="#0" className="text-green-600 hover:underline">
-            Terms of Service
-          </a>{' '}
-          and{' '}
-          <a href="#0" className="text-green-600 hover:underline">
-            Privacy Policy
-          </a>
-        </span>
+        {errors?.hasCheckedTerms?.type === 'required' && <p role="alert">Please accept terms before you continue.</p>}
       </label>
-      <Button className="ml-auto mt-8 w-fit" variant={'default'}>
+      <Button className="ml-auto mt-8 w-fit" variant={'default'} disabled={!isValid} type="submit">
         Confirm
         <MDIIcon path={mdiChevronRight} />
       </Button>
-    </div>
+    </form>
   );
 }
 
