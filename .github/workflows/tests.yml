@@ -29,7 +29,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd server
-        pnpm install
+        pnpm install --no-frozen-lockfile
     - name: Run unit tests
       run: |
         cd server
