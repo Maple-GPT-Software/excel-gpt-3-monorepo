@@ -41,6 +41,7 @@ export default function PublicNav() {
   return (
     <>
       <header
+        // TODO: get rid of classnames
         className={clsx('header top-0 left-0 z-40 flex w-full items-center bg-transparent ', {
           'dark:!bg-primary !fixed !z-[9999] !bg-white !bg-opacity-80 shadow-sticky backdrop-blur-sm !transition dark:!bg-opacity-20':
             sticky,

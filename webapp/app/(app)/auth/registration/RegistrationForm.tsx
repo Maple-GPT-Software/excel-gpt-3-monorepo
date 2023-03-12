@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 
 import { mdiChevronRight } from '@mdi/js';
 import { mdiCheck } from '@mdi/js';
+import SimplifyApi from '@/api/SimplifyApi';
 
 interface RegistrationForm {
   fullName: string;
@@ -23,7 +24,7 @@ function RegistrationForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
   } = useForm<RegistrationForm>({
     defaultValues: {
       fullName: firebaseUser.displayName ?? '',
@@ -32,8 +33,16 @@ function RegistrationForm() {
     },
   });
 
-  function onSubmit(data: any) {
-    console.log(data);
+  async function onSubmit(data: RegistrationForm) {
+    const { fullName, hasCheckedTerms } = data;
+    try {
+      const user = await SimplifyApi().createUser(fullName, hasCheckedTerms);
+      await SimplifyApi().createFreeSubscription();
+    } catch (error) {}
+  }
+
+  if (isSubmitting) {
+    return <p>Loading...</p>;
   }
 
   return (
