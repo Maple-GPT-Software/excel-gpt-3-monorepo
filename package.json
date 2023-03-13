@@ -2,5 +2,8 @@
   "name": "excel-simplify",
   "version": "0.1.0",
   "private": true,
-  "license": "ISC"
+  "license": "ISC",
+  "scripts": {
+    "start": "cd server"
+  }
 }
