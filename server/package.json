@@ -12,6 +12,7 @@
     "type-check": "tsc --noEmit",
     "build": "rm -rf dist && swc src -d dist",
     "dev": "concurrently \"npm run type-check\" \"cross-env NODE_ENV=development nodemon --exec node -r @swc-node/register ./src/index.ts --require tsconfig-paths -q dist/index.js\"",
+    "heroku-preinstall": "npm install pnpm",
     "stripe:dev": "stripe listen --forward-to localhost:3000/webhook",
     "lint": "eslint .",
     "prettier": "prettier --check **/*.ts",
