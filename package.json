@@ -5,6 +5,6 @@
   "license": "ISC",
   "scripts": {
     "start": "npm install pnpm && npm run dev",
-    "dev": "cd server && pnpm run prepare && pnpm run preinstall && pnpm run build && pnpm run dev"
+    "dev": "cd server && pnpm run prepare && pnpm run build && pnpm run start"
   }
 }
