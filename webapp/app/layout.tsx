@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Montserrat } from '@next/font/google';
 
 import 'node_modules/react-modal-video/css/modal-video.css';
@@ -20,13 +20,18 @@ export const metadata = {
   },
 };
 
-type RootLayoutProps = {
+interface RootLayoutProps {
   children: ReactNode;
-};
+}
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html suppressHydrationWarning lang="en" className={montserrat.className} style={{ fontWeight: 200 }}>
+    <html
+      suppressHydrationWarning
+      lang="en"
+      className={montserrat.className}
+      style={{ fontWeight: 200 }}
+    >
       <body className="dark:bg-black">{children}</body>
     </html>
   );

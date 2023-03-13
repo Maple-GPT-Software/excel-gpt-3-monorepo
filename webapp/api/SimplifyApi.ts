@@ -1,6 +1,6 @@
 import { AuthenticatedRequestor } from './AuthenticatedRequestor';
 import settings from '@/settings';
-import { SimplifyUser } from '@/types/simplifyApi';
+import type { SimplifyUser } from '@/types/simplifyApi';
 import AuthService from '@/models/AuthService';
 
 const SERVER_AUTH_BASE = '/auth';
@@ -13,17 +13,19 @@ const SERVER_PAYMENT_BASE = '/payment';
 export default function SimplifyApi(accessToken?: string): SimplifyApiClient {
   let token: string | undefined;
 
-  if (accessToken) {
+  if (accessToken !== undefined) {
     token = accessToken;
   } else {
     token = AuthService.accessToken ?? '';
   }
 
-  if (!token) {
+  if (token !== undefined) {
     throw new Error('You have to be logged in to make SimplifyApi API calls');
   }
 
-  return new SimplifyApiClient(new AuthenticatedRequestor(settings.simplifyBaseUrl, token));
+  return new SimplifyApiClient(
+    new AuthenticatedRequestor(settings.simplifyBaseUrl, token)
+  );
 }
 
 class SimplifyApiClient {
@@ -43,6 +45,7 @@ class SimplifyApiClient {
 
       return res.data;
     } catch (error) {
+      console.error('Error creating user');
       throw error;
     }
   }
@@ -53,7 +56,9 @@ class SimplifyApiClient {
 
   async login() {
     try {
-      const response = await this.requestor.post({ url: `${SERVER_AUTH_BASE}/login` });
+      const response = await this.requestor.post({
+        url: `${SERVER_AUTH_BASE}/login`,
+      });
 
       // if (response.status.);
       return response;

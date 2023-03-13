@@ -1,7 +1,7 @@
-// @ts-nocheck
 const { NODE_ENV } = process.env;
 
 export const isProd = NODE_ENV === 'production';
+// @ts-expect-error integration is a valid type
 export const isIntegration = NODE_ENV === 'integration';
 
 // development defaults

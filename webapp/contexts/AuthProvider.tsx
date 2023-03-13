@@ -1,9 +1,9 @@
 import { auth } from '@/service/firebase';
-import React, { ReactNode, useState, useEffect, createContext, useContext } from 'react';
-import { User } from '@firebase/auth-types';
+import type { ReactNode } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
+import type { User } from '@firebase/auth-types';
 import { useRouter } from 'next/navigation';
-import { SIGN_IN_ROUTE } from '@/constants';
-import { SIGN_UP_ROUTE } from '../constants';
+import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
 import AuthService from '@/models/AuthService';
 
 // TODO: additional properties such as logout
@@ -13,12 +13,14 @@ interface AuthContextType {
   firebaseUser: User;
 }
 
-const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+const AuthContext = createContext<AuthContextType | undefined>(
+  {} as AuthContextType
+);
 
 export function useAuthContext() {
   const context = useContext(AuthContext);
 
-  if (!context) {
+  if (context === undefined) {
     throw new Error('Missing AuthProvider');
   }
 
@@ -37,7 +39,10 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
   function redirectUnauhenticatedUserHandler() {
     // we don't need to re-direct if the user accesses these routes unathenticated
-    if (location.pathname.includes(SIGN_IN_ROUTE) || location.pathname.includes(SIGN_UP_ROUTE)) {
+    if (
+      location.pathname.includes(SIGN_IN_ROUTE) ||
+      location.pathname.includes(SIGN_UP_ROUTE)
+    ) {
       return;
     }
 
@@ -46,9 +51,9 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
       /** if the user was previously logged user !== null */
-      if (user) {
+      if (user !== null) {
         setFirebaseUser(user as User);
       } else {
         redirectUnauhenticatedUserHandler();
@@ -65,7 +70,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     const interval = setInterval(async () => {
       const user = auth.currentUser;
 
-      if (user) {
+      if (user !== null) {
         const token = await user.getIdToken();
         AuthService.setCurrentUser(user as User, token);
       }
@@ -76,11 +81,15 @@ function AuthProvider({ children }: { children: ReactNode }) {
     };
   });
 
-  if (isLoading && !firebaseUser) {
+  if (isLoading && firebaseUser !== null) {
     return <p>Loading...</p>;
   }
 
-  return <AuthContext.Provider value={{ firebaseUser: firebaseUser as User }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ firebaseUser: firebaseUser as User }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export default AuthProvider;

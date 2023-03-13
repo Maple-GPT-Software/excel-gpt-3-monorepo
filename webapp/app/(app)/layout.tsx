@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { ThemeProvider } from 'next-themes';
 
@@ -21,7 +21,11 @@ export default function layout({ children }: { children: ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>{children}</AuthProvider>
         {/* https://tanstack.com/query/latest/docs/react/devtools query devtools when NODE_EV === 'production' */}
-        <ReactQueryDevtools initialIsOpen={false} position="bottom-left" panelPosition="left" />
+        <ReactQueryDevtools
+          initialIsOpen={false}
+          position="bottom-left"
+          panelPosition="left"
+        />
       </QueryClientProvider>
     </ThemeProvider>
   );

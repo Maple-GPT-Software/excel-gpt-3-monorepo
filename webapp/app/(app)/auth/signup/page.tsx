@@ -43,7 +43,8 @@ const SignupPage = () => {
     try {
       const { user } = await signInWithGoogle();
       const accessToken = await user.getIdToken();
-      const profile = await SimplifyApi(accessToken).login();
+      // TODO: set user profile
+      await SimplifyApi(accessToken).login();
 
       router.push('/');
     } catch (e: any) {
@@ -53,19 +54,33 @@ const SignupPage = () => {
 
   return (
     <>
-      <section id="signup" className="relative z-10 overflow-hidden pt-36 pb-16 md:pb-20 lg:pt-[180px] lg:pb-28">
+      <section
+        id="signup"
+        className="relative z-10 overflow-hidden pt-36 pb-16 md:pb-20 lg:pt-[180px] lg:pb-28"
+      >
         <div className="container">
           <div className="-mx-4 flex flex-wrap">
             <div className="w-full px-4">
               <div className="mx-auto max-w-[500px] rounded-md  bg-green-600 bg-opacity-5 py-10 px-6 font-thin dark:bg-dark sm:p-[60px]">
-                <h3 className="mb-14 text-center text-2xl  text-black dark:text-white sm:text-3xl">Create your account</h3>
-                {errorMessage && <p className="mb-4 text-center text-red-500">{errorMessage}</p>}
+                <h3 className="mb-14 text-center text-2xl  text-black dark:text-white sm:text-3xl">
+                  Create your account
+                </h3>
+                {errorMessage !== '' && (
+                  <p className="mb-4 text-center text-red-500">
+                    {errorMessage}
+                  </p>
+                )}
                 <button
                   onClick={signUpPopup}
                   className="text-body-color hover:text-primary dark:text-body-color mb-6 flex w-full items-center justify-center rounded-md bg-white p-3 text-base font-medium shadow-one dark:bg-[#242B51] dark:shadow-signUp dark:hover:text-white"
                 >
                   <span className="mr-3">
-                    <Image alt="google" width={16} height={16} src="/images/brands/google.png" />
+                    <Image
+                      alt="google"
+                      width={16}
+                      height={16}
+                      src="/images/brands/google.png"
+                    />
                   </span>
                   Sign up with Google
                 </button>
@@ -92,7 +107,13 @@ const SignupPage = () => {
           </div>
         </div>
         <div className="absolute left-0 top-0 z-[-1]">
-          <svg width="1440" height="969" viewBox="0 0 1440 969" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            width="1440"
+            height="969"
+            viewBox="0 0 1440 969"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <mask
               id="mask0_95:1005"
               style={{ maskType: 'alpha' }}
