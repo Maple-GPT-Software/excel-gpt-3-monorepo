@@ -4,6 +4,7 @@
   "private": true,
   "license": "ISC",
   "scripts": {
-    "start": "cd server"
+    "heroku-preinstall": "npm install pnpm && cd server",
+    "dev": "pnpm run prepare && pnpm run preinstall && pnpm run build && pnpm run dev"
   }
 }
