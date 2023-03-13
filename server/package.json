@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A Node Express RESTFUL API",
   "main": "index.js",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "prepare": "npx ts-patch install -s",
     "preinstall": "npx -y only-allow pnpm",
