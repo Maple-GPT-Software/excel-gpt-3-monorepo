@@ -10,9 +10,11 @@ import { AxiosError } from 'axios';
 import { FirebaseError } from 'firebase/app';
 import { AuthErrorCodes } from 'firebase/auth';
 import Image from 'next/image';
-import { REGISTRATION_ROUTE } from '@/constants';
+import { REGISTRATION_ROUTE, DASHBOARD_ROUTE } from '@/constants';
+import { useAuthContext } from '@/contexts/AuthProvider';
 
 const SignupPage = () => {
+  const { setSimplifyUser } = useAuthContext();
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
@@ -43,10 +45,10 @@ const SignupPage = () => {
     try {
       const { user } = await signInWithGoogle();
       const accessToken = await user.getIdToken();
-      // TODO: set user profile
-      await SimplifyApi(accessToken).login();
+      const response = await SimplifyApi(accessToken).login();
 
-      router.push('/');
+      setSimplifyUser(response);
+      router.replace(DASHBOARD_ROUTE);
     } catch (e: any) {
       signUpErrorHandler(e);
     }
@@ -60,7 +62,7 @@ const SignupPage = () => {
       >
         <div className="container">
           <div className="-mx-4 flex flex-wrap">
-            <div className="w-full px-4">
+            <div className="w-full px-4 -mt-8">
               <div className="mx-auto max-w-[500px] rounded-md  bg-green-600 bg-opacity-5 py-10 px-6 font-thin dark:bg-dark sm:p-[60px]">
                 <h3 className="mb-14 text-center text-2xl  text-black dark:text-white sm:text-3xl">
                   Create your account
@@ -84,21 +86,24 @@ const SignupPage = () => {
                   </span>
                   Sign up with Google
                 </button>
-                <div className="text-body-color flex cursor-pointer select-none text-sm font-medium">
+                <div className="text-center text-body-color flex cursor-pointer select-none text-sm font-medium">
                   <span>
                     By creating account means you agree to the
                     <a href="#0" className="text-green-600 hover:underline">
                       Terms and Conditions
                     </a>
-                    , and our
+                    , and our{' '}
                     <a href="#0" className="text-green-600 hover:underline">
                       Privacy Policy
                     </a>
                   </span>
                 </div>
                 <p className="text-body-color pt-11 text-center text-base font-medium">
-                  Already using Startup?
-                  <Link href="/signin" className="text-primary hover:underline">
+                  Already have an account?{' '}
+                  <Link
+                    href="/signin"
+                    className="text-green-600 hover:underline"
+                  >
                     Sign in
                   </Link>
                 </p>

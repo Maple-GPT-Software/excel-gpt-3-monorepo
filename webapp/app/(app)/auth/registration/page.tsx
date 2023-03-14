@@ -14,9 +14,11 @@ const RegistrationPage = () => {
           {/* TODO: border radius */}
           <div className="border-b-lg flex flex-col justify-center bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-green-600 via-green-800 to-green-700 pl-4 text-white">
             <p>
-              "Using the Excel Simplify has been a <span className="font-medium">game-changer</span> for our team. It's{' '}
-              <span className="font-medium">user-friendly</span> design have made our lives much{' '}
-              <span className="font-medium">easier</span>."
+              &quot;Using the Excel Simplify has been a{' '}
+              <span className="font-medium">game-changer</span> for our team.
+              It&apos;s <span className="font-medium">user-friendly</span>{' '}
+              design have made our lives much{' '}
+              <span className="font-medium">easier</span>.&quot;
             </p>
             <div className="divide-y-[20px]"></div>
             <p className="pt-2 font-medium"> lastName F.</p>

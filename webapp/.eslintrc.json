@@ -25,6 +25,7 @@
     "@typescript-eslint/semi": ["off"],
     "@typescript-eslint/consistent-type-assertions": ["off"],
     "@typescript-eslint/consistent-indexed-object-style": ["off"],
+    "@typescript-eslint/indent": ["off"],
     "react/jsx-filename-extension": [2, { "extensions": [".ts", ".tsx"] }],
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",

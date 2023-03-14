@@ -19,8 +19,10 @@ export default function SimplifyApi(accessToken?: string): SimplifyApiClient {
     token = AuthService.accessToken ?? '';
   }
 
-  if (token !== undefined) {
-    throw new Error('You have to be logged in to make SimplifyApi API calls');
+  if (token === undefined) {
+    throw new Error(
+      'You need to be authenticated by Firebase make SimplifyApi API calls'
+    );
   }
 
   return new SimplifyApiClient(
@@ -55,16 +57,10 @@ class SimplifyApiClient {
   }
 
   async login() {
-    try {
-      const response = await this.requestor.post({
-        url: `${SERVER_AUTH_BASE}/login`,
-      });
+    const response = await this.requestor.post<SimplifyUser>({
+      url: `${SERVER_AUTH_BASE}/login`,
+    });
 
-      // if (response.status.);
-      return response;
-    } catch (error) {
-      console.error('Error while getting account details');
-      throw error;
-    }
+    return response.data;
   }
 }

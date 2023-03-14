@@ -1,22 +1,37 @@
-import { auth } from '@/service/firebase';
-import type { ReactNode } from 'react';
+// NPM
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import type { User } from '@firebase/auth-types';
+import { auth } from '@/service/firebase';
 import { useRouter } from 'next/navigation';
-import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
+// COMPONENTS
+import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
+// SERVICES
 import AuthService from '@/models/AuthService';
+// CONSTATNS
+import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
+// TYPES
+import type { ReactNode } from 'react';
+import type { SimplifyUser } from '@/types/simplifyApi';
+import type { User } from '@firebase/auth-types';
 
-// TODO: additional properties such as logout
-// FUTURE: if application increases in complexity we can use immer and useImmerReducer
-// to better manage changes to the state
+/**
+ * We don't need to make firebaseUser and simplifyUser required because we don't show the parts
+ * of the app that require authentication until the user's credentials have been verified
+ */
+// TODO: we don't render app until firebase authenticates the user
+// we only show logged in parts of app when there is a firebase user
 interface AuthContextType {
-  firebaseUser: User;
+  firebaseUser?: User;
+  simplifyUser?: SimplifyUser;
+  setSimplifyUser: React.Dispatch<
+    React.SetStateAction<SimplifyUser | undefined>
+  >;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(
   {} as AuthContextType
 );
 
+// hook to get access to provider values and we're outside of application
 export function useAuthContext() {
   const context = useContext(AuthContext);
 
@@ -27,6 +42,24 @@ export function useAuthContext() {
   return context;
 }
 
+/**
+ * we only render /app/* routes when there is a simplifyUser
+ * if the user was previously logged in they are redirected to a refresh route
+ * while we retrieve their user account
+ */
+// TODO: hook for when we're inside applicaiton
+export function useUserContext(): {
+  simplifyUser: SimplifyUser;
+} {
+  const context = useContext(AuthContext);
+
+  if (context === undefined) {
+    throw new Error('Missing AuthProvider');
+  }
+
+  return { simplifyUser: context.simplifyUser as SimplifyUser };
+}
+
 function AuthProvider({ children }: { children: ReactNode }) {
   /**
    * by default we'll show a loading spinner until firebase has verified the user's last session and we haven't fetched the user's profile
@@ -34,10 +67,13 @@ function AuthProvider({ children }: { children: ReactNode }) {
    * */
   const [isLoading, setIsLoading] = useState(true);
   const [firebaseUser, setFirebaseUser] = useState<User | undefined>(undefined);
+  const [simplifyUser, setSimplifyUser] = useState<SimplifyUser | undefined>(
+    undefined
+  );
 
   const router = useRouter();
 
-  function redirectUnauhenticatedUserHandler() {
+  function redirectUnauthenticatedUser() {
     // we don't need to re-direct if the user accesses these routes unathenticated
     if (
       location.pathname.includes(SIGN_IN_ROUTE) ||
@@ -56,7 +92,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
       if (user !== null) {
         setFirebaseUser(user as User);
       } else {
-        redirectUnauhenticatedUserHandler();
+        redirectUnauthenticatedUser();
       }
 
       setIsLoading(false);
@@ -65,7 +101,9 @@ function AuthProvider({ children }: { children: ReactNode }) {
     return unsubscribe;
   });
 
-  /** Interval for refreshing access token */
+  /**
+   * Interval for refreshing access token after firebase initially authenticates user
+   * */
   useEffect(() => {
     const interval = setInterval(async () => {
       const user = auth.currentUser;
@@ -81,13 +119,23 @@ function AuthProvider({ children }: { children: ReactNode }) {
     };
   });
 
-  if (isLoading && firebaseUser !== null) {
-    return <p>Loading...</p>;
-  }
-
   return (
-    <AuthContext.Provider value={{ firebaseUser: firebaseUser as User }}>
-      {children}
+    <AuthContext.Provider
+      value={{
+        firebaseUser: firebaseUser as User,
+        simplifyUser,
+        setSimplifyUser,
+      }}
+    >
+      {isLoading && (
+        <div className="bg-white fixed w-full h-full top-0 left-0">
+          <CenteredSpinnner>
+            <p className="mt-4"> Getting things ready </p>
+          </CenteredSpinnner>
+        </div>
+      )}
+      {/* we don't render application while firebase is in the process of authenticating the user */}
+      {!isLoading && children}
     </AuthContext.Provider>
   );
 }

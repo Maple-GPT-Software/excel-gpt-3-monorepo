@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
 
@@ -8,7 +8,10 @@ function AuthLayout({ children }: { children: ReactNode }) {
       <nav className="align-items-center flex h-16 justify-between p-8">
         <p>logo placeholder</p>
         <div>
-          <Link className="py-2 px-6 text-base text-dark hover:opacity-70" href={SIGN_IN_ROUTE}>
+          <Link
+            className="py-2 px-6 text-base text-dark hover:opacity-70"
+            href={SIGN_IN_ROUTE}
+          >
             Sign in
           </Link>
           <Link

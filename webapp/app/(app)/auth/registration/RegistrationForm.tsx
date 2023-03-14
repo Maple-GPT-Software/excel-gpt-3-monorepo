@@ -10,6 +10,8 @@ import { useForm } from 'react-hook-form';
 import { mdiChevronRight } from '@mdi/js';
 import SimplifyApi from '@/api/SimplifyApi';
 import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
+import { useRouter } from 'next/navigation';
+import { DASHBOARD_ROUTE } from '@/constants';
 
 interface RegistrationFormTypes {
   fullName: string;
@@ -18,7 +20,8 @@ interface RegistrationFormTypes {
 }
 
 function RegistrationForm() {
-  const { firebaseUser } = useAuthContext();
+  const { firebaseUser, setSimplifyUser } = useAuthContext();
+  const router = useRouter();
 
   const {
     register,
@@ -26,6 +29,7 @@ function RegistrationForm() {
     formState: { errors, isValid, isSubmitting },
   } = useForm<RegistrationFormTypes>({
     defaultValues: {
+      // TODO: type error
       fullName: firebaseUser.displayName ?? '',
       email: firebaseUser.email ?? '',
     },
@@ -34,9 +38,14 @@ function RegistrationForm() {
   async function onSubmit(data: RegistrationFormTypes) {
     const { fullName, hasCheckedTerms } = data;
     try {
-      // TODO : save user in auth provider
-      await SimplifyApi().createUser(fullName, hasCheckedTerms);
+      const simplifyUser = await SimplifyApi().createUser(
+        fullName,
+        hasCheckedTerms
+      );
       await SimplifyApi().createFreeSubscription();
+      // set user so that they are able to acces /app/* without redirect to /auth/refresh
+      setSimplifyUser(simplifyUser);
+      router.replace(DASHBOARD_ROUTE);
     } catch (error) {}
   }
 
