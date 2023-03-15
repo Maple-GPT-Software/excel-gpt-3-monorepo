@@ -63,11 +63,7 @@ export default {
   stripeEndpointSecret: isProduction ? envVars.STRIPE_PROD_ENDPOINT_SECRET : envVars.STRIPE_TEST_ENDPOINT_SECRET,
   clients: {
     // TODO: webapp production url
-    webappCheckoutSuccessUrl: isProduction
-      ? 'production_url'
-      : 'http://127.0.0.1:5000/app/registration/checkout?status=successfull',
-    webappCheckoutCancelledUrl: isProduction
-      ? 'production_url'
-      : 'http://127.0.0.1:5000/app/registration/checkout?status=cancelled',
+    webappCheckoutSuccessUrl: isProduction ? 'production_url' : 'http://127.0.0.1:5000/app/dashboard',
+    webappCheckoutCancelledUrl: isProduction ? 'production_url' : 'http://127.0.0.1:5000/auth/signup',
   },
 };

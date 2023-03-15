@@ -13,25 +13,27 @@ import type { ReactNode } from 'react';
 import type { SimplifyUser } from '@/types/simplifyApi';
 import type { User } from '@firebase/auth-types';
 
-/**
- * We don't need to make firebaseUser and simplifyUser required because we don't show the parts
- * of the app that require authentication until the user's credentials have been verified
- */
-// TODO: we don't render app until firebase authenticates the user
-// we only show logged in parts of app when there is a firebase user
 interface AuthContextType {
+  /** user information after firebase authenticates session */
   firebaseUser?: User;
+  /** user profile from simplify API */
   simplifyUser?: SimplifyUser;
   setSimplifyUser: React.Dispatch<
     React.SetStateAction<SimplifyUser | undefined>
   >;
 }
 
+/**
+ * We only render everything in /app/* when the user has been authenticated by firebase and they have an account we
+ * use useUserContext which returns AuthContextType but without the optional types
+ */
+type AuthenticatedSessionType = Required<AuthContextType>;
+
 const AuthContext = createContext<AuthContextType | undefined>(
   {} as AuthContextType
 );
 
-// hook to get access to provider values and we're outside of application
+// hook to get access to provider values outside of /app/*
 export function useAuthContext() {
   const context = useContext(AuthContext);
 
@@ -42,22 +44,15 @@ export function useAuthContext() {
   return context;
 }
 
-/**
- * we only render /app/* routes when there is a simplifyUser
- * if the user was previously logged in they are redirected to a refresh route
- * while we retrieve their user account
- */
-// TODO: hook for when we're inside applicaiton
-export function useUserContext(): {
-  simplifyUser: SimplifyUser;
-} {
+/** hook to get access to provider values within /app/* */
+export function useUserContext(): AuthenticatedSessionType {
   const context = useContext(AuthContext);
 
   if (context === undefined) {
     throw new Error('Missing AuthProvider');
   }
 
-  return { simplifyUser: context.simplifyUser as SimplifyUser };
+  return context as AuthenticatedSessionType;
 }
 
 function AuthProvider({ children }: { children: ReactNode }) {

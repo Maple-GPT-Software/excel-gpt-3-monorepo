@@ -5,18 +5,21 @@ import { signInWithGoogle } from '@/service/firebase';
 import Link from 'next/link';
 
 import SimplifyApi from '@/api/SimplifyApi';
-import { useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
 import { FirebaseError } from 'firebase/app';
 import { AuthErrorCodes } from 'firebase/auth';
 import Image from 'next/image';
 import { REGISTRATION_ROUTE, DASHBOARD_ROUTE } from '@/constants';
 import { useAuthContext } from '@/contexts/AuthProvider';
+import { useNavigateWithParams } from '@/hooks/useNavigateWithParams';
 
 const SignupPage = () => {
   const { setSimplifyUser } = useAuthContext();
   const [errorMessage, setErrorMessage] = useState('');
-  const router = useRouter();
+  const navigateWithParams = useNavigateWithParams({
+    preserveCurrentParms: true,
+    replace: true,
+  });
 
   /**
    * this function either re-directs to registration if the user signups for the first time, re-directs to the dashboard if they've already signed up or displays an error message for firebase popup errors or any unhandled errors
@@ -25,7 +28,7 @@ const SignupPage = () => {
     if (e instanceof AxiosError) {
       if (e.response?.status === 404) {
         /** user does not exist, re-direct to regisration */
-        router.push(REGISTRATION_ROUTE);
+        navigateWithParams(REGISTRATION_ROUTE);
       } else {
         console.error(e);
         setErrorMessage('Unhandled server error.');
@@ -48,7 +51,7 @@ const SignupPage = () => {
       const response = await SimplifyApi(accessToken).login();
 
       setSimplifyUser(response);
-      router.replace(DASHBOARD_ROUTE);
+      navigateWithParams(DASHBOARD_ROUTE);
     } catch (e: any) {
       signUpErrorHandler(e);
     }

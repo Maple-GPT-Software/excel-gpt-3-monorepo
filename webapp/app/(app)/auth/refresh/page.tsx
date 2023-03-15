@@ -12,7 +12,11 @@ import {
 import SimplifyApi from '@/api/SimplifyApi';
 import { useAuthContext } from '@/contexts/AuthProvider';
 
-/** this */
+/**
+ * This component gets rendered when there is an existing firebase sesion in
+ * indexDB and the session has been verifed by firebase. We check if a user exists
+ * by .login(). If there is an error we re-direct the user to sign in
+ */
 const AuthRefresh: FunctionComponent = () => {
   const { setSimplifyUser } = useAuthContext();
   const router = useRouter();

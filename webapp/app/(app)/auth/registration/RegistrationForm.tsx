@@ -10,8 +10,10 @@ import { useForm } from 'react-hook-form';
 import { mdiChevronRight } from '@mdi/js';
 import SimplifyApi from '@/api/SimplifyApi';
 import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { DASHBOARD_ROUTE } from '@/constants';
+import { AppSearchParams } from '@/hooks/useNavigateWithParams';
+import { PriceIds, SubscriptionURLParams } from '@/types/appTypes';
 
 interface RegistrationFormTypes {
   fullName: string;
@@ -22,6 +24,7 @@ interface RegistrationFormTypes {
 function RegistrationForm() {
   const { firebaseUser, setSimplifyUser } = useAuthContext();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const {
     register,
@@ -29,9 +32,8 @@ function RegistrationForm() {
     formState: { errors, isValid, isSubmitting },
   } = useForm<RegistrationFormTypes>({
     defaultValues: {
-      // TODO: type error
-      fullName: firebaseUser.displayName ?? '',
-      email: firebaseUser.email ?? '',
+      fullName: firebaseUser?.displayName ?? '',
+      email: firebaseUser?.email ?? '',
     },
   });
 
@@ -40,13 +42,35 @@ function RegistrationForm() {
     try {
       const simplifyUser = await SimplifyApi().createUser(
         fullName,
-        hasCheckedTerms
+        hasCheckedTerms,
+        searchParams?.get(AppSearchParams.REFERRER) ?? ''
       );
-      await SimplifyApi().createFreeSubscription();
+
+      if (
+        searchParams?.get(AppSearchParams.SUBSCRIPTION) ===
+        SubscriptionURLParams.PREMIUM
+      ) {
+        await handlePremiumSubscription();
+      } else {
+        await SimplifyApi().createFreeSubscription();
+      }
       // set user so that they are able to acces /app/* without redirect to /auth/refresh
       setSimplifyUser(simplifyUser);
       router.replace(DASHBOARD_ROUTE);
     } catch (error) {}
+  }
+
+  // TODO: handle case where a premium subscriber cancels
+  // we can re-direct to a /auth/free-subscription route that
+  // calls await SimplifyApi().createFreeSubscription()
+  async function handlePremiumSubscription() {
+    try {
+      await SimplifyApi().createPremiumSubscription(
+        PriceIds.STANDALONE_MONTHLY
+      );
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   if (isSubmitting) {
@@ -77,10 +101,9 @@ function RegistrationForm() {
         <label htmlFor="email">
           <p>Email</p>
           <Input
-            {...(register('email'), { required: true })}
+            {...register('email', { required: true })}
             className="mb-4 mt-2"
             disabled
-            value={firebaseUser.email ?? ''}
           />
           {errors.email?.type === 'required' && <p>Email is required</p>}
         </label>

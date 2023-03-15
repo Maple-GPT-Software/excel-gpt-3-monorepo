@@ -2,6 +2,7 @@ import { AuthenticatedRequestor } from './AuthenticatedRequestor';
 import settings from '@/settings';
 import type { SimplifyUser } from '@/types/simplifyApi';
 import AuthService from '@/models/AuthService';
+import type { PriceIds } from '@/types/appTypes';
 
 const SERVER_AUTH_BASE = '/auth';
 const SERVER_PAYMENT_BASE = '/payment';
@@ -36,13 +37,11 @@ class SimplifyApiClient {
     this.requestor = requestor;
   }
 
-  // TODO: improving typing
   async createUser(name: string, hasAcceptedTerms: boolean, referrer?: string) {
-    // TODO: improve status handling here
     try {
       const res = await this.requestor.post<SimplifyUser>({
         url: `${SERVER_AUTH_BASE}/signup`,
-        data: { name, hasAcceptedTerms },
+        data: { name, hasAcceptedTerms, referrer },
       });
 
       return res.data;
@@ -54,6 +53,25 @@ class SimplifyApiClient {
 
   async createFreeSubscription() {
     return await this.requestor.post({ url: `${SERVER_PAYMENT_BASE}/trial` });
+  }
+
+  async createPremiumSubscription(priceId: PriceIds) {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const response = await this.requestor.post<any>({
+        url: `${SERVER_PAYMENT_BASE}/premium`,
+        data: { priceId },
+      });
+
+      return response.data;
+    } catch (error: any) {
+      // stripe sends 307 for re-direct
+      if (error?.response?.status === 307) {
+        return window.open(error.response.data.url, '_self');
+      } else {
+        throw error;
+      }
+    }
   }
 
   async login() {
