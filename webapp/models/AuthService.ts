@@ -1,4 +1,4 @@
-import { SimplifyUser } from '@/types/simplify.types';
+import { SimplifyUser } from '@/types/simplifyApi';
 import { User } from '@firebase/auth-types';
 
 class AuthService {
@@ -6,6 +6,7 @@ class AuthService {
   private _accessToken?: string;
   // we'll need this when we do teams pricing. If a member is under an org we won't fetch
   // billing information
+  // TODO: _userProfile
   // private _userProfile: SimplifyUser;
 
   setCurrentUser(firebaseUser: User, accessToken: string) {

@@ -95,7 +95,6 @@ userSchema.methods.toJSON = function () {
   delete obj.createdAt;
   delete obj.updatedAt;
   delete obj.referrer;
-  delete obj.signUpSource;
 
   return obj;
 };

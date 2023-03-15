@@ -4,8 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-import { HamburgerMenuIcon } from '@radix-ui/react-icons';
 import { PRICING_ROUTE, SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
+import { e } from 'easy-tailwind';
 
 const menuItems: { route: string; label: string }[] = [
   {
@@ -41,6 +41,7 @@ export default function PublicNav() {
   return (
     <>
       <header
+        // TODO: get rid of classnames
         className={clsx('header top-0 left-0 z-40 flex w-full items-center bg-transparent ', {
           'dark:!bg-primary !fixed !z-[9999] !bg-white !bg-opacity-80 shadow-sticky backdrop-blur-sm !transition dark:!bg-opacity-20':
             sticky,
@@ -68,7 +69,8 @@ export default function PublicNav() {
                   aria-label="Mobile Menu"
                   className="ring-primary absolute right-4 top-1/2 block translate-y-[-50%] rounded-lg px-3 py-[6px] focus:ring-2 lg:hidden"
                 >
-                  <HamburgerMenuIcon className="h-8 w-8" />
+                  {/* TODO: MDI icon */}
+                  {/* <HamburgerMenuIcon className="h-8 w-8" /> */}
                 </button>
                 <nav
                   id="navbarCollapse"
@@ -103,7 +105,13 @@ export default function PublicNav() {
                 </Link>
                 <Link
                   href={SIGN_UP_ROUTE}
-                  className="ease-in-up rounded-md bg-green-600 py-3 px-8 text-base  text-white transition duration-300 hover:bg-opacity-90 hover:shadow-signUp md:px-9 lg:px-6 xl:px-9"
+                  className={e(
+                    'ease-in-up rounded-md bg-green-600 py-3 px-8 text-base  text-white transition duration-300',
+                    {
+                      hover: 'bg-opacity-90 shadow-signUp',
+                      md: ['px-9'],
+                    }
+                  )}
                 >
                   Sign Up
                 </Link>

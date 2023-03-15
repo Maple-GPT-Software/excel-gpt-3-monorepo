@@ -98,8 +98,8 @@ export const addCustomerId = async (email: string, stripeCustomerId: string) => 
 
 /** when webhook receives subscription.created event */
 export const updateSubscription = async (subscription: Stripe.Subscription) => {
-  const { customer, current_period_end, status } = subscription;
-  User.findOneAndUpdate({ customer }, { current_period_end, status }).catch((e) => {
-    logger.notice('#addSubscription unable to update stripe subscription', customer, e);
+  const { customer: stripeCustomerId, current_period_end: stripeCurrentPeriodEnd, status: stripeStatus } = subscription;
+  User.findOneAndUpdate({ stripeCustomerId }, { stripeCurrentPeriodEnd, stripeStatus }).catch((e) => {
+    logger.notice('#addSubscription unable to update stripe subscription', subscription, e);
   });
 };

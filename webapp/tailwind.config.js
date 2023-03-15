@@ -1,8 +1,14 @@
 const colors = require('tailwindcss/colors');
+const { replacer } = require('easy-tailwind');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./app/**/*.{js,ts,jsx,tsx}', './pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+  content: {
+    files: ['./app/**/*.{js,ts,jsx,tsx}', './pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+    transform: {
+      DEFAULT: replacer,
+    },
+  },
   darkMode: 'class',
   theme: {
     container: {
@@ -14,9 +20,8 @@ module.exports = {
       transparent: 'transparent',
       white: '#FFFFFF',
       dark: '#1D2144',
-      yellow: {
-        500: colors.yellow[500],
-      },
+      yellow: colors.yellow,
+      red: colors.red,
       slate: colors.slate,
       green: colors.green,
       black: colors.black,

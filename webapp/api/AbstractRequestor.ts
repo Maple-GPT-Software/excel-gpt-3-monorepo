@@ -33,14 +33,14 @@ export class AbstractRequestor {
     params?: RequestParams;
     headers?: RequestHeaders;
   }) {
-    return this.instance.post<T>(url, { data, params, headers });
+    return this.instance.post<T>(url, data, { params, headers });
   }
 
   patch<T>({ url, data, headers }: { url: string; data?: unknown; headers?: RequestHeaders }) {
-    return this.instance.patch<T>(url, { data, headers });
+    return this.instance.patch<T>(url, data, { headers });
   }
 
   delete<T>({ url, data, headers }: { url: string; data?: unknown; headers?: RequestHeaders }) {
-    return this.instance.delete<T>(url, { data, headers });
+    return this.instance.delete<T>(url, { headers });
   }
 }

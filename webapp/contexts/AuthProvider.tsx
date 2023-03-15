@@ -4,6 +4,7 @@ import { User } from '@firebase/auth-types';
 import { useRouter } from 'next/navigation';
 import { SIGN_IN_ROUTE } from '@/constants';
 import { SIGN_UP_ROUTE } from '../constants';
+import AuthService from '@/models/AuthService';
 
 // TODO: additional properties such as logout
 // FUTURE: if application increases in complexity we can use immer and useImmerReducer
@@ -46,6 +47,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
+      /** if the user was previously logged user !== null */
       if (user) {
         setFirebaseUser(user as User);
       } else {
@@ -65,6 +67,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
       if (user) {
         const token = await user.getIdToken();
+        AuthService.setCurrentUser(user as User, token);
       }
     });
 
