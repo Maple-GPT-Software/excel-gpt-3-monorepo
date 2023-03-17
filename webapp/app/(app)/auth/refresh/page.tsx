@@ -13,25 +13,35 @@ import SimplifyApi from '@/api/SimplifyApi';
 import { useAuthContext } from '@/contexts/AuthProvider';
 
 /**
- * This component gets rendered when there is an existing firebase sesion in
- * indexDB and the session has been verifed by firebase. We check if a user exists
- * by .login(). If there is an error we re-direct the user to sign in
+ * This component will show a loading state until firebase has authenticated the session
  */
 const AuthRefresh: FunctionComponent = () => {
-  const { setSimplifyUser } = useAuthContext();
+  const { setSimplifyUser, firebaseUser, hasFirebasedAuthenticated } =
+    useAuthContext();
   const router = useRouter();
+
   useEffect(() => {
-    SimplifyApi()
-      .login()
-      .then(user => {
-        const redirectTo = localStorage.getItem(ROUTE_BEFORE_REFRESH);
-        setSimplifyUser(user);
-        router.replace(redirectTo ?? DASHBOARD_ROUTE);
-      })
-      .catch(e => {
+    /**
+     * once firebase has authenticated the session firebaseUser is either be a User object or null
+     * at this point we can reach out to our API since AuthService will have a valid accessToken
+     * */
+    if (hasFirebasedAuthenticated) {
+      if (firebaseUser) {
+        SimplifyApi()
+          .login()
+          .then(user => {
+            const redirectTo = localStorage.getItem(ROUTE_BEFORE_REFRESH);
+            setSimplifyUser(user);
+            router.replace(redirectTo ?? DASHBOARD_ROUTE);
+          })
+          .catch(e => {
+            router.replace(SIGN_IN_ROUTE);
+          });
+      } else {
         router.replace(SIGN_IN_ROUTE);
-      });
-  }, []);
+      }
+    }
+  }, [firebaseUser, hasFirebasedAuthenticated, router, setSimplifyUser]);
 
   return (
     <div className="bg-white fixed w-full h-full top-0 left-0">

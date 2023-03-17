@@ -1,5 +1,5 @@
-import { SimplifyUser } from '@/types/simplifyApi';
-import { User } from '@firebase/auth-types';
+// import type { SimplifyUser } from '@/types/simplifyApi';
+import type { User } from '@firebase/auth-types';
 
 class AuthService {
   private _firebaseUser?: User;
@@ -17,6 +17,10 @@ class AuthService {
   // TODO: if we need firebase user or user profiles outside of react
   // we'll have to add more getters
 
+  setRefreshedAccessToken(accessToken: string) {
+    this._accessToken = accessToken;
+  }
+
   get accessToken() {
     if (!this._accessToken) {
       throw new Error('Must be logged in to get accessToken');
@@ -26,4 +30,6 @@ class AuthService {
   }
 }
 
-export default new AuthService();
+const AuthServiceInstance = new AuthService();
+
+export default AuthServiceInstance;

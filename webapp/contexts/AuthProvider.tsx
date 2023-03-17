@@ -2,8 +2,6 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { auth } from '@/service/firebase';
 import { useRouter } from 'next/navigation';
-// COMPONENTS
-import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
 // SERVICES
 import AuthService from '@/models/AuthService';
 // CONSTATNS
@@ -14,6 +12,7 @@ import type { SimplifyUser } from '@/types/simplifyApi';
 import type { User } from '@firebase/auth-types';
 
 interface AuthContextType {
+  hasFirebasedAuthenticated: boolean;
   /** user information after firebase authenticates session */
   firebaseUser?: User;
   /** user profile from simplify API */
@@ -60,11 +59,12 @@ function AuthProvider({ children }: { children: ReactNode }) {
    * by default we'll show a loading spinner until firebase has verified the user's last session and we haven't fetched the user's profile
    * if the user tries to access a route that requires them to be authenticated but they aren't we'll redirect them to signin
    * */
-  const [isLoading, setIsLoading] = useState(true);
   const [firebaseUser, setFirebaseUser] = useState<User | undefined>(undefined);
   const [simplifyUser, setSimplifyUser] = useState<SimplifyUser | undefined>(
     undefined
   );
+  const [hasFirebasedAuthenticated, setHasFirebaseAuthenticated] =
+    useState(false);
 
   const router = useRouter();
 
@@ -85,12 +85,20 @@ function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = auth.onAuthStateChanged(user => {
       /** if the user was previously logged user !== null */
       if (user !== null) {
-        setFirebaseUser(user as User);
+        user
+          .getIdToken()
+          .then(token => {
+            setFirebaseUser(user as User);
+            AuthService.setCurrentUser(user as User, token);
+          })
+          .catch(e => {
+            redirectUnauthenticatedUser();
+          });
       } else {
         redirectUnauthenticatedUser();
       }
 
-      setIsLoading(false);
+      setHasFirebaseAuthenticated(true);
     });
 
     return unsubscribe;
@@ -105,7 +113,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
       if (user !== null) {
         const token = await user.getIdToken();
-        AuthService.setCurrentUser(user as User, token);
+        AuthService.setRefreshedAccessToken(token);
       }
     });
 
@@ -117,20 +125,13 @@ function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
+        hasFirebasedAuthenticated,
         firebaseUser: firebaseUser as User,
         simplifyUser,
         setSimplifyUser,
       }}
     >
-      {isLoading && (
-        <div className="bg-white fixed w-full h-full top-0 left-0">
-          <CenteredSpinnner>
-            <p className="mt-4"> Getting things ready </p>
-          </CenteredSpinnner>
-        </div>
-      )}
-      {/* we don't render application while firebase is in the process of authenticating the user */}
-      {!isLoading && children}
+      {children}
     </AuthContext.Provider>
   );
 }

@@ -1,7 +1,7 @@
 'use-client';
 
 import { Dialog, DialogContent } from '@/components/ui/Dialog';
-import RegistrationForm from './RegistrationForm';
+import RegistrationForm from '@/features/RegistrationForm';
 
 const RegistrationPage = () => {
   return (

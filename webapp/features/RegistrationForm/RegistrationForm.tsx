@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/Input';
 import React from 'react';
 import { useAuthContext } from '@/contexts/AuthProvider';
 import { Button } from '@/components/ui/Button';
-import MDIIcon from '@/components/ui/Icon';
+import MDIIcon from '@/components/ui/MDIIcon';
 import { useForm } from 'react-hook-form';
 
 import { mdiChevronRight } from '@mdi/js';
@@ -29,7 +29,7 @@ function RegistrationForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting },
+    formState: { errors, isValid, isSubmitting, isSubmitted },
   } = useForm<RegistrationFormTypes>({
     defaultValues: {
       fullName: firebaseUser?.displayName ?? '',
@@ -73,7 +73,7 @@ function RegistrationForm() {
     }
   }
 
-  if (isSubmitting) {
+  if (isSubmitting || isSubmitted) {
     return (
       <CenteredSpinnner>
         <p className="mt-4 text-slate-700">Setting up your account</p>

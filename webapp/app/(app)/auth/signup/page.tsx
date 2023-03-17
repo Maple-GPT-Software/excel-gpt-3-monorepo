@@ -9,7 +9,11 @@ import { AxiosError } from 'axios';
 import { FirebaseError } from 'firebase/app';
 import { AuthErrorCodes } from 'firebase/auth';
 import Image from 'next/image';
-import { REGISTRATION_ROUTE, DASHBOARD_ROUTE } from '@/constants';
+import {
+  REGISTRATION_ROUTE,
+  DASHBOARD_ROUTE,
+  SIGN_IN_ROUTE,
+} from '@/constants';
 import { useAuthContext } from '@/contexts/AuthProvider';
 import { useNavigateWithParams } from '@/hooks/useNavigateWithParams';
 
@@ -104,7 +108,7 @@ const SignupPage = () => {
                 <p className="text-body-color pt-11 text-center text-base font-medium">
                   Already have an account?{' '}
                   <Link
-                    href="/signin"
+                    href={SIGN_IN_ROUTE}
                     className="text-green-600 hover:underline"
                   >
                     Sign in

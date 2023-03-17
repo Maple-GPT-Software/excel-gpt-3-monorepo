@@ -10,7 +10,8 @@ export const AUTH_REFRESH_ROUTE = '/auth/refresh';
 
 // Authenticated Routes
 export const DASHBOARD_ROUTE = 'app/dashboard';
-export const ACCOUNT_ROUTE = 'app/account';
+export const BILLING_ROUTE = 'app/billing';
 
 // local storage keys
+/** this is the route the user was at before they were routed to refresh */
 export const ROUTE_BEFORE_REFRESH = 'route_before_refesh';
