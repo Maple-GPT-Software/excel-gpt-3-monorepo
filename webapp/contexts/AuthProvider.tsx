@@ -115,6 +115,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
         const token = await user.getIdToken();
         AuthService.setRefreshedAccessToken(token);
       }
+    // TODO: specify interval for refresh
     });
 
     return () => {
