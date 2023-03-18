@@ -1,4 +1,5 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios from 'axios';
+import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 /** search params, e.g ?id=some_id */
 interface RequestParams {
@@ -18,11 +19,19 @@ export class AbstractRequestor {
     this.baseUrl = config.baseURL;
   }
 
-  get<T>({ url, params, headers }: { url: string; params?: RequestParams; headers?: RequestHeaders }) {
-    return this.instance.get<T>(url, { params, headers });
+  async get<T>({
+    url,
+    params,
+    headers,
+  }: {
+    url: string;
+    params?: RequestParams;
+    headers?: RequestHeaders;
+  }) {
+    return await this.instance.get<T>(url, { params, headers });
   }
 
-  post<T>({
+  async post<T>({
     url,
     data,
     params,
@@ -33,14 +42,29 @@ export class AbstractRequestor {
     params?: RequestParams;
     headers?: RequestHeaders;
   }) {
-    return this.instance.post<T>(url, { data, params, headers });
+    return await this.instance.post<T>(url, data, { params, headers });
   }
 
-  patch<T>({ url, data, headers }: { url: string; data?: unknown; headers?: RequestHeaders }) {
-    return this.instance.patch<T>(url, { data, headers });
+  async patch<T>({
+    url,
+    data,
+    headers,
+  }: {
+    url: string;
+    data?: unknown;
+    headers?: RequestHeaders;
+  }) {
+    return await this.instance.patch<T>(url, data, { headers });
   }
 
-  delete<T>({ url, data, headers }: { url: string; data?: unknown; headers?: RequestHeaders }) {
-    return this.instance.delete<T>(url, { data, headers });
+  async delete<T>({
+    url,
+    headers,
+  }: {
+    url: string;
+    data?: unknown;
+    headers?: RequestHeaders;
+  }) {
+    return await this.instance.delete<T>(url, { headers });
   }
 }

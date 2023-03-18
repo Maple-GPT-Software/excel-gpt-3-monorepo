@@ -1,25 +1,34 @@
 import { AuthenticatedRequestor } from './AuthenticatedRequestor';
 import settings from '@/settings';
+import type { SimplifyUser } from '@/types/simplifyApi';
+import AuthService from '@/models/AuthService';
+import type { PriceIds } from '@/types/appTypes';
+
+const SERVER_AUTH_BASE = '/auth';
+const SERVER_PAYMENT_BASE = '/payment';
 
 /**
  * This function returns an AuthenticatedRequestor. It can be used in or outside of React. Outside of react the function will reach out
  * to AuthService to get the access token for the currently logged in user
  */
-export default function SimplifyApi(accessToken: string): SimplifyApiClient {
+export default function SimplifyApi(accessToken?: string): SimplifyApiClient {
   let token: string | undefined;
 
-  // if(accessToken) {
-  //   token = accessToken;
-  // } else {
-  //   // get token from service
-  // }
-
-  // TODO: setup token
-  if (!accessToken) {
-    throw new Error('You have to be logged in to make SimplifyApi API calls');
+  if (accessToken !== undefined) {
+    token = accessToken;
+  } else {
+    token = AuthService.accessToken ?? '';
   }
 
-  return new SimplifyApiClient(new AuthenticatedRequestor(settings.simplifyBaseUrl, accessToken));
+  if (token === undefined) {
+    throw new Error(
+      'You need to be authenticated by Firebase make SimplifyApi API calls'
+    );
+  }
+
+  return new SimplifyApiClient(
+    new AuthenticatedRequestor(settings.simplifyBaseUrl, token)
+  );
 }
 
 class SimplifyApiClient {
@@ -30,23 +39,46 @@ class SimplifyApiClient {
 
   async createUser(name: string, hasAcceptedTerms: boolean, referrer?: string) {
     try {
-      const profile = await this.requestor.post({ url: '/signup', data: { name, hasAcceptedTerms } });
+      const res = await this.requestor.post<SimplifyUser>({
+        url: `${SERVER_AUTH_BASE}/signup`,
+        data: { name, hasAcceptedTerms, referrer },
+      });
 
-      return profile;
+      return res.data;
     } catch (error) {
-      return error;
+      console.error('Error creating user');
+      throw error;
+    }
+  }
+
+  async createFreeSubscription() {
+    return await this.requestor.post({ url: `${SERVER_PAYMENT_BASE}/trial` });
+  }
+
+  async createPremiumSubscription(priceId: PriceIds) {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const response = await this.requestor.post<any>({
+        url: `${SERVER_PAYMENT_BASE}/premium`,
+        data: { priceId },
+      });
+
+      return response.data;
+    } catch (error: any) {
+      // stripe sends 307 for re-direct
+      if (error?.response?.status === 307) {
+        return window.open(error.response.data.url, '_self');
+      } else {
+        throw error;
+      }
     }
   }
 
   async login() {
-    try {
-      const response = await this.requestor.post({ url: '/auth/login' });
+    const response = await this.requestor.post<SimplifyUser>({
+      url: `${SERVER_AUTH_BASE}/login`,
+    });
 
-      // if (response.status.);
-      return response;
-    } catch (error) {
-      console.error('Error while getting account details');
-      throw error;
-    }
+    return response.data;
   }
 }

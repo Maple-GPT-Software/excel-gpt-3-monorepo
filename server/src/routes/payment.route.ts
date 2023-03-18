@@ -9,6 +9,6 @@ router.post('/trial', paymentController.createTrial);
 
 router.put('/cancel-subscription/:id', paymentController.cancelSubscription);
 
-router.post('/subscription-session', validate(validatePriceId), paymentController.createSubscriptionSession);
+router.post('/premium', validate(validatePriceId), paymentController.createSubscriptionSession);
 
 export default router;

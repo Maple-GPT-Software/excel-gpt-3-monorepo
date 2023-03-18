@@ -10,10 +10,10 @@ const crossIcon = (
   </svg>
 );
 
-type OfferListProps = {
+interface OfferListProps {
   text: string;
   status: string;
-};
+}
 const OfferList = ({ text, status }: OfferListProps) => {
   return (
     <div className="mb-3 flex items-center">

@@ -1,8 +1,8 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { ACCOUNT_ROUTE, DASHBOARD_ROUTE } from '@/constants';
 
-function SideMenu() {
+function SideMenu(): ReactNode {
   return (
     <ul>
       <Link href={DASHBOARD_ROUTE}>Dashboard</Link>

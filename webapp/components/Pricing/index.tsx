@@ -3,9 +3,17 @@ import { useState } from 'react';
 import SectionTitle from '@/components/Common/SectionTitle';
 import OfferList from '@/components/Pricing/OfferList';
 import PricingBox from '@/components/Pricing/PricingBox';
+import {
+  useNavigateWithParams,
+  AppSearchParams,
+} from '@/hooks/useNavigateWithParams';
+import { SIGN_UP_ROUTE } from '@/constants';
+import { SubscriptionURLParams } from '@/types/appTypes';
 
 const Pricing = () => {
   const [isMonthly, setIsMonthly] = useState(true);
+
+  const navigateWithParams = useNavigateWithParams();
 
   return (
     <section id="pricing" className="relative z-10 py-16 md:py-20 lg:py-28">
@@ -67,6 +75,19 @@ const Pricing = () => {
             duration={isMonthly ? 'mo' : 'yr'}
             subtitle="Lorem ipsum dolor sit amet adiscing elit Mauris egestas enim."
           >
+            <div className="border-body-color mb-8 border-b border-opacity-10 pb-8 dark:border-white dark:border-opacity-10">
+              <button
+                onClick={() => {
+                  navigateWithParams(SIGN_UP_ROUTE, {
+                    [AppSearchParams.SUBSCRIPTION]:
+                      SubscriptionURLParams.PREMIUM,
+                  });
+                }}
+                className="bg-green-600 flex w-full items-center justify-center rounded-md p-3 text-base font-semibold text-white transition duration-300 ease-in-out hover:bg-opacity-80 hover:shadow-signUp"
+              >
+                Start Free Trial
+              </button>
+            </div>
             <OfferList text="All UI Components" status="active" />
             <OfferList text="Use with Unlimited Projects" status="active" />
             <OfferList text="Commercial Use" status="active" />
@@ -104,7 +125,13 @@ const Pricing = () => {
       </div>
 
       <div className="absolute left-0 bottom-0 z-[-1]">
-        <svg width="239" height="601" viewBox="0 0 239 601" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          width="239"
+          height="601"
+          viewBox="0 0 239 601"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <rect
             opacity="0.3"
             x="-184.451"

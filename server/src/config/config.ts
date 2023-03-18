@@ -12,6 +12,8 @@ const envVarsSchema = Joi.object()
     PORT: Joi.number().default(3000),
     MONGODB_URL_PROD: Joi.string().required().description('Mongo PROD url required'),
     MONGODB_URL_DEV: Joi.string().optional().description('Mongo Dev url required'),
+    ENCRYPT_SECRET: Joi.string().required(),
+    ENCRYPT_IV: Joi.string().required(),
     OPEN_AI: Joi.string().required(),
     FIREBASE_TYPE: Joi.string().required(),
     FIREBASE_PROJECT_ID: Joi.string().required(),
@@ -38,36 +40,60 @@ if (error) {
 
 const isProduction = envVars.NODE_ENV === Environment.PROD;
 
+const {
+  NODE_ENV,
+  PORT,
+  MONGODB_URL_PROD,
+  MONGODB_URL_DEV,
+  ENCRYPT_SECRET,
+  ENCRYPT_IV,
+  OPEN_AI,
+  FIREBASE_TYPE,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_PRIVATE_KEY_ID,
+  FIREBASE_PRIVATE_KEY,
+  FIREBASE_CLIENT_EMAIL,
+  FIREBASE_CLIENT_ID,
+  FIREBASE_AUTH_URI,
+  FIREBASE_TOKEN_URI,
+  FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
+  FIREBASE_CLIENT_X509_CERT_URL,
+  STRIPE_PROD_SECRET_KEY,
+  STRIPE_TEST_SECRET_KEY,
+  STRIPE_PROD_ENDPOINT_SECRET,
+  STRIPE_TEST_ENDPOINT_SECRET,
+} = envVars;
+
 export default {
-  env: envVars.NODE_ENV,
-  port: envVars.PORT,
+  env: NODE_ENV,
+  port: PORT,
   mongoose: {
-    url: isProduction ? envVars.MONGODB_URL_PROD : envVars.MONGODB_URL_DEV,
+    url: isProduction ? MONGODB_URL_PROD : MONGODB_URL_DEV,
     // useCreateIndex, useNewUrlParser, useUnifiedTopology options are true by default
     // https://www.mongodb.com/community/forums/t/option-usecreateindex-is-not-supported/123048/4
   },
-  openAi: envVars.OPEN_AI,
+  encrypt: {
+    secretKey: ENCRYPT_SECRET,
+    iv: ENCRYPT_IV,
+  },
+  openAi: OPEN_AI,
   firebase: {
-    type: envVars.FIREBASE_TYPE,
-    project_id: envVars.FIREBASE_PROJECT_ID,
-    private_key_id: envVars.FIREBASE_PRIVATE_KEY_ID,
-    private_key: envVars.FIREBASE_PRIVATE_KEY.replace(/\\n/gm, '\n'),
-    client_email: envVars.FIREBASE_CLIENT_EMAIL,
-    client_id: envVars.FIREBASE_CLIENT_ID,
-    auth_uri: envVars.FIREBASE_AUTH_URI,
-    token_uri: envVars.FIREBASE_TOKEN_URI,
-    auth_provider_x509_cert_url: envVars.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
-    client_x509_cert_url: envVars.FIREBASE_CLIENT_X509_CERT_URL,
+    type: FIREBASE_TYPE,
+    project_id: FIREBASE_PROJECT_ID,
+    private_key_id: FIREBASE_PRIVATE_KEY_ID,
+    private_key: FIREBASE_PRIVATE_KEY.replace(/\\n/gm, '\n'),
+    client_email: FIREBASE_CLIENT_EMAIL,
+    client_id: FIREBASE_CLIENT_ID,
+    auth_uri: FIREBASE_AUTH_URI,
+    token_uri: FIREBASE_TOKEN_URI,
+    auth_provider_x509_cert_url: FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
+    client_x509_cert_url: FIREBASE_CLIENT_X509_CERT_URL,
   } as any,
-  stripeApi: isProduction ? envVars.STRIPE_PROD_SECRET_KEY : envVars.STRIPE_TEST_SECRET_KEY,
-  stripeEndpointSecret: isProduction ? envVars.STRIPE_PROD_ENDPOINT_SECRET : envVars.STRIPE_TEST_ENDPOINT_SECRET,
+  stripeApi: isProduction ? STRIPE_PROD_SECRET_KEY : STRIPE_TEST_SECRET_KEY,
+  stripeEndpointSecret: isProduction ? STRIPE_PROD_ENDPOINT_SECRET : STRIPE_TEST_ENDPOINT_SECRET,
   clients: {
     // TODO: webapp production url
-    webappCheckoutSuccessUrl: isProduction
-      ? 'production_url'
-      : 'http://127.0.0.1:5000/app/registration/checkout?status=successfull',
-    webappCheckoutCancelledUrl: isProduction
-      ? 'production_url'
-      : 'http://127.0.0.1:5000/app/registration/checkout?status=cancelled',
+    webappCheckoutSuccessUrl: isProduction ? 'production_url' : 'http://127.0.0.1:5000/app/dashboard',
+    webappCheckoutCancelledUrl: isProduction ? 'production_url' : 'http://127.0.0.1:5000/auth/signup',
   },
 };

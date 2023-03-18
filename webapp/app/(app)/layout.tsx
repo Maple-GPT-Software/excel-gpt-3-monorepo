@@ -1,10 +1,11 @@
 'use client';
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { ThemeProvider } from 'next-themes';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import AuthProvider from '@/contexts/AuthProvider';
 
 const queryClient = new QueryClient();
@@ -20,7 +21,11 @@ export default function layout({ children }: { children: ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>{children}</AuthProvider>
         {/* https://tanstack.com/query/latest/docs/react/devtools query devtools when NODE_EV === 'production' */}
-        <ReactQueryDevtools initialIsOpen={false} />
+        <ReactQueryDevtools
+          initialIsOpen={false}
+          position="bottom-left"
+          panelPosition="left"
+        />
       </QueryClientProvider>
     </ThemeProvider>
   );
