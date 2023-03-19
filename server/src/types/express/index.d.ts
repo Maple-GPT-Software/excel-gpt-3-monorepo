@@ -12,7 +12,8 @@ declare global {
     export interface Request {
       /** We only use providers that require email for registration, e.g Google, Facebook */
       decodedFirebaseToken: Required<DecodedIdToken>;
-      isPremiumUser?: boolean;
+      /** only true when the user has paid for lifetime access */
+      hasLifetimeAccess?: boolean;
     }
   }
 }

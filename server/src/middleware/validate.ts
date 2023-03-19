@@ -5,7 +5,6 @@ import pick from '@src/utils/pick';
 import ApiError from '@src/utils/ApiError';
 
 const validate = (schema: any) => (req: Request, res: Response, next: NextFunction) => {
-  console.log('body is: ', req.body);
   const validSchema = pick(schema, ['params', 'query', 'body']);
   const object = pick(req, Object.keys(validSchema));
   const { value, error } = Joi.compile(validSchema)

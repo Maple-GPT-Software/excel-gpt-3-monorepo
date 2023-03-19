@@ -66,6 +66,9 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
       // we specify the user's email that should be used to uniquely identify the customer
       stripeService.addCustomerId(customer.email as string, customer.id);
       break;
+    case StripeWebhooks.PaymentSucceeded:
+      stripeService.updateLifetimeAccessPayment(event.data.object);
+      break;
     case StripeWebhooks.SubscriptionCreated:
       // FUTURE: email user with thank you, installation guide
       stripeService.updateSubscription(event.data.object);

@@ -6,34 +6,64 @@ import ApiError from '@src/utils/ApiError';
 import { User, UserType } from '@src/models/user.model';
 
 /**
- * This checks if the user is permitted to access resources that require an active or trialing subsciption
- * see isStripeSubscriptionInvalid
+ * This middleware is used for request made to messages to check if free trial users still have access to use chat
+ * and adds hasLifetimeAccess to req for dailyMessagesLimiter
  */
-const subscriptionCheck: RequestHandler = async (req, res, next) => {
+export const lifetimeAccessCheck: RequestHandler = async (req, res, next) => {
   try {
     const { email } = req.decodedFirebaseToken;
 
-    // this middleware is only used for routes where the user is logged in
-    // do we need to 1) check if user exists, 2) throw error if user === null
-    const { simplifyTrialEnd, openAiApiKey } = (await User.findOne({ email })) as UserType;
+    const { stripeLifetimeAccessPaymentId, stripeCurrentPeriodEnd, stripeStatus } = (await User.findOne({
+      email,
+    })) as UserType;
 
-    if (!isSimplifyTrialValid(simplifyTrialEnd)) {
+    if (stripeLifetimeAccessPaymentId !== '') {
+      req.hasLifetimeAccess = true;
+
+      next();
+      return;
+    }
+
+    if (isStripeSubscriptionInvalid(stripeCurrentPeriodEnd, stripeStatus)) {
       next(new ApiError(httpStatus.FORBIDDEN, 'Your subscription has expired'));
     }
 
-    // if (isStripeSubscriptionInvalid(user?.stripeCurrentPeriodEnd, user?.stripeStatus)) {
-    //   next(new ApiError(httpStatus.FORBIDDEN, 'Your subscription has expired'));
-    // }
-
-    // req.isPremiumUser = user.stripeStatus === 'active' || user.stripeStatus === 'canceled' || user.openAiApiKey !== '';
-    req.isPremiumUser = openAiApiKey !== '';
     next();
   } catch (error: any) {
     next(new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to retrieve your account'));
   }
 };
 
-export default subscriptionCheck;
+/**
+ * This checks if the user is permitted to access resources that require lifetime access or trialing subsciption
+ * see isStripeSubscriptionInvalid
+ */
+// export const subscriptionCheck: RequestHandler = async (req, res, next) => {
+//   try {
+//     const { email } = req.decodedFirebaseToken;
+
+//     // this middleware is only used for routes where the user is logged in
+//     // do we need to 1) check if user exists, 2) throw error if user === null
+//     // TODO: fix the subscription check
+//     const { stripeLifetimeAccessPaymentId, stripeCurrentPeriodEnd, stripeStatus, openAiApiKey } = (await User.findOne({
+//       email,
+//     })) as UserType;
+
+//     /** lifetime access checks */
+//     if (stripeLifetimeAccessPaymentId !== '') {
+//       req.hasLifetimeAccess = true;
+//     }
+
+//     if (isStripeSubscriptionInvalid(stripeCurrentPeriodEnd, stripeStatus)) {
+//       next(new ApiError(httpStatus.FORBIDDEN, 'Your subscription has expired'));
+//     }
+
+//     req.hasLifetimeAccess = stripeStatus === 'active' || stripeStatus === 'canceled' || openAiApiKey !== '';
+//     next();
+//   } catch (error: any) {
+//     next(new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to retrieve your account'));
+//   }
+// };
 
 export function isSimplifyTrialValid(trialEnd: number) {
   if (getCurrentUnixSeconds() < trialEnd) {

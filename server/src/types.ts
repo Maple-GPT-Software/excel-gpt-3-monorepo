@@ -13,6 +13,8 @@ export enum StripeWebhooks {
    * We get this event after 1) user signs up for free trial, or 2) checkouts for the first time for a premium subscription
    */
   CustomerCreated = 'customer.created',
+  /** When a payment has been successfully charged */
+  PaymentSucceeded = 'payment_intent.succeeded',
   /**
    * When a user starts a trial or subscribes to premium after trial expiration. We get the following statuses:
    *  - trialing : trial has started

@@ -91,9 +91,4 @@ export default {
   } as any,
   stripeApi: isProduction ? STRIPE_PROD_SECRET_KEY : STRIPE_TEST_SECRET_KEY,
   stripeEndpointSecret: isProduction ? STRIPE_PROD_ENDPOINT_SECRET : STRIPE_TEST_ENDPOINT_SECRET,
-  clients: {
-    // TODO: webapp production url
-    webappCheckoutSuccessUrl: isProduction ? 'production_url' : 'http://127.0.0.1:5000/app/dashboard',
-    webappCheckoutCancelledUrl: isProduction ? 'production_url' : 'http://127.0.0.1:5000/auth/signup',
-  },
 };

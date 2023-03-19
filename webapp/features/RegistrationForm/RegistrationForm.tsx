@@ -48,7 +48,7 @@ function RegistrationForm() {
 
       if (
         searchParams?.get(AppSearchParams.SUBSCRIPTION) ===
-        SubscriptionURLParams.PREMIUM
+        SubscriptionURLParams.LIFETIME_CHAT_ACCESS
       ) {
         await handlePremiumSubscription();
       } else {
