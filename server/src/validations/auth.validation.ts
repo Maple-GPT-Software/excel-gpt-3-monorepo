@@ -5,5 +5,6 @@ export const firebaseSignup = {
     name: Joi.string().required(),
     referrer: Joi.string().optional().allow(''),
     hasAcceptedTerms: Joi.boolean().required(),
+    openAiApiKey: Joi.string().optional().allow(''),
   }),
 };

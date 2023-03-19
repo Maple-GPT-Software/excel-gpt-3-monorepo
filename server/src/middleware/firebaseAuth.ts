@@ -4,6 +4,8 @@ import httpStatus from 'http-status';
 import ApiError from '@src/utils/ApiError';
 import admin from '@src/services/firebase.service';
 
+import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
+
 /**
  * This middlewares validates the accessToken sent by the client applications
  * via firebase admin SDK. The decoded token includes the following properties
@@ -25,7 +27,7 @@ const firebaseAuth: RequestHandler = async (req, res, next) => {
 
     const decodedToken = await admin.auth().verifyIdToken(idToken);
 
-    req.decodedFirebaseToken = decodedToken;
+    req.decodedFirebaseToken = decodedToken as Required<DecodedIdToken>;
 
     next();
   } catch (error: any) {

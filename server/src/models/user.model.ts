@@ -82,7 +82,8 @@ const userSchema = new Schema<UserType, UserModel>({
   },
   openAiApiKey: {
     type: String,
-    required: true,
+    required: false,
+    default: '',
   },
   // stripeCustomerId: {
   //   type: String,

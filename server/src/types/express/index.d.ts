@@ -10,7 +10,8 @@ export {};
 declare global {
   namespace Express {
     export interface Request {
-      decodedFirebaseToken: DecodedIdToken;
+      /** We only use providers that require email for registration, e.g Google, Facebook */
+      decodedFirebaseToken: Required<DecodedIdToken>;
       isPremiumUser?: boolean;
     }
   }

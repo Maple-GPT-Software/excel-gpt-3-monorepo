@@ -15,15 +15,18 @@ const subscriptionCheck: RequestHandler = async (req, res, next) => {
 
     // this middleware is only used for routes where the user is logged in
     // do we need to 1) check if user exists, 2) throw error if user === null
-    const user = (await User.findOne({ email })) as UserType;
+    const { simplifyTrialEnd, openAiApiKey } = (await User.findOne({ email })) as UserType;
 
-    // @ts-expect-error keeping this for later
-    if (isSubscriptionInvalid(user?.stripeCurrentPeriodEnd, user?.stripeStatus)) {
+    if (!isSimplifyTrialValid(simplifyTrialEnd)) {
       next(new ApiError(httpStatus.FORBIDDEN, 'Your subscription has expired'));
     }
 
-    // @ts-expect-error keeping this for later
-    req.isPremiumUser = user.stripeStatus === 'active' || user.stripeStatus === 'canceled';
+    // if (isStripeSubscriptionInvalid(user?.stripeCurrentPeriodEnd, user?.stripeStatus)) {
+    //   next(new ApiError(httpStatus.FORBIDDEN, 'Your subscription has expired'));
+    // }
+
+    // req.isPremiumUser = user.stripeStatus === 'active' || user.stripeStatus === 'canceled' || user.openAiApiKey !== '';
+    req.isPremiumUser = openAiApiKey !== '';
     next();
   } catch (error: any) {
     next(new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to retrieve your account'));
@@ -32,8 +35,16 @@ const subscriptionCheck: RequestHandler = async (req, res, next) => {
 
 export default subscriptionCheck;
 
+export function isSimplifyTrialValid(trialEnd: number) {
+  if (getCurrentUnixSeconds() < trialEnd) {
+    return true;
+  }
+
+  return false;
+}
+
 /** Checks if the current subscription is invalid. Canceled subscriptions are good until current date > current period end */
-export function isSubscriptionInvalid(
+export function isStripeSubscriptionInvalid(
   stripeCurrentPeriodEnd: number | undefined,
   stripeStatus: Stripe.Subscription.Status | undefined
 ) {

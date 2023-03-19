@@ -11,3 +11,6 @@ export enum PRICE_IDS {
 
 /** which version the user accepted when they signed up */
 export const TERMS_AND_CONDITION_VERSION = 1;
+
+// DATE
+export const MILISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
