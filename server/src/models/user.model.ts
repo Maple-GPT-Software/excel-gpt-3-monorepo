@@ -16,13 +16,17 @@ export interface UserType {
    * We don't have to keep all the metadata associated with a subscription because Stripe's client facing SDK has no rate limiting. Server side API however has a limit of 100 reads/min.
    */
   /** stripe customer id associated with user's email */
-  stripeCustomerId?: string;
-  /** the end of the bill cycle of the user's subscription*/
-  stripeCurrentPeriodEnd?: number;
+  // stripeCustomerId?: string;
+  /** the end of the bill cycle of the user's subscription */
+  // stripeCurrentPeriodEnd?: number;
   /**
    * possible statuses: paid, incomplete, trialing, active, past_due, canceled. We don't allow users to pause their subscription.
    */
-  stripeStatus?: Stripe.Subscription.Status;
+  // stripeStatus?: Stripe.Subscription.Status;
+  /** unix timestamp, in seconds, of when the user's trial ends */
+  simplifyTrialEnd: number;
+  /** the user's open AI API key */
+  openAiApiKey?: string;
 }
 
 /**
@@ -72,18 +76,26 @@ const userSchema = new Schema<UserType, UserModel>({
     required: true,
     lowercase: true,
   },
-  stripeCustomerId: {
-    type: String,
-    required: false,
-  },
-  stripeCurrentPeriodEnd: {
+  simplifyTrialEnd: {
     type: Number,
     required: false,
   },
-  stripeStatus: {
+  openAiApiKey: {
     type: String,
-    required: false,
+    required: true,
   },
+  // stripeCustomerId: {
+  //   type: String,
+  //   required: false,
+  // },
+  // stripeCurrentPeriodEnd: {
+  //   type: Number,
+  //   required: false,
+  // },
+  // stripeStatus: {
+  //   type: String,
+  //   required: false,
+  // },
 });
 
 /** Remove properties before Document is sent to client */
@@ -95,6 +107,7 @@ userSchema.methods.toJSON = function () {
   delete obj.createdAt;
   delete obj.updatedAt;
   delete obj.referrer;
+  delete obj.openAiApiKey;
 
   return obj;
 };

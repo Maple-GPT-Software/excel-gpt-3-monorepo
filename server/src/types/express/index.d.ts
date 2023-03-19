@@ -1,5 +1,7 @@
 // https://blog.logrocket.com/extend-express-request-object-typescript/
 
+import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
+
 export {};
 
 // This allows us to extend the types from Express and do stuff
@@ -8,7 +10,7 @@ export {};
 declare global {
   namespace Express {
     export interface Request {
-      decodedFirebaseToken?: DecodedIdToken;
+      decodedFirebaseToken: DecodedIdToken;
       isPremiumUser?: boolean;
     }
   }

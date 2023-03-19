@@ -13,6 +13,7 @@ export const createTrial = catchAsync(async (req: Request, res: Response) => {
    *  1) signed up to trial
    *  2) completed checkout for a paid subscription
    */
+  // @ts-expect-error keeping this for later
   if (user?.stripeCustomerId) {
     res.status(httpStatus.FORBIDDEN).send('You already trialed our services');
   }
@@ -25,13 +26,13 @@ export const createTrial = catchAsync(async (req: Request, res: Response) => {
 
 export const cancelSubscription = catchAsync(async (req: Request, res: Response) => {
   const { id: subscriptionId } = req.params;
-  const email = req.decodedFirebaseToken.email;
+  const { email } = req.decodedFirebaseToken;
   await cancelSubscriptionById(email, subscriptionId);
   res.status(httpStatus.OK).send();
 });
 
 export const createSubscriptionSession = catchAsync(async (req: Request, res: Response) => {
-  const email = req.decodedFirebaseToken.email;
+  const { email } = req.decodedFirebaseToken;
   const { priceId } = req.body;
 
   const session = await createSessionByProductId(email, priceId);

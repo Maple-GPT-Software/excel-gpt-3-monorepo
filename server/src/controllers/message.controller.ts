@@ -29,7 +29,7 @@ export const createMessage = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const rateMessage = catchAsync(async (req: Request, res: Response) => {
-  const rating = req.body.rating;
+  const { rating } = req.body;
   const userId = req.decodedFirebaseToken.uid;
   const { id } = req.params;
 

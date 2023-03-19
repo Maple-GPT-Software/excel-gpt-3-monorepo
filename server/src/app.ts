@@ -53,8 +53,8 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
     // verifying the signature sent by Stripe
     event = stripe.webhooks.constructEvent(request.body, sig, config.stripeEndpointSecret) as Stripe.DiscriminatedEvent;
   } catch (error: unknown) {
-    // @ts-ignore
-    logger.debug(`⚠️  Webhook signature verification failed.`, err.message);
+    // @ts-expect-error we don't need to type this
+    logger.debug(`⚠️  Webhook signature verification failed.`, error.message);
     response.status(400).send();
     return;
   }

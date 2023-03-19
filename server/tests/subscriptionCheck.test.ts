@@ -25,26 +25,26 @@ describe('isSubscriptionInvalid free subscription tests', () => {
 describe('isSubscriptionInvalid premium subscription test', () => {
   it('should return true when the user has an active subscription', () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-02-05'));
-    expect(subscriptionCheck.isSubscriptionInvalid(FEB_28_2023, 'active'));
+    expect(subscriptionCheck.isSubscriptionInvalid(FEB_28_2023, 'active')).toBe(true);
   });
 
   it('should return true when Stripe was not able to bill the user', () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-02-05'));
-    expect(subscriptionCheck.isSubscriptionInvalid(FEB_28_2023, 'past_due'));
+    expect(subscriptionCheck.isSubscriptionInvalid(FEB_28_2023, 'past_due')).toBe(true);
   });
 
   it('should return true when the subscription has been cancelled and current date is past current date end', () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-03-01'));
-    expect(subscriptionCheck.isSubscriptionInvalid(FEB_28_2023, 'canceled'));
+    expect(subscriptionCheck.isSubscriptionInvalid(FEB_28_2023, 'canceled')).toBe(true);
   });
 
   it('should return false when the user has a canceled subscription and the current date is before the current date end', () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-02-05'));
-    expect(subscriptionCheck.isSubscriptionInvalid(FEB_28_2023, 'canceled'));
+    expect(subscriptionCheck.isSubscriptionInvalid(FEB_28_2023, 'canceled')).toBe(false);
   });
 
   it('should return false when the user has an acive subscription', () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-02-05'));
-    expect(subscriptionCheck.isSubscriptionInvalid(FEB_28_2023, 'active'));
+    expect(subscriptionCheck.isSubscriptionInvalid(FEB_28_2023, 'active')).toBe(false);
   });
 });

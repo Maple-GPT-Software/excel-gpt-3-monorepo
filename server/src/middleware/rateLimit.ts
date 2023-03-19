@@ -21,9 +21,8 @@ export const dailyMessagesLimiter = rateLimit({
   max: async (req, res) => {
     if (req?.isPremiumUser) {
       return PREMIUM_MAX_DAILY_REQUESTS;
-    } else {
-      return FREE_TRIAL_MAX_DAILY_REQUESTS;
     }
+    return FREE_TRIAL_MAX_DAILY_REQUESTS;
   },
   message: async (request: Request, response: Response) => {
     if (request?.isPremiumUser) {

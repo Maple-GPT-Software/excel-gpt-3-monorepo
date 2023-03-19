@@ -10,8 +10,7 @@ import logger from '@src/config/logger';
  */
 export async function getCompletion(prompt: string, user: string) {
   try {
-    // @ts-ignore
-    // .createChatCompletion is a valid method, maintainers likely forgot to add it to types
+    // @ts-expect-error .createChatCompletion is a valid method, maintainers likely forgot to add it to types
     const { data } = await openai.createChatCompletion({
       ...basePromptConfig,
       user,

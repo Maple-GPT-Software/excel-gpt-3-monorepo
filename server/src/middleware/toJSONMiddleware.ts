@@ -7,7 +7,7 @@ import { Document } from 'mongoose';
  * it is sent to the client apps
  * */
 function toJSONMiddleware(req: Request, res: Response, next: NextFunction) {
-  const send = res.send;
+  const { send } = res;
   res.send = function (body) {
     if (body instanceof Document) {
       return send.call(res, body.toJSON());

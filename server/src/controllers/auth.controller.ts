@@ -17,7 +17,7 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
     referrer: req.body.referrer ?? '',
   };
   const user = await userService.createUser(newUser);
-  res.status(httpStatus.CREATED).send({ user: user });
+  res.status(httpStatus.CREATED).send({ user });
 });
 
 export const login = catchAsync(async (req: Request, res: Response) => {

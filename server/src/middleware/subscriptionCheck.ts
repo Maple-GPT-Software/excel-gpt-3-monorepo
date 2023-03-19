@@ -11,16 +11,18 @@ import { User, UserType } from '@src/models/user.model';
  */
 const subscriptionCheck: RequestHandler = async (req, res, next) => {
   try {
-    const email = req.decodedFirebaseToken.email;
+    const { email } = req.decodedFirebaseToken;
 
     // this middleware is only used for routes where the user is logged in
     // do we need to 1) check if user exists, 2) throw error if user === null
     const user = (await User.findOne({ email })) as UserType;
 
+    // @ts-expect-error keeping this for later
     if (isSubscriptionInvalid(user?.stripeCurrentPeriodEnd, user?.stripeStatus)) {
       next(new ApiError(httpStatus.FORBIDDEN, 'Your subscription has expired'));
     }
 
+    // @ts-expect-error keeping this for later
     req.isPremiumUser = user.stripeStatus === 'active' || user.stripeStatus === 'canceled';
     next();
   } catch (error: any) {
@@ -51,9 +53,9 @@ export function isSubscriptionInvalid(
   } else if (stripeStatus === 'trialing' || stripeStatus === 'active' || stripeStatus === 'canceled') {
     // subscription can be cancelled but we permit access to APIs until current date > currentPeriodEnd
     return false;
-  } else {
-    return true;
   }
+
+  return true;
 }
 
 /**
