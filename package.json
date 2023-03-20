@@ -2,9 +2,5 @@
   "name": "excel-simplify",
   "version": "0.1.0",
   "private": true,
-  "license": "ISC",
-  "scripts": {
-    "start": "npm install pnpm && npm run dev",
-    "dev": "cd server && pnpm run prepare && pnpm run build && pnpm run start"
-  }
+  "license": "ISC"
 }
