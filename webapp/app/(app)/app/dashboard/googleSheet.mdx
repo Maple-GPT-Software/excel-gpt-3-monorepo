@@ -1,0 +1,62 @@
+# Install ChatGPT into Google Sheets
+
+This guide will walk you through the steps to install ChatGPT into Google Sheets.
+
+## Prerequisites
+
+Before you begin, make sure you have the following:
+
+- A Google Sheets account
+- A Google Cloud Platform account
+- A Google Cloud Platform project with the Google Sheets API enabled
+- A Google Cloud Platform service account key
+
+## Step 1: Enable the Google Sheets API
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a new project or select an existing one.
+3. In the left-hand menu, select **APIs & Services** > **Dashboard**.
+4. Click on the **Enable APIs and Services** button at the top.
+5. Search for **Google Sheets API** and click on it.
+6. Click on the **Enable** button.
+
+## Step 2: Create a Service Account Key
+
+1. In the left-hand menu, select **APIs & Services** > **Credentials**.
+2. Click on the **Create credentials** button and select **Service account key**.
+3. Choose a name for your service account and select **JSON** as the key type.
+4. Click on the **Create** button.
+5. Your JSON key file will be downloaded to your computer.
+
+## Step 3: Share your Google Sheets document
+
+1. Open your Google Sheets document.
+2. Click on the **Share** button in the top-right corner.
+3. Add the email address of your service account and give it **Editor** access.
+
+## Step 4: Install ChatGPT
+
+1. Open the script editor in your Google Sheets document by going to **Tools** > **Script editor**.
+2. Paste the following code into the script editor:
+
+   ```javascript
+   const installChatGPT = () => {
+     const code = `
+     function generateTextFromPrompt(prompt, length) {
+       const response = ChatGPT.generate(prompt, length);
+       return response.data[0].text;
+     }
+     `;
+     const head = document.getElementsByTagName('head')[0];
+     const script = document.createElement('script');
+     script.type = 'text/javascript';
+     script.innerHTML = code;
+     head.appendChild(script);
+   };
+   ```
+
+3. Click on File > Save.
+4. Click on Run > installChatGPT.
+5. Allow the script to access your Google Sheets document.
+
+And that's it! ChatGPT is now installed in your Google Sheets document.
