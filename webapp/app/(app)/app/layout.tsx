@@ -15,6 +15,7 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
   const { simplifyUser, firebaseUser } = useAuthContext();
   const router = useRouter();
 
+  // only re-direct on mount
   useEffect(() => {
     // previously logged in and revisits app. Re-direct to refresh so that sesison can be refresh
     if (!simplifyUser || !firebaseUser) {
@@ -22,14 +23,17 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
       localStorage.setItem(ROUTE_BEFORE_REFRESH, currentRoute);
       router.replace(AUTH_REFRESH_ROUTE);
     }
-    // only re-direct on mount
   }, []);
+
+  if (!simplifyUser || !firebaseUser) {
+    return null;
+  }
 
   // only render /app/* routes if user profile was succesfully fetched from server
   return (
-    <div className="grid grid-cols-[250px_1fr]">
+    <div className="grid h-screen w-screen grid-cols-[250px_1fr]">
       <SideNav />
-      <div>{children}</div>
+      <div className="px-4 pt-12">{children}</div>
     </div>
   );
 };

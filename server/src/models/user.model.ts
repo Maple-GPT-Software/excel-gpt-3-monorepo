@@ -4,6 +4,7 @@ import Stripe from 'stripe';
 /** base user type */
 export interface UserType {
   /** corresponds to uid from firebase auth */
+  // TODO: refactor this to be firebaseUUID
   userId: string;
   email: string;
   name: string;
@@ -107,6 +108,8 @@ const userSchema = new Schema<UserType, UserModel>({
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
 
+  // return this as id
+  // obj.id = obj._id;
   delete obj._id;
   delete obj.__v;
   delete obj.createdAt;

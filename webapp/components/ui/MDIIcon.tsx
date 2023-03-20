@@ -6,10 +6,18 @@ interface MDIIconProps {
   size?: number;
   fill?: string;
   className?: string;
+  color?: string;
 }
 
-const MDIIcon: React.FC<MDIIconProps> = ({ path, size, className }) => {
-  return <Icon path={path} size={size || 1} className={className} />;
+const MDIIcon: React.FC<MDIIconProps> = ({ path, size, className, color }) => {
+  return (
+    <Icon
+      path={path}
+      size={size || 1}
+      className={className}
+      color={color ?? 'black'}
+    />
+  );
 };
 
 export default MDIIcon;

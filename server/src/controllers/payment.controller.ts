@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
 import catchAsync from '@src/utils/catchAsync';
-import { cancelSubscriptionById, createCustomerWithFreeTrial, createSessionByProductId } from '@src/services/stripe.service';
+import { cancelSubscriptionById, createCustomerWithFreeTrial, createSessionByPricetId } from '@src/services/stripe.service';
 import httpStatus from 'http-status';
-import { User } from '@src/models/user.model';
+import { User, UserType } from '@src/models/user.model';
+import { PRICE_IDS } from '@src/constants';
+import ApiError from '@src/utils/ApiError';
 
 export const createTrial = catchAsync(async (req: Request, res: Response) => {
   const { email } = req.decodedFirebaseToken;
@@ -34,7 +36,20 @@ export const createPurchaseSession = catchAsync(async (req: Request, res: Respon
   const { email } = req.decodedFirebaseToken;
   const { priceId, successUrl, cancelUrl } = req.body;
 
-  const session = await createSessionByProductId(email, priceId, { successUrl, cancelUrl });
+  const session = await createSessionByPricetId(email, priceId, { successUrl, cancelUrl });
 
   res.status(httpStatus.TEMPORARY_REDIRECT).send(session);
+});
+
+export const createLifetimeAccessPurchaseSession = catchAsync(async (req: Request, res: Response) => {
+  const { email } = req.decodedFirebaseToken;
+  const { successUrl, cancelUrl, openAiApiKey } = req.body;
+
+  User.updateOne({ email }, { openAiApiKey }).catch((e) => {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Interval server error');
+  });
+
+  const session = await createSessionByPricetId(email, PRICE_IDS.LIFETIME_CHAT_ACCESS, { successUrl, cancelUrl });
+
+  return session;
 });

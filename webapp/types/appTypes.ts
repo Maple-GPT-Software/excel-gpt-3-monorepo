@@ -5,6 +5,7 @@
 /** possible subscription types when registering */
 export enum SubscriptionURLParams {
   PREMIUM = 'premium',
+  /** user signing up for lifetime access */
   LIFETIME_CHAT_ACCESS = 'lifetime',
 }
 

@@ -9,6 +9,7 @@ import logger from '@src/config/logger';
  * https://platform.openai.com/docs/api-reference/completions/create#completions/create-user
  */
 export async function getCompletion(prompt: string, user: string) {
+  // TODO: use user's openai API key if it exists
   try {
     // @ts-expect-error .createChatCompletion is a valid method, maintainers likely forgot to add it to types
     const { data } = await openai.createChatCompletion({

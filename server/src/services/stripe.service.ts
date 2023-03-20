@@ -37,7 +37,7 @@ export const createCustomerWithFreeTrial = async (email: string) => {
  * 3) user clicks on cancel_url, is navigated back to client and clients makes API call to create free trial
  * 4) defaults to payment mode unless options.mode is specified
  */
-export const createSessionByProductId = async (
+export const createSessionByPricetId = async (
   email: string,
   priceId: string,
   options: { mode?: Stripe.Checkout.SessionCreateParams.Mode; successUrl: string; cancelUrl: string }
@@ -67,7 +67,7 @@ export const createSessionByProductId = async (
     return session;
   } catch (error) {
     // Stripe was not able to create a checkout session for whatever reason
-    logger.error('#createSessionByProductId failed', error);
+    logger.error('#createSessionByPricetId failed', error);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to checkout with Stripe');
   }
 };

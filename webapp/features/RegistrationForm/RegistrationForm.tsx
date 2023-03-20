@@ -13,14 +13,13 @@ import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { DASHBOARD_ROUTE } from '@/constants';
 import { AppSearchParams } from '@/hooks/useNavigateWithParams';
-import { PriceIds, SubscriptionURLParams } from '@/types/appTypes';
 
 interface RegistrationFormTypes {
   fullName: string;
   email: string;
   hasCheckedTerms: boolean;
 }
-
+// TODO: lifetime access form
 function RegistrationForm() {
   const { firebaseUser, setSimplifyUser } = useAuthContext();
   const router = useRouter();
@@ -46,31 +45,12 @@ function RegistrationForm() {
         searchParams?.get(AppSearchParams.REFERRER) ?? ''
       );
 
-      if (
-        searchParams?.get(AppSearchParams.SUBSCRIPTION) ===
-        SubscriptionURLParams.LIFETIME_CHAT_ACCESS
-      ) {
-        await handlePremiumSubscription();
-      } else {
-        await SimplifyApi().createFreeSubscription();
-      }
+      await SimplifyApi().createFreeSubscription();
+
       // set user so that they are able to acces /app/* without redirect to /auth/refresh
       setSimplifyUser(simplifyUser);
       router.replace(DASHBOARD_ROUTE);
     } catch (error) {}
-  }
-
-  // TODO: handle case where a premium subscriber cancels
-  // we can re-direct to a /auth/free-subscription route that
-  // calls await SimplifyApi().createFreeSubscription()
-  async function handlePremiumSubscription() {
-    try {
-      await SimplifyApi().createPremiumSubscription(
-        PriceIds.STANDALONE_MONTHLY
-      );
-    } catch (error) {
-      console.error(error);
-    }
   }
 
   if (isSubmitting || isSubmitted) {
@@ -136,7 +116,7 @@ function RegistrationForm() {
         )}
       </label>
       <Button
-        className="ml-auto mt-8 w-fit"
+        className="ml-auto mt-4 w-fit"
         variant={'default'}
         disabled={!isValid}
         type="submit"
