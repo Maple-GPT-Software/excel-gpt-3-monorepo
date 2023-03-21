@@ -5,10 +5,8 @@ export interface SimplifyUser {
   referrer: string;
   hasAcceptedTerms: boolean;
   acceptedTermsVersion: number;
+  hasLifetimeAccess: boolean;
   stripeCustomerId: string;
-  stripeLifetimeAccessPaymentId: string;
-  /** current period end as unix timestamp in seconds */
   stripeCurrentPeriodEnd: number;
-  stripeStatus?: string;
-  openAiApiKey?: string;
+  stripeStatus: string;
 }

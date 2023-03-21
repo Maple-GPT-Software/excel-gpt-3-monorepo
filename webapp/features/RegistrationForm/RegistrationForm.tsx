@@ -1,20 +1,24 @@
 'use client';
 
-import { Input } from '@/components/ui/Input';
+// NPM
 import React from 'react';
-import { useAuthContext } from '@/contexts/AuthProvider';
-import { Button } from '@/components/ui/Button';
-import MDIIcon from '@/components/ui/MDIIcon';
 import { useForm } from 'react-hook-form';
-
+import MDIIcon from '@/components/ui/MDIIcon';
 import { mdiChevronRight } from '@mdi/js';
-import SimplifyApi from '@/api/SimplifyApi';
-import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { DASHBOARD_ROUTE } from '@/constants';
+// Contexts
+import { useAuthContext } from '@/contexts/AuthProvider';
+// Hooks
 import { AppSearchParams } from '@/hooks/useNavigateWithParams';
+// Components
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
+// API
+import SimplifyApi from '@/api/SimplifyApi';
+import { DASHBOARD_ROUTE } from '@/constants';
 
-interface RegistrationFormTypes {
+interface RegistrationFormType {
   fullName: string;
   email: string;
   hasCheckedTerms: boolean;
@@ -29,14 +33,14 @@ function RegistrationForm() {
     register,
     handleSubmit,
     formState: { errors, isValid, isSubmitting, isSubmitted },
-  } = useForm<RegistrationFormTypes>({
+  } = useForm<RegistrationFormType>({
     defaultValues: {
       fullName: firebaseUser?.displayName ?? '',
       email: firebaseUser?.email ?? '',
     },
   });
 
-  async function onSubmit(data: RegistrationFormTypes) {
+  async function onSubmit(data: RegistrationFormType) {
     const { fullName, hasCheckedTerms } = data;
     try {
       const simplifyUser = await SimplifyApi().createUser(
@@ -62,29 +66,17 @@ function RegistrationForm() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex h-full flex-col justify-center px-8"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="flex h-full flex-col justify-center px-8">
       <h3 className="mb-8 text-2xl font-light">Set up your account</h3>
       <div>
         <label htmlFor="fullName">
           <p>Full Name</p>
-          <Input
-            {...register('fullName', { required: true, minLength: 3 })}
-            className="mb-4 mt-2"
-          />
-          {errors?.fullName?.message === 'minLength' && (
-            <p role="alert">Minimum length is 3 characters</p>
-          )}
+          <Input {...register('fullName', { required: true, minLength: 3 })} className="mb-4 mt-2" />
+          {errors?.fullName?.message === 'minLength' && <p role="alert">Minimum length is 3 characters</p>}
         </label>
         <label htmlFor="email">
           <p>Email</p>
-          <Input
-            {...register('email', { required: true })}
-            className="mb-4 mt-2"
-            disabled
-          />
+          <Input {...register('email', { required: true })} className="mb-4 mt-2" disabled />
           {errors.email?.type === 'required' && <p>Email is required</p>}
         </label>
       </div>
@@ -95,11 +87,7 @@ function RegistrationForm() {
         {/* TODO:  https://ui.shadcn.com/docs/primitives/checkbox */}
         {/* we need the checkbox to show */}
         <div>
-          <input
-            {...register('hasCheckedTerms', { required: true })}
-            type="checkbox"
-            id="checkboxLabel"
-          />
+          <input {...register('hasCheckedTerms', { required: true })} type="checkbox" id="checkboxLabel" />
           <span>
             I agree to
             <a href="#0" className="text-green-600 hover:underline">
@@ -111,16 +99,9 @@ function RegistrationForm() {
             </a>
           </span>
         </div>
-        {errors?.hasCheckedTerms?.type === 'required' && (
-          <p role="alert">Please accept terms before you continue.</p>
-        )}
+        {errors?.hasCheckedTerms?.type === 'required' && <p role="alert">Please accept terms before you continue.</p>}
       </label>
-      <Button
-        className="ml-auto mt-4 w-fit"
-        variant={'default'}
-        disabled={!isValid}
-        type="submit"
-      >
+      <Button className="ml-auto mt-4 w-fit" variant={'default'} disabled={!isValid} type="submit">
         Confirm
         <MDIIcon path={mdiChevronRight} />
       </Button>

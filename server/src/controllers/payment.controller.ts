@@ -43,13 +43,13 @@ export const createPurchaseSession = catchAsync(async (req: Request, res: Respon
 
 export const createLifetimeAccessPurchaseSession = catchAsync(async (req: Request, res: Response) => {
   const { email } = req.decodedFirebaseToken;
-  const { successUrl, cancelUrl, openAiApiKey } = req.body;
+  const { successUrl, cancelUrl, openaiApiKey } = req.body;
 
-  User.updateOne({ email }, { openAiApiKey }).catch((e) => {
+  await User.updateOne({ email }, { openaiApiKey }).catch((e) => {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Interval server error');
   });
 
   const session = await createSessionByPricetId(email, PRICE_IDS.LIFETIME_CHAT_ACCESS, { successUrl, cancelUrl });
 
-  return session;
+  res.status(httpStatus.TEMPORARY_REDIRECT).send(session);
 });

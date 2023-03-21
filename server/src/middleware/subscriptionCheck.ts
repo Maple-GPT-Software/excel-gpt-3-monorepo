@@ -45,7 +45,7 @@ export const lifetimeAccessCheck: RequestHandler = async (req, res, next) => {
 //     // this middleware is only used for routes where the user is logged in
 //     // do we need to 1) check if user exists, 2) throw error if user === null
 //     // TODO: fix the subscription check
-//     const { stripeLifetimeAccessPaymentId, stripeCurrentPeriodEnd, stripeStatus, openAiApiKey } = (await User.findOne({
+//     const { stripeLifetimeAccessPaymentId, stripeCurrentPeriodEnd, stripeStatus, openaiApiKey } = (await User.findOne({
 //       email,
 //     })) as UserType;
 
@@ -58,7 +58,7 @@ export const lifetimeAccessCheck: RequestHandler = async (req, res, next) => {
 //       next(new ApiError(httpStatus.FORBIDDEN, 'Your subscription has expired'));
 //     }
 
-//     req.hasLifetimeAccess = stripeStatus === 'active' || stripeStatus === 'canceled' || openAiApiKey !== '';
+//     req.hasLifetimeAccess = stripeStatus === 'active' || stripeStatus === 'canceled' || openaiApiKey !== '';
 //     next();
 //   } catch (error: any) {
 //     next(new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to retrieve your account'));

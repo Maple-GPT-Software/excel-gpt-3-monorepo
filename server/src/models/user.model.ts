@@ -30,7 +30,7 @@ export interface UserType {
    */
   stripeStatus?: Stripe.Subscription.Status;
   /** the user's open AI API key */
-  openAiApiKey?: string;
+  openaiApiKey?: string;
 }
 
 /**
@@ -80,7 +80,7 @@ const userSchema = new Schema<UserType, UserModel>({
     required: true,
     lowercase: true,
   },
-  openAiApiKey: {
+  openaiApiKey: {
     type: String,
     required: false,
     default: '',
@@ -108,14 +108,14 @@ const userSchema = new Schema<UserType, UserModel>({
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
 
-  // return this as id
-  // obj.id = obj._id;
+  obj.hasLifetimeAccess = obj.stripeLifetimeAccessPaymentId !== '';
+
   delete obj._id;
   delete obj.__v;
   delete obj.createdAt;
   delete obj.updatedAt;
   delete obj.referrer;
-  delete obj.openAiApiKey;
+  delete obj.openaiApiKey;
 
   return obj;
 };

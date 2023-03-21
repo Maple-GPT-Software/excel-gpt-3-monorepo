@@ -15,7 +15,7 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "plugins": ["react", "unused-imports", "prettier"],
+  "plugins": ["react", "unused-imports"],
   "rules": {
     "comma-dangle": "off",
     "semi": "off",
