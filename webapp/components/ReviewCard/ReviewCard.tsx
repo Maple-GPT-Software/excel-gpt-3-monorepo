@@ -20,7 +20,7 @@ type ReviewCardProps = {
 const ReviewCard = ({ testimonial }: ReviewCardProps) => {
   const { star, name, image, content, designation } = testimonial;
 
-  let ratingIcons = [];
+  const ratingIcons = [];
   for (let index = 0; index < star; index++) {
     ratingIcons.push(
       <span key={index} className="text-yellow-500">
@@ -34,7 +34,7 @@ const ReviewCard = ({ testimonial }: ReviewCardProps) => {
       <div className="wow fadeInUp rounded-md bg-green-600 p-8 shadow-one lg:px-5 xl:px-8" data-wow-delay=".1s">
         <div className="mb-5 flex items-center space-x-1">{ratingIcons}</div>
         <p className="border-body-color mb-8 border-b border-opacity-10 pb-8 text-base leading-relaxed text-white dark:border-white dark:border-opacity-10 dark:text-white">
-          “{content}"
+          &quot;{content}&quot;
         </p>
         <div className="flex items-center">
           <div className="relative mr-4 h-[50px] w-full max-w-[50px] overflow-hidden rounded-full">
