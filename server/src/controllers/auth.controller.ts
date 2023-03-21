@@ -5,16 +5,21 @@ import catchAsync from '@src/utils/catchAsync';
 import * as userService from '@src/services/user.service';
 import ApiError from '@src/utils/ApiError';
 import { TERMS_AND_CONDITION_VERSION } from '@src/constants';
+import { endOfDay } from '@src/utils/dateUtils';
 
 export const signup = catchAsync(async (req: Request, res: Response) => {
+  const { uid: userId, email } = req.decodedFirebaseToken;
+
   const newUser = {
-    userId: req.decodedFirebaseToken.uid,
-    email: req.decodedFirebaseToken.email,
+    userId,
+    email,
     name: req.body.name,
     signUpSource: req.body.signUpSource,
     hasAcceptedTerms: req.body.hasAcceptedTerms,
     acceptedTermsVersion: TERMS_AND_CONDITION_VERSION,
     referrer: req.body.referrer ?? '',
+    // 5 day free subscription
+    simplifyTrialEnd: endOfDay(5),
   };
   const user = await userService.createUser(newUser);
   res.status(httpStatus.CREATED).send({ user });

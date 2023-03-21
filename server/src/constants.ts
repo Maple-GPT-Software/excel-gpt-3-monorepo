@@ -6,8 +6,13 @@ export enum PRICE_IDS {
   // this is the price_id for the premium subscription, 5.99$ per month for standalone accounts
   // we use it to create a free_trial subscription without accepting payment info
   STANDALONE_MONTHLY = 'price_1MdLWWGB7M3KTCGBlQufaDuk',
+  /** price_id for lifetime access to chat */
+  LIFETIME_CHAT_ACCESS = 'price_1Mn9ECGB7M3KTCGBq6qXZWpG',
   // other price ids e.g, standalone yearly, team monthly, team yearly
 }
 
 /** which version the user accepted when they signed up */
 export const TERMS_AND_CONDITION_VERSION = 1;
+
+// DATE
+export const MILISECONDS_IN_DAY = 24 * 60 * 60 * 1000;

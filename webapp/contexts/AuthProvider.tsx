@@ -17,9 +17,7 @@ interface AuthContextType {
   firebaseUser?: User;
   /** user profile from simplify API */
   simplifyUser?: SimplifyUser;
-  setSimplifyUser: React.Dispatch<
-    React.SetStateAction<SimplifyUser | undefined>
-  >;
+  setSimplifyUser: React.Dispatch<React.SetStateAction<SimplifyUser | undefined>>;
 }
 
 /**
@@ -28,9 +26,7 @@ interface AuthContextType {
  */
 type AuthenticatedSessionType = Required<AuthContextType>;
 
-const AuthContext = createContext<AuthContextType | undefined>(
-  {} as AuthContextType
-);
+const AuthContext = createContext<AuthContextType | undefined>({} as AuthContextType);
 
 // hook to get access to provider values outside of /app/*
 export function useAuthContext() {
@@ -43,11 +39,11 @@ export function useAuthContext() {
   return context;
 }
 
-/** hook to get access to provider values within /app/* */
-export function useUserContext(): AuthenticatedSessionType {
+/** hook to get access to provider values within /app/* at this point we know the user has been authenticated */
+export function useAuthenticatedContext(): AuthenticatedSessionType {
   const context = useContext(AuthContext);
 
-  if (context === undefined) {
+  if (context === undefined || !context.firebaseUser || !context.simplifyUser) {
     throw new Error('Missing AuthProvider');
   }
 
@@ -60,20 +56,14 @@ function AuthProvider({ children }: { children: ReactNode }) {
    * if the user tries to access a route that requires them to be authenticated but they aren't we'll redirect them to signin
    * */
   const [firebaseUser, setFirebaseUser] = useState<User | undefined>(undefined);
-  const [simplifyUser, setSimplifyUser] = useState<SimplifyUser | undefined>(
-    undefined
-  );
-  const [hasFirebasedAuthenticated, setHasFirebaseAuthenticated] =
-    useState(false);
+  const [simplifyUser, setSimplifyUser] = useState<SimplifyUser | undefined>(undefined);
+  const [hasFirebasedAuthenticated, setHasFirebaseAuthenticated] = useState(false);
 
   const router = useRouter();
 
   function redirectUnauthenticatedUser() {
     // we don't need to re-direct if the user accesses these routes unathenticated
-    if (
-      location.pathname.includes(SIGN_IN_ROUTE) ||
-      location.pathname.includes(SIGN_UP_ROUTE)
-    ) {
+    if (location.pathname.includes(SIGN_IN_ROUTE) || location.pathname.includes(SIGN_UP_ROUTE)) {
       return;
     }
 
@@ -115,7 +105,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
         const token = await user.getIdToken();
         AuthService.setRefreshedAccessToken(token);
       }
-    // TODO: specify interval for refresh
+      // TODO: specify interval for refresh
     });
 
     return () => {

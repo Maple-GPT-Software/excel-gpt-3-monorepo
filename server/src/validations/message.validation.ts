@@ -2,7 +2,8 @@ import Joi from 'joi';
 import { CompletionRating } from '@src/models/message.model';
 import { ClientSources } from '@src/types';
 
-const MAXIMUM_PROMPT_CHARACTERS = 400;
+// TODO: change character count limit in app-script
+const MAXIMUM_PROMPT_CHARACTERS = 800;
 
 export const createMessage = {
   body: Joi.object().keys({
