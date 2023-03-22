@@ -1,4 +1,4 @@
-import config from '@src/config/config';
+import config from '../config/config';
 import crypto from 'crypto';
 
 const {

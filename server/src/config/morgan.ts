@@ -1,7 +1,7 @@
 import morgan from 'morgan';
 import config from './config';
 import logger from './logger';
-import { Environment } from '@src/types';
+import { Environment } from '../types';
 
 morgan.token('message', (req, res) => res.statusMessage || '');
 morgan.token('source', (req) => {

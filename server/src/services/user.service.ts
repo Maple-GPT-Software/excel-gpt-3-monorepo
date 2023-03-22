@@ -1,6 +1,6 @@
 import httpStatus from 'http-status';
-import { User, UserType } from '@src/models/user.model';
-import ApiError from '@src/utils/ApiError';
+import { User, UserType } from '../models/user.model';
+import ApiError from '../utils/ApiError';
 
 export const createUser = async (newUser: UserType) => {
   if (await User.isEmailTaken(newUser.email)) {

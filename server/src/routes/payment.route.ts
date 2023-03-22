@@ -1,7 +1,7 @@
 import express from 'express';
-import * as paymentController from '@src/controllers/payment.controller';
-import validate from '@src/middleware/validate';
-import { validateCheckoutSession, validateLifetimeAccessSession } from '@src/validations/payment.validation';
+import * as paymentController from '../controllers/payment.controller';
+import validate from '../middleware/validate';
+import { validateCheckoutSession, validateLifetimeAccessSession } from '../validations/payment.validation';
 
 const router = express.Router();
 

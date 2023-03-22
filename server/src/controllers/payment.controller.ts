@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import catchAsync from '@src/utils/catchAsync';
-import { cancelSubscriptionById, createCustomerWithFreeTrial, createSessionByPricetId } from '@src/services/stripe.service';
+import catchAsync from '../utils/catchAsync';
+import { cancelSubscriptionById, createCustomerWithFreeTrial, createSessionByPricetId } from '../services/stripe.service';
 import httpStatus from 'http-status';
-import { User, UserType } from '@src/models/user.model';
-import { PRICE_IDS } from '@src/constants';
-import ApiError from '@src/utils/ApiError';
+import { User, UserType } from '../models/user.model';
+import { PRICE_IDS } from '../constants';
+import ApiError from '../utils/ApiError';
 
 export const createTrial = catchAsync(async (req: Request, res: Response) => {
   const { email } = req.decodedFirebaseToken;

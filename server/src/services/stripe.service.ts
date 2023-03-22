@@ -1,11 +1,10 @@
 import Stripe from 'stripe';
-import logger from '@src/config/logger';
-import { User } from '@src/models/user.model';
-import stripe from '@src/config/stripe';
-import ApiError from '@src/utils/ApiError';
+import logger from '../config/logger';
+import { User } from '../models/user.model';
+import stripe from '../config/stripe';
+import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
-import config from '@src/config/config';
-import { PRICE_IDS } from '@src/constants';
+import { PRICE_IDS } from '../constants';
 
 /**
  * This method is uses stripe's API to create:

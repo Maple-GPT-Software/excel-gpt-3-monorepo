@@ -1,10 +1,10 @@
 import express from 'express';
 
-import * as messageController from '@src/controllers/message.controller';
-import { lifetimeAccessCheck } from '@src/middleware/subscriptionCheck';
-import validate from '@src/middleware/validate';
-import * as messageValidation from '@src/validations/message.validation';
-import * as rateLimitMiddleware from '@src/middleware/rateLimit';
+import * as messageController from '../controllers/message.controller';
+import { lifetimeAccessCheck } from '../middleware/subscriptionCheck';
+import validate from '../middleware/validate';
+import * as messageValidation from '../validations/message.validation';
+import * as rateLimitMiddleware from '../middleware/rateLimit';
 
 const router = express.Router();
 

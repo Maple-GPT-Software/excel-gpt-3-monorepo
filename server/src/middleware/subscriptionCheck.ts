@@ -2,8 +2,8 @@ import { RequestHandler } from 'express';
 import httpStatus from 'http-status';
 import Stripe from 'stripe';
 
-import ApiError from '@src/utils/ApiError';
-import { User, UserType } from '@src/models/user.model';
+import ApiError from '../utils/ApiError';
+import { User, UserType } from '../models/user.model';
 
 /**
  * This middleware is used for request made to messages to check if free trial users still have access to use chat

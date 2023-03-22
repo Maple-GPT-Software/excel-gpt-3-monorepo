@@ -1,5 +1,5 @@
 import { Configuration, CreateCompletionRequest, OpenAIApi } from 'openai';
-import config from '@src/config/config';
+import config from './config';
 
 export enum OpenAiModels {
   TURBO = 'gpt-3.5-turbo',

@@ -1,11 +1,11 @@
 import { Response, Request } from 'express';
 
 import httpStatus from 'http-status';
-import catchAsync from '@src/utils/catchAsync';
+import catchAsync from '../utils/catchAsync';
 
-import * as openAIService from '@src/services/openai.service';
-import * as messageService from '@src/services/message.service';
-import { BASE_PROMP_VERSION } from '@src/constants';
+import * as openAIService from '../services/openai.service';
+import * as messageService from '../services/message.service';
+import { BASE_PROMP_VERSION } from '../constants';
 
 export const createMessage = catchAsync(async (req: Request, res: Response) => {
   const { prompt, source } = req.body;

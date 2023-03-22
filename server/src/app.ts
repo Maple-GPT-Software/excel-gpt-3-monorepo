@@ -8,17 +8,17 @@ import mongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
 import cors from 'cors';
 import httpStatus from 'http-status';
-import config from '@src/config/config';
-import * as morgan from '@src/config/morgan';
+import config from './config/config';
+import * as morgan from './config/morgan';
 /** Middlewares */
-import firebaseAuth from '@src/middleware/firebaseAuth';
+import firebaseAuth from './middleware/firebaseAuth';
 import { errorHandler, errorConverter } from './middleware/error';
 // FUTURE: rate limiting
 // import { authLimiter } from "./middlewares/rateLimiter";
 /** Modules */
-import AppRoutes from '@src/routes';
-import ApiError from '@src/utils/ApiError';
-import * as stripeService from '@src/services/stripe.service';
+import AppRoutes from './routes';
+import ApiError from './utils/ApiError';
+import * as stripeService from './services/stripe.service';
 import logger from './config/logger';
 import stripe from './config/stripe';
 import { StripeWebhooks } from './types';

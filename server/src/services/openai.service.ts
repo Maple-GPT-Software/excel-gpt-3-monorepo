@@ -1,8 +1,8 @@
-import ApiError from '@src/utils/ApiError';
+import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
-import openai, { basePromptConfig } from '@src/config/openai';
-import { BASE_PROMPT } from '@src/constants';
-import logger from '@src/config/logger';
+import openai, { basePromptConfig } from '../config/openai';
+import { BASE_PROMPT } from '../constants';
+import logger from '../config/logger';
 
 /**
  * we need this for abuse detection

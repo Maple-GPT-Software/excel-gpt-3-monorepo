@@ -1,4 +1,4 @@
-import { ClientSources } from '@src/types';
+import { ClientSources } from '../types';
 import { Model, Schema, model } from 'mongoose';
 
 export enum CompletionRating {
