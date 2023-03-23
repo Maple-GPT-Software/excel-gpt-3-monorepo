@@ -35,6 +35,7 @@ import toJSONMiddleware from './middleware/toJSONMiddleware';
 
 const app = express();
 
+// TODO: morgan setup logs?
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);
@@ -124,8 +125,7 @@ app.use(firebaseAuth);
 //   app.use('/v1/auth', authLimiter);
 // }
 
-// v1 api routes
-app.use('/', AppRoutes);
+app.use('/api/v1/', AppRoutes);
 
 app.use(toJSONMiddleware);
 

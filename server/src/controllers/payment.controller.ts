@@ -2,9 +2,10 @@ import { Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
 import { cancelSubscriptionById, createCustomerWithFreeTrial, createSessionByPricetId } from '../services/stripe.service';
 import httpStatus from 'http-status';
-import { User, UserType } from '../models/user.model';
+import { User } from '../models/user.model';
 import { PRICE_IDS } from '../constants';
 import ApiError from '../utils/ApiError';
+import { encryptData } from '../services/encryption.service';
 
 export const createTrial = catchAsync(async (req: Request, res: Response) => {
   const { email } = req.decodedFirebaseToken;
@@ -45,7 +46,7 @@ export const createLifetimeAccessPurchaseSession = catchAsync(async (req: Reques
   const { email } = req.decodedFirebaseToken;
   const { successUrl, cancelUrl, openaiApiKey } = req.body;
 
-  await User.updateOne({ email }, { openaiApiKey }).catch((e) => {
+  await User.updateOne({ email }, { openaiApiKey: encryptData(openaiApiKey) }).catch((e) => {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Interval server error');
   });
 

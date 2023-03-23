@@ -13,6 +13,7 @@ export const lifetimeAccessCheck: RequestHandler = async (req, res, next) => {
   try {
     const { email } = req.decodedFirebaseToken;
 
+    console.log('lifetimeAccessCheck');
     const { stripeLifetimeAccessPaymentId, stripeCurrentPeriodEnd, stripeStatus } = (await User.findOne({
       email,
     })) as UserType;

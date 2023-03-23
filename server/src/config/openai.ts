@@ -6,12 +6,12 @@ export enum OpenAiModels {
   TURBO_0301 = 'gpt-3.5-turbo-0301',
 }
 
-const configuration = new Configuration({
-  apiKey: config.openAi,
-  organization: 'org-WdaykyBMcZad17H1WbC3trTM',
-});
+// const configuration = new Configuration({
+//   apiKey: config.openAi,
+//   organization: undefined,
+// });
 
-const openai = new OpenAIApi(configuration);
+// const openai = new OpenAIApi(configuration);
 
 /**
  * base configuration. For testing use max_tokens: 50 and simple questions like
@@ -30,4 +30,4 @@ export const basePromptConfig: CreateCompletionRequest = {
   n: 1,
 };
 
-export default openai;
+// export default openai;
