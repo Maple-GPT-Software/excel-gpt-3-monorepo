@@ -11,7 +11,7 @@ export const createMessage = catchAsync(async (req: Request, res: Response) => {
   const { prompt, source } = req.body;
   const userId = req.decodedFirebaseToken.uid;
 
-  const completion: any = await openAIService.getCompletion(prompt, userId);
+  const completion: any = await openAIService.getChatCompletion(prompt, userId);
   const message = await messageService.createUserMessage({
     userId,
     prompt,

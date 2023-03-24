@@ -5,7 +5,7 @@ export const isProd = NODE_ENV === 'production';
 export const isIntegration = NODE_ENV === 'integration';
 
 // development defaults
-let SIMPLIFY_BASE_URL = 'http://localhost:3000';
+let SIMPLIFY_BASE_URL = 'http://localhost:3000/api/v1';
 let WEBAPP_BASE_URL = 'http://127.0.0.1:5000';
 
 if (isIntegration) {

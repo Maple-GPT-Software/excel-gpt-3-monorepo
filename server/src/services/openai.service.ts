@@ -3,24 +3,15 @@ import httpStatus from 'http-status';
 import { basePromptConfig } from '../config/openai';
 import { BASE_PROMPT } from '../constants';
 import logger from '../config/logger';
-import { Configuration, OpenAIApi } from 'openai';
-import config from '../config/config';
+import { getOpenAiInstanceByUser } from './openaiCache.service';
 
 /**
- * we need this for abuse detection
+ * we to specify user this for abuse detection
  * https://platform.openai.com/docs/api-reference/completions/create#completions/create-user
  */
-export async function getCompletion(prompt: string, user: string) {
+export async function getChatCompletion(prompt: string, user: string) {
   try {
-    // TODO: use user's openai API key if it exists
-    // caching openai instance?
-    const configuration = new Configuration({
-      apiKey: config.openAi,
-      organization: 'org-WdaykyBMcZad17H1WbC3trTM',
-    });
-
-    const openai = new OpenAIApi(configuration);
-
+    const openai = await getOpenAiInstanceByUser(user);
     // @ts-expect-error .createChatCompletion is a valid method, maintainers likely forgot to add it to types
     const { data } = await openai.createChatCompletion({
       ...basePromptConfig,

@@ -31,7 +31,7 @@ function BillingPage() {
                   purchase now
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-[500px]" showCloseButton={true}>
+              <DialogContent className="w-[32rem]" showCloseButton={true}>
                 <DialogHeader>
                   <DialogTitle>Lifetime Access</DialogTitle>
                   <DialogDescription className="text-slate-800">
