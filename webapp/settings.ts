@@ -15,7 +15,7 @@ if (isIntegration) {
 
 // TODO: switch with real prod URLs
 if (isProd) {
-  SIMPLIFY_BASE_URL = 'prod';
+  SIMPLIFY_BASE_URL = 'https://excel-simplify.herokuapp.com/api/v1';
   WEBAPP_BASE_URL = 'prod';
 }
 
