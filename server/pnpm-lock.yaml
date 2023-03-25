@@ -44,6 +44,7 @@ specifiers:
   openai: ^3.2.1
   pm2: ^5.2.2
   prettier: ^2.8.4
+  prettier-plugin-sort-imports: ^1.7.1
   stripe: ^11.11.0
   stripe-event-types: ^2.2.0
   swc: ^1.0.11
@@ -106,6 +107,7 @@ devDependencies:
   jest: 29.5.0_@types+node@18.15.5
   nodemon: 2.0.21
   prettier: 2.8.6
+  prettier-plugin-sort-imports: 1.7.1_typescript@4.9.5
   stripe-event-types: 2.3.0_stripe@11.15.0
   swc: 1.0.11
   swc-node: 1.0.0_w2zjgg3mtz4gzyxcl35vjzbpcm
@@ -7559,6 +7561,15 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       fast-diff: 1.2.0
+    dev: true
+
+  /prettier-plugin-sort-imports/1.7.1_typescript@4.9.5:
+    resolution: {integrity: sha512-NSFDOdr2xy+pJtK9auCHJb23NaaAEEmNveh94K7xQErMahUuhlhDTpAotQcZQqdo1C7NFOgEn5Le9BWo77j3zg==}
+    peerDependencies:
+      typescript: ^4.0.3
+    dependencies:
+      prettier: 2.8.6
+      typescript: 4.9.5
     dev: true
 
   /prettier/2.8.6:

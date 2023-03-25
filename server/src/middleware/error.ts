@@ -1,9 +1,10 @@
 import { NextFunction, Response, Request } from 'express';
-import mongoose from 'mongoose';
 import httpStatus from 'http-status';
+import mongoose from 'mongoose';
+
+import ApiError from '../utils/ApiError';
 import config from '../config/config';
 import logger from '../config/logger';
-import ApiError from '../utils/ApiError';
 
 export const errorConverter = (err: any, req: Request, res: Response, next: NextFunction) => {
   let error = err;

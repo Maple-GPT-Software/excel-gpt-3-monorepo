@@ -1,8 +1,9 @@
 import { Configuration, OpenAIApi } from 'openai';
 import { caching } from 'cache-manager';
+
+import { decryptData } from './encryption.service';
 import { User } from '../models/user.model';
 import openai from '../config/openai';
-import { decryptData } from './encryption.service';
 
 const memoryCache = caching('memory', {
   // 4 hours

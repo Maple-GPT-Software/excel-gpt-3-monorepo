@@ -1,4 +1,5 @@
 import httpStatus from 'http-status';
+
 import { User, UserType } from '../models/user.model';
 import ApiError from '../utils/ApiError';
 

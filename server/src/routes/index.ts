@@ -1,7 +1,8 @@
 import express from 'express';
-import authRoutes from './auth.route';
+
 import messageRoutes from './message.route';
 import paymentRoutes from './payment.route';
+import authRoutes from './auth.route';
 
 const router = express.Router();
 

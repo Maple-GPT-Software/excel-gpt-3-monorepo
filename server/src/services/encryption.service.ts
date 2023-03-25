@@ -1,5 +1,6 @@
-import config from '../config/config';
 import crypto from 'crypto';
+
+import config from '../config/config';
 
 const {
   encrypt: { secretKey, iv: encryptIv },

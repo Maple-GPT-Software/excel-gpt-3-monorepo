@@ -1,4 +1,5 @@
 import express from 'express';
+
 import validate from '../middleware/validate';
 
 import * as authValidation from '../validations/auth.validation';

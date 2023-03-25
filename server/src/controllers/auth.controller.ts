@@ -1,11 +1,12 @@
 import { Response, Request } from 'express';
 
 import httpStatus from 'http-status';
-import catchAsync from '../utils/catchAsync';
-import * as userService from '../services/user.service';
-import ApiError from '../utils/ApiError';
+
 import { TERMS_AND_CONDITION_VERSION } from '../constants';
+import * as userService from '../services/user.service';
 import { endOfDay } from '../utils/dateUtils';
+import catchAsync from '../utils/catchAsync';
+import ApiError from '../utils/ApiError';
 
 export const signup = catchAsync(async (req: Request, res: Response) => {
   const { uid: userId, email } = req.decodedFirebaseToken;

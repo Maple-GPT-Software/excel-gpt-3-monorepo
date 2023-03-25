@@ -1,4 +1,5 @@
 import Joi from 'joi';
+
 import { CompletionRating } from '../models/message.model';
 import { ClientSources } from '../types';
 

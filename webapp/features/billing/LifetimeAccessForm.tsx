@@ -6,7 +6,8 @@ import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
 import { Input } from '@/components/ui/Input';
 import { BILLING_ROUTE, DASHBOARD_ROUTE } from '@/constants';
 import settings from '@/settings';
-import React from 'react';
+import axios from 'axios';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface LifetimeAccessFormType {
@@ -19,18 +20,32 @@ function LifetimeAccessForm() {
     handleSubmit,
     formState: { isValid, isSubmitting, isSubmitted },
   } = useForm<LifetimeAccessFormType>();
+  const [errorMessage, setErrorMessage] = useState('');
 
   async function onSubmit(data: LifetimeAccessFormType) {
     const { openaiApiKey } = data;
     const fullBillingRoute = `${settings.webappBaseUrl}/${BILLING_ROUTE}`;
-    await SimplifyApi().lifetimeAccessCheckout({
-      openaiApiKey,
-      successUrl: fullBillingRoute,
-      cancelUrl: fullBillingRoute,
-    });
+    setErrorMessage('');
+
+    try {
+      await SimplifyApi().lifetimeAccessCheckout({
+        openaiApiKey,
+        successUrl: fullBillingRoute,
+        cancelUrl: fullBillingRoute,
+      });
+    } catch (error) {
+      let message = '';
+      if (axios.isAxiosError(error)) {
+        message = error.response?.data.message;
+      } else {
+        message = 'Internal server error. Try again';
+      }
+
+      setErrorMessage(message);
+    }
   }
 
-  if (isSubmitting || isSubmitted) {
+  if (isSubmitting || (isSubmitted && !errorMessage)) {
     return (
       <CenteredSpinnner>
         <p>Processing request</p>
@@ -58,9 +73,12 @@ function LifetimeAccessForm() {
           $20 <span>USD</span>
         </p>
       </div>
-      <Button disabled={!isValid} className="float-right uppercase" variant="default">
-        checkout with Stripe
-      </Button>
+      <div className="float-right">
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        <Button disabled={!isValid} className="float-right uppercase" variant="default">
+          checkout with Stripe
+        </Button>
+      </div>
     </form>
   );
 }

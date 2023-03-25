@@ -1,8 +1,8 @@
 import { RequestHandler } from 'express';
 import httpStatus from 'http-status';
 
-import ApiError from '../utils/ApiError';
 import admin from '../services/firebase.service';
+import ApiError from '../utils/ApiError';
 
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 

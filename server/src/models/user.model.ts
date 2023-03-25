@@ -1,6 +1,10 @@
 import { Model, Schema, model, Document } from 'mongoose';
 import validator from 'validator';
 import Stripe from 'stripe';
+
+// TODO: improve typings. There's a basic UserType and an IUserType
+// the IUserType will have stripeCustomerId, stripeCurrentPeriodEnd, stripeStatus as required
+// optional properties will have a default defined in the schema
 /** base user type */
 export interface UserType {
   /** corresponds to uid from firebase auth */

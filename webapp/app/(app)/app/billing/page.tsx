@@ -46,6 +46,7 @@ function BillingPage() {
         </div>
       </SectionWrapper>
 
+      {/* TODO: reach out to stripe for billing information */}
       <SectionWrapper testId="subscription-wrapper">
         <div className="mb-2 flex justify-between">
           <h2>Subscription - Free Trial</h2>

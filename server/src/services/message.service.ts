@@ -1,4 +1,5 @@
 import httpStatus from 'http-status';
+
 import { Message, MessageType } from '../models/message.model';
 import ApiError from '../utils/ApiError';
 

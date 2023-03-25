@@ -1,4 +1,5 @@
 import { Configuration, CreateCompletionRequest, OpenAIApi } from 'openai';
+
 import config from './config';
 
 export enum OpenAiModels {

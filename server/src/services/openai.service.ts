@@ -1,9 +1,10 @@
-import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
+
+import { getOpenAiInstanceByUser } from './openaiCache.service';
 import { basePromptConfig } from '../config/openai';
 import { BASE_PROMPT } from '../constants';
+import ApiError from '../utils/ApiError';
 import logger from '../config/logger';
-import { getOpenAiInstanceByUser } from './openaiCache.service';
 
 /**
  * we to specify user this for abuse detection

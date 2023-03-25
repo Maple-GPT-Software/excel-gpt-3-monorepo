@@ -1,28 +1,29 @@
 /// <reference types="stripe-event-types" />
 /** NPM */
-import express from 'express';
-import Stripe from 'stripe';
-import helmet from 'helmet';
-import xss from 'xss-clean';
 import mongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
-import cors from 'cors';
 import httpStatus from 'http-status';
-import config from './config/config';
-import * as morgan from './config/morgan';
+import express from 'express';
+import xss from 'xss-clean';
+import Stripe from 'stripe';
+import helmet from 'helmet';
+import cors from 'cors';
+
+import { errorHandler, errorConverter } from './middleware/error';
+import toJSONMiddleware from './middleware/toJSONMiddleware';
+import * as stripeService from './services/stripe.service';
 /** Middlewares */
 import firebaseAuth from './middleware/firebaseAuth';
-import { errorHandler, errorConverter } from './middleware/error';
+import * as morgan from './config/morgan';
+import { StripeWebhooks } from './types';
+import ApiError from './utils/ApiError';
+import config from './config/config';
+import logger from './config/logger';
+import stripe from './config/stripe';
 // FUTURE: rate limiting
 // import { authLimiter } from "./middlewares/rateLimiter";
 /** Modules */
 import AppRoutes from './routes';
-import ApiError from './utils/ApiError';
-import * as stripeService from './services/stripe.service';
-import logger from './config/logger';
-import stripe from './config/stripe';
-import { StripeWebhooks } from './types';
-import toJSONMiddleware from './middleware/toJSONMiddleware';
 // !IMPORTANT start server with pm2
 
 // TODO: only allow specific origins
@@ -67,6 +68,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
       // we specify the user's email that should be used to uniquely identify the customer
       stripeService.addCustomerId(customer.email as string, customer.id);
       break;
+    // TODO: only update lifetime payment id if 1) unset, 2) payment is for lifetime access
     case StripeWebhooks.PaymentSucceeded:
       stripeService.updateLifetimeAccessPayment(event.data.object);
       break;

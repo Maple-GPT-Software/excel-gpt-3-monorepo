@@ -2,8 +2,8 @@ import { RequestHandler } from 'express';
 import httpStatus from 'http-status';
 import Stripe from 'stripe';
 
-import ApiError from '../utils/ApiError';
 import { User, UserType } from '../models/user.model';
+import ApiError from '../utils/ApiError';
 
 /**
  * This middleware is used for request made to messages to check if free trial users still have access to use chat
@@ -13,7 +13,6 @@ export const lifetimeAccessCheck: RequestHandler = async (req, res, next) => {
   try {
     const { email } = req.decodedFirebaseToken;
 
-    console.log('lifetimeAccessCheck');
     const { stripeLifetimeAccessPaymentId, stripeCurrentPeriodEnd, stripeStatus } = (await User.findOne({
       email,
     })) as UserType;
