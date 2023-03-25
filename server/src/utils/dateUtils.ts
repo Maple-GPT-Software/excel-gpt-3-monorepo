@@ -1,4 +1,4 @@
-import { MILISECONDS_IN_DAY } from '@src/constants';
+import { MILISECONDS_IN_DAY } from '../constants';
 
 /**
  * get the end of the current day as a unix timestamp in seconds,

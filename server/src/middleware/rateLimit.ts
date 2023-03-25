@@ -1,6 +1,6 @@
-import httpStatus from 'http-status';
 import { Response, Request } from 'express';
 import rateLimit from 'express-rate-limit';
+import httpStatus from 'http-status';
 
 /** 24 hours */
 const DAILY_WINDOW = 24 * 60 * 60 * 1000;

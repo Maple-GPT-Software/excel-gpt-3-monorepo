@@ -1,6 +1,7 @@
 import httpStatus from 'http-status';
-import { Message, MessageType } from '@src/models/message.model';
-import ApiError from '@src/utils/ApiError';
+
+import { Message, MessageType } from '../models/message.model';
+import ApiError from '../utils/ApiError';
 
 /**
  * creates a message with with an "N/A" rating

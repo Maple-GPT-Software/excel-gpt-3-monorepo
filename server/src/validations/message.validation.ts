@@ -1,6 +1,7 @@
 import Joi from 'joi';
-import { CompletionRating } from '@src/models/message.model';
-import { ClientSources } from '@src/types';
+
+import { CompletionRating } from '../models/message.model';
+import { ClientSources } from '../types';
 
 // TODO: change character count limit in app-script
 const MAXIMUM_PROMPT_CHARACTERS = 800;

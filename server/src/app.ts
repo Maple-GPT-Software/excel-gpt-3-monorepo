@@ -1,28 +1,29 @@
 /// <reference types="stripe-event-types" />
 /** NPM */
-import express from 'express';
-import Stripe from 'stripe';
-import helmet from 'helmet';
-import xss from 'xss-clean';
 import mongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
-import cors from 'cors';
 import httpStatus from 'http-status';
-import config from '@src/config/config';
-import * as morgan from '@src/config/morgan';
-/** Middlewares */
-import firebaseAuth from '@src/middleware/firebaseAuth';
+import express from 'express';
+import xss from 'xss-clean';
+import Stripe from 'stripe';
+import helmet from 'helmet';
+import cors from 'cors';
+
 import { errorHandler, errorConverter } from './middleware/error';
+import toJSONMiddleware from './middleware/toJSONMiddleware';
+import * as stripeService from './services/stripe.service';
+/** Middlewares */
+import firebaseAuth from './middleware/firebaseAuth';
+import * as morgan from './config/morgan';
+import { StripeWebhooks } from './types';
+import ApiError from './utils/ApiError';
+import config from './config/config';
+import logger from './config/logger';
+import stripe from './config/stripe';
 // FUTURE: rate limiting
 // import { authLimiter } from "./middlewares/rateLimiter";
 /** Modules */
-import AppRoutes from '@src/routes';
-import ApiError from '@src/utils/ApiError';
-import * as stripeService from '@src/services/stripe.service';
-import logger from './config/logger';
-import stripe from './config/stripe';
-import { StripeWebhooks } from './types';
-import toJSONMiddleware from './middleware/toJSONMiddleware';
+import AppRoutes from './routes';
 // !IMPORTANT start server with pm2
 
 // TODO: only allow specific origins
@@ -35,6 +36,7 @@ import toJSONMiddleware from './middleware/toJSONMiddleware';
 
 const app = express();
 
+// TODO: morgan setup logs?
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);
@@ -124,8 +126,7 @@ app.use(firebaseAuth);
 //   app.use('/v1/auth', authLimiter);
 // }
 
-// v1 api routes
-app.use('/', AppRoutes);
+app.use('/api/v1/', AppRoutes);
 
 app.use(toJSONMiddleware);
 

@@ -1,5 +1,6 @@
 import { Configuration, CreateCompletionRequest, OpenAIApi } from 'openai';
-import config from '@src/config/config';
+
+import config from './config';
 
 export enum OpenAiModels {
   TURBO = 'gpt-3.5-turbo',
@@ -11,6 +12,7 @@ const configuration = new Configuration({
   organization: 'org-WdaykyBMcZad17H1WbC3trTM',
 });
 
+/** default openAI instance that uses our keys for trial users */
 const openai = new OpenAIApi(configuration);
 
 /**

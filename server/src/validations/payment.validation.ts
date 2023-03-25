@@ -1,9 +1,10 @@
 import Joi from 'joi';
-import { PRICE_IDS } from '@src/constants';
+
+import settings from '../settings';
 
 const baseCheckoutSchema = Joi.object().keys({
   // FUTURE_WORK: add other price ids later on, e.g monthly team pricing
-  priceId: Joi.string().valid(PRICE_IDS.LIFETIME_CHAT_ACCESS),
+  priceId: Joi.string().valid(...Object.values(settings.stripePriceIds)),
   successUrl: Joi.string().required(),
   cancelUrl: Joi.string().required(),
 });

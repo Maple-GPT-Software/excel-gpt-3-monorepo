@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import Joi from 'joi';
-import { Environment } from '@src/types';
+
+import { Environment } from '../types';
 
 // TODO: how to configure this for netlify
 dotenv.config({ path: path.join(__dirname, '../../.env') });
@@ -38,7 +39,7 @@ if (error) {
   throw new Error(`Config validation error: ${error.message}`);
 }
 
-const isProduction = envVars.NODE_ENV === Environment.PROD;
+export const isProduction = envVars.NODE_ENV === Environment.PROD;
 
 const {
   NODE_ENV,

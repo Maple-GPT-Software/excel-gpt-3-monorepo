@@ -1,5 +1,6 @@
-import { ClientSources } from '@src/types';
 import { Model, Schema, model } from 'mongoose';
+
+import { ClientSources } from '../types';
 
 export enum CompletionRating {
   LIKE = 'LIKE',

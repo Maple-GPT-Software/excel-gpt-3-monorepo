@@ -5,7 +5,7 @@ export const isProd = NODE_ENV === 'production';
 export const isIntegration = NODE_ENV === 'integration';
 
 // development defaults
-let SIMPLIFY_BASE_URL = 'http://localhost:3000';
+let SIMPLIFY_BASE_URL = 'http://localhost:3000/api/v1';
 let WEBAPP_BASE_URL = 'http://127.0.0.1:5000';
 
 if (isIntegration) {
@@ -15,7 +15,7 @@ if (isIntegration) {
 
 // TODO: switch with real prod URLs
 if (isProd) {
-  SIMPLIFY_BASE_URL = 'prod';
+  SIMPLIFY_BASE_URL = 'https://excel-simplify.herokuapp.com/api/v1';
   WEBAPP_BASE_URL = 'prod';
 }
 

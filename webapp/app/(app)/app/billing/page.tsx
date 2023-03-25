@@ -31,7 +31,7 @@ function BillingPage() {
                   purchase now
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-[500px]" showCloseButton={true}>
+              <DialogContent className="w-[32rem]" showCloseButton={true}>
                 <DialogHeader>
                   <DialogTitle>Lifetime Access</DialogTitle>
                   <DialogDescription className="text-slate-800">
@@ -46,6 +46,7 @@ function BillingPage() {
         </div>
       </SectionWrapper>
 
+      {/* TODO: reach out to stripe for billing information */}
       <SectionWrapper testId="subscription-wrapper">
         <div className="mb-2 flex justify-between">
           <h2>Subscription - Free Trial</h2>

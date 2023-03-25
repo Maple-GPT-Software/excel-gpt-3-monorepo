@@ -1,11 +1,19 @@
 import { Request, Response } from 'express';
-import catchAsync from '@src/utils/catchAsync';
-import { cancelSubscriptionById, createCustomerWithFreeTrial, createSessionByPricetId } from '@src/services/stripe.service';
 import httpStatus from 'http-status';
-import { User, UserType } from '@src/models/user.model';
-import { PRICE_IDS } from '@src/constants';
-import ApiError from '@src/utils/ApiError';
 
+import {
+  cancelSubscriptionById,
+  createCustomerWithFreeTrial,
+  createPaymentSession,
+  createSubscriptionSession,
+} from '../services/stripe.service';
+import { encryptData } from '../services/encryption.service';
+import catchAsync from '../utils/catchAsync';
+import { User } from '../models/user.model';
+import ApiError from '../utils/ApiError';
+import settings from '../settings';
+
+/** users are signed up with a trial account by default */
 export const createTrial = catchAsync(async (req: Request, res: Response) => {
   const { email } = req.decodedFirebaseToken;
   const user = await User.findOne({ email });
@@ -32,11 +40,17 @@ export const cancelSubscription = catchAsync(async (req: Request, res: Response)
   res.status(httpStatus.OK).send();
 });
 
-export const createPurchaseSession = catchAsync(async (req: Request, res: Response) => {
+export const createCheckoutSession = catchAsync(async (req: Request, res: Response) => {
   const { email } = req.decodedFirebaseToken;
   const { priceId, successUrl, cancelUrl } = req.body;
 
-  const session = await createSessionByPricetId(email, priceId, { successUrl, cancelUrl });
+  const user = await User.findOne({ email });
+
+  if (!user?.stripeCustomerId) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+  }
+
+  const session = await createSubscriptionSession(user.stripeCustomerId, { successUrl, cancelUrl, priceId });
 
   res.status(httpStatus.TEMPORARY_REDIRECT).send(session);
 });
@@ -45,11 +59,23 @@ export const createLifetimeAccessPurchaseSession = catchAsync(async (req: Reques
   const { email } = req.decodedFirebaseToken;
   const { successUrl, cancelUrl, openaiApiKey } = req.body;
 
-  await User.updateOne({ email }, { openaiApiKey }).catch((e) => {
+  const user = await User.findOne({ email });
+
+  if (user?.openaiApiKey !== '' && user?.stripeLifetimeAccessPaymentId !== '') {
+    throw new ApiError(httpStatus.FORBIDDEN, 'An open ai API key already exists on your account');
+  } else if (!user?.stripeCustomerId) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+  }
+
+  await User.updateOne({ email }, { openaiApiKey: encryptData(openaiApiKey) }).catch((e) => {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Interval server error');
   });
 
-  const session = await createSessionByPricetId(email, PRICE_IDS.LIFETIME_CHAT_ACCESS, { successUrl, cancelUrl });
+  const session = await createPaymentSession(user.stripeCustomerId, {
+    priceId: settings.stripePriceIds.lifetimeChatAccess,
+    successUrl,
+    cancelUrl,
+  });
 
   res.status(httpStatus.TEMPORARY_REDIRECT).send(session);
 });
