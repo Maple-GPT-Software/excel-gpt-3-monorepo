@@ -29,7 +29,9 @@ async function getFromCache<T>(key: string): Promise<T | undefined> {
  * @returns Promise<OpenAIApi>
  */
 export async function getOpenAiInstanceByUser(userId: string): Promise<OpenAIApi> {
+  // TODO: use default api key for trial users
   const user = await User.findOne({ userId });
+  // todo: update key for open ai cache to `openai-instance-${userId}`
   const cachedOpenAiInstance = await getFromCache<OpenAIApi>(userId);
 
   // user has openai instance in cache

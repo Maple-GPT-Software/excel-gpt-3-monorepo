@@ -68,7 +68,6 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
       // we specify the user's email that should be used to uniquely identify the customer
       stripeService.addCustomerId(customer.email as string, customer.id);
       break;
-    // TODO: only update lifetime payment id if 1) unset, 2) payment is for lifetime access
     case StripeWebhooks.PaymentSucceeded:
       stripeService.updateLifetimeAccessPayment(event.data.object);
       break;
