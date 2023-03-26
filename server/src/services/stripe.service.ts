@@ -1,11 +1,21 @@
-import Stripe from 'stripe';
-import logger from '@src/config/logger';
-import { User } from '@src/models/user.model';
-import stripe from '@src/config/stripe';
-import ApiError from '@src/utils/ApiError';
 import httpStatus from 'http-status';
-import config from '@src/config/config';
-import { PRICE_IDS } from '@src/constants';
+import Stripe from 'stripe';
+
+import { Document } from 'mongoose';
+
+import { User, UserType } from '../models/user.model';
+import ApiError from '../utils/ApiError';
+import logger from '../config/logger';
+import stripe from '../config/stripe';
+import settings from '../settings';
+
+interface SessionBase {
+  /** price id from Stripe dashboard UI */
+  priceId: string;
+  successUrl: string;
+  cancelUrl: string;
+  quantity?: number;
+}
 
 /**
  * This method is uses stripe's API to create:
@@ -20,8 +30,8 @@ export const createCustomerWithFreeTrial = async (email: string) => {
 
     stripe.subscriptions.create({
       customer: customer.id,
-      items: [{ price: PRICE_IDS.STANDALONE_MONTHLY }],
-      trial_period_days: 5,
+      items: [{ price: settings.stripePriceIds.premiumMonthly }],
+      trial_period_days: 7,
       cancel_at_period_end: true,
       proration_behavior: 'none',
     });
@@ -31,38 +41,72 @@ export const createCustomerWithFreeTrial = async (email: string) => {
   }
 };
 
-/**
- * 1) user completes checkout session: Customer object created, Subscription is created
- * 2) user complets checkout, redirected to success_url (client app)
- * 3) user clicks on cancel_url, is navigated back to client and clients makes API call to create free trial
- */
-export const createSessionByProductId = async (email: string, priceId: string) => {
+/** creates a Stripe subscription checkout */
+export const createSubscriptionSession = async (stripeCustomerId: string, options: SessionBase) => {
+  const { successUrl, cancelUrl, priceId, quantity = 1 } = options;
   try {
+    // const user = await User.findOne({ email });
     // https://stripe.com/docs/api/checkout/sessions/create?lang=node
     const session = await stripe.checkout.sessions.create({
-      success_url: config.clients.webappCheckoutSuccessUrl,
-      cancel_url: config.clients.webappCheckoutCancelledUrl,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      /** our webhooks depend on stripe customer id */
+      customer: stripeCustomerId,
       line_items: [
         {
           price: priceId,
-          quantity: 1,
+          quantity,
         },
       ],
       mode: 'subscription',
       currency: 'usd',
-      // stripe will use this email when creating the Customer object
-      customer_email: email,
-      // expires in 30 minutes
+      metadata: {
+        priceId,
+      },
+      // expires in 30 minutes from now as unix timestamp in seconds
       expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
     });
 
     return session;
   } catch (error) {
     // Stripe was not able to create a checkout session for whatever reason
-    logger.error('#createSessionByProductId failed', error);
+    logger.error('#createSubscriptionSession failed', error);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to checkout with Stripe');
   }
 };
+
+export const createPaymentSession = async (stripeCustomerId: string, options: SessionBase) => {
+  const { successUrl, cancelUrl, priceId, quantity = 1 } = options;
+  try {
+    const session = await stripe.checkout.sessions.create({
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      customer: stripeCustomerId,
+      line_items: [
+        {
+          price: priceId,
+          quantity,
+        },
+      ],
+      mode: 'payment',
+      currency: 'usd',
+      payment_intent_data: {
+        metadata: {
+          priceId,
+        },
+      },
+      expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
+    });
+
+    return session;
+  } catch (error) {
+    // Stripe was not able to create a checkout session for whatever reason
+    logger.error('#createSubscriptionSession failed', error);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to checkout with Stripe');
+  }
+};
+
+// TODO: separate functions for subscription and payment API calls
 
 /**
  * Called when user wants to cancel their subscription. We will cancel their
@@ -71,6 +115,7 @@ export const createSessionByProductId = async (email: string, priceId: string) =
  */
 export const cancelSubscriptionById = async (email: string, id: string) => {
   try {
+    // TODO: revise this only users with subscriptions cancel, just
     const customer = (await stripe.customers.list({ email, limit: 1 })).data.length;
 
     // at this point, in the client app, the user is authenticated
@@ -87,8 +132,6 @@ export const cancelSubscriptionById = async (email: string, id: string) => {
   }
 };
 
-// FUTURE_WORK: if any of these fail how do we approach syncing properties with those in Stripe's DB
-
 /** When webhook receives customer.created event */
 export const addCustomerId = async (email: string, stripeCustomerId: string) => {
   User.findOneAndUpdate({ email }, { stripeCustomerId }).catch((e) => {
@@ -101,5 +144,46 @@ export const updateSubscription = async (subscription: Stripe.Subscription) => {
   const { customer: stripeCustomerId, current_period_end: stripeCurrentPeriodEnd, status: stripeStatus } = subscription;
   User.findOneAndUpdate({ stripeCustomerId }, { stripeCurrentPeriodEnd, stripeStatus }).catch((e) => {
     logger.notice('#addSubscription unable to update stripe subscription', subscription, e);
+  });
+};
+
+/**
+ * when webhook receives payment_intent.succeeded, we only save the payment intent id if
+ * payment was successful
+ */
+export const updateLifetimeAccessPayment = async (paymentIntent: Stripe.PaymentIntent) => {
+  const { customer: stripeCustomerId, metadata } = paymentIntent;
+  const user = await User.findOne({ stripeCustomerId });
+
+  /** we fail silently, this should never happen because we create stripe customerid on signup */
+  if (!user) {
+    return;
+  }
+
+  if (metadata?.priceId === settings.stripePriceIds.lifetimeChatAccess) {
+    updateLifetimeAccess(paymentIntent, user);
+  }
+};
+
+/** updates the lifetime access payment intent ID on the user's profile */
+const updateLifetimeAccess = async (
+  paymentIntent: Stripe.PaymentIntent,
+  user: Document<unknown, any, UserType> &
+    Omit<
+      UserType & {
+        _id: any;
+      },
+      never
+    >
+) => {
+  const { id: paymentIntentId } = paymentIntent;
+
+  if (user.stripeLifetimeAccessPaymentId !== '') {
+    logger.notice('#updateLifetimeAccess user already has lifetime access', user.email);
+  }
+
+  console.log('updating user profile');
+  user.updateOne({ stripeLifetimeAccessPaymentId: paymentIntentId }).catch((e) => {
+    logger.notice('#updateLifetimeAccess unable to update user profile', paymentIntent, user.email, e);
   });
 };

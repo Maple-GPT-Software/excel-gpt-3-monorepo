@@ -1,9 +1,14 @@
 import { Model, Schema, model, Document } from 'mongoose';
 import validator from 'validator';
 import Stripe from 'stripe';
+
+// TODO: improve typings. There's a basic UserType and an IUserType
+// the IUserType will have stripeCustomerId, stripeCurrentPeriodEnd, stripeStatus as required
+// optional properties will have a default defined in the schema
 /** base user type */
 export interface UserType {
   /** corresponds to uid from firebase auth */
+  // TODO: refactor this to be firebaseUUID
   userId: string;
   email: string;
   name: string;
@@ -17,12 +22,19 @@ export interface UserType {
    */
   /** stripe customer id associated with user's email */
   stripeCustomerId?: string;
-  /** the end of the bill cycle of the user's subscription*/
+  /**
+   * IMPORTANT: this is updated once when the user's payment has succeeded
+   * the payment id associated with lifetime access purchase. Empty string by default
+   * */
+  stripeLifetimeAccessPaymentId?: string;
+  /** the end of the bill cycle of the user's subscription */
   stripeCurrentPeriodEnd?: number;
   /**
    * possible statuses: paid, incomplete, trialing, active, past_due, canceled. We don't allow users to pause their subscription.
    */
   stripeStatus?: Stripe.Subscription.Status;
+  /** the user's open AI API key */
+  openaiApiKey?: string;
 }
 
 /**
@@ -72,6 +84,16 @@ const userSchema = new Schema<UserType, UserModel>({
     required: true,
     lowercase: true,
   },
+  openaiApiKey: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  stripeLifetimeAccessPaymentId: {
+    type: String,
+    required: false,
+    default: '',
+  },
   stripeCustomerId: {
     type: String,
     required: false,
@@ -90,11 +112,14 @@ const userSchema = new Schema<UserType, UserModel>({
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
 
+  obj.hasLifetimeAccess = obj.stripeLifetimeAccessPaymentId !== '';
+
   delete obj._id;
   delete obj.__v;
   delete obj.createdAt;
   delete obj.updatedAt;
   delete obj.referrer;
+  delete obj.openaiApiKey;
 
   return obj;
 };

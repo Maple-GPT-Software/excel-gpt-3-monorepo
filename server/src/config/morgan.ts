@@ -1,16 +1,17 @@
 import morgan from 'morgan';
+
+import { Environment } from '../types';
 import config from './config';
 import logger from './logger';
-import { Environment } from '@src/types';
 
 morgan.token('message', (req, res) => res.statusMessage || '');
-morgan.token('source', (req, res) => {
+morgan.token('source', (req) => {
   /** source, e.g appscript, webapp, excel */
   if (req.headers['x-source-header']) {
     return req.headers['x-source-header'] as string;
-  } else {
-    return '';
   }
+
+  return '';
 });
 
 const getIpFormat = () => (config.env === Environment.PROD ? ':remote-addr - ' : 'localhost -');

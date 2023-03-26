@@ -25,13 +25,13 @@
     // "moduleDetection": "auto",                        /* Control what method is used to detect module-format JS files. */
 
     /* Modules */
-    "module": "commonjs" /* Specify what module code is generated. */,
+    "module": "CommonJS" /* Specify what module code is generated. */,
     "rootDir": "src" /* Specify the root folder within your source files. */,
-    // "moduleResolution": "node",                       /* Specify how TypeScript looks up a file from a given module specifier. */
-    "baseUrl": "./" /* Specify the base directory to resolve non-relative module names. */,
-    "paths": {
-      "@src/*": ["src/*"]
-    } /* Specify a set of entries that re-map imports to additional lookup locations. */,
+    "moduleResolution": "node" /* Specify how TypeScript looks up a file from a given module specifier. */,
+    // "baseUrl": "./" /* Specify the base directory to resolve non-relative module names. */,
+    // "paths": {
+    //   "@src/*": ["src/*"]
+    // } /* Specify a set of entries that re-map imports to additional lookup locations. */,
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     // "typeRoots": ["./customTypes.d.ts"],                                  /* Specify multiple folders that act like './node_modules/@types'. */
     // "types": [],                                      /* Specify type package names to be included without being referenced in a source file. */
@@ -103,10 +103,9 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "plugins": [
       // Transform paths in output .js files
-      { "transform": "typescript-transform-paths" },
-
+      // { "transform": "typescript-transform-paths" },
       // Transform paths in output .d.ts files (Include this line if you output declarations files)
-      { "transform": "typescript-transform-paths", "afterDeclarations": true }
+      // { "transform": "typescript-transform-paths", "afterDeclarations": true }
     ]
   },
   // root is /src, so we have to go up in order to include test folder

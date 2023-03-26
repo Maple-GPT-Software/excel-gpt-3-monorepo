@@ -1,11 +1,12 @@
-import config from '@src/config/config';
 import crypto from 'crypto';
+
+import config from '../config/config';
 
 const {
   encrypt: { secretKey, iv: encryptIv },
 } = config;
 
-//Using AES encryption
+// Using AES encryption
 // aes-256-cbc securre? https://www.n-able.com/blog/aes-256-encryption-algorithm
 const algorithm = 'aes-256-cbc';
 

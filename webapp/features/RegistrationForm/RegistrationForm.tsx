@@ -1,27 +1,30 @@
 'use client';
 
-import { Input } from '@/components/ui/Input';
+// NPM
 import React from 'react';
-import { useAuthContext } from '@/contexts/AuthProvider';
-import { Button } from '@/components/ui/Button';
-import MDIIcon from '@/components/ui/MDIIcon';
 import { useForm } from 'react-hook-form';
-
+import MDIIcon from '@/components/ui/MDIIcon';
 import { mdiChevronRight } from '@mdi/js';
-import SimplifyApi from '@/api/SimplifyApi';
-import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { DASHBOARD_ROUTE } from '@/constants';
+// Contexts
+import { useAuthContext } from '@/contexts/AuthProvider';
+// Hooks
 import { AppSearchParams } from '@/hooks/useNavigateWithParams';
-import { PriceIds, SubscriptionURLParams } from '@/types/appTypes';
+// Components
 import Link from 'next/link';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
+// API
+import SimplifyApi from '@/api/SimplifyApi';
+import { DASHBOARD_ROUTE } from '@/constants';
 
-interface RegistrationFormTypes {
+interface RegistrationFormType {
   fullName: string;
   email: string;
   hasCheckedTerms: boolean;
 }
-
+// TODO: lifetime access form
 function RegistrationForm() {
   const { firebaseUser, setSimplifyUser } = useAuthContext();
   const router = useRouter();
@@ -31,14 +34,14 @@ function RegistrationForm() {
     register,
     handleSubmit,
     formState: { errors, isValid, isSubmitting, isSubmitted },
-  } = useForm<RegistrationFormTypes>({
+  } = useForm<RegistrationFormType>({
     defaultValues: {
       fullName: firebaseUser?.displayName ?? '',
       email: firebaseUser?.email ?? '',
     },
   });
 
-  async function onSubmit(data: RegistrationFormTypes) {
+  async function onSubmit(data: RegistrationFormType) {
     const { fullName, hasCheckedTerms } = data;
     try {
       const simplifyUser = await SimplifyApi().createUser(
@@ -47,31 +50,12 @@ function RegistrationForm() {
         searchParams?.get(AppSearchParams.REFERRER) ?? ''
       );
 
-      if (
-        searchParams?.get(AppSearchParams.SUBSCRIPTION) ===
-        SubscriptionURLParams.PREMIUM
-      ) {
-        await handlePremiumSubscription();
-      } else {
-        await SimplifyApi().createFreeSubscription();
-      }
+      await SimplifyApi().createFreeSubscription();
+
       // set user so that they are able to acces /app/* without redirect to /auth/refresh
       setSimplifyUser(simplifyUser);
       router.replace(DASHBOARD_ROUTE);
     } catch (error) {}
-  }
-
-  // TODO: handle case where a premium subscriber cancels
-  // we can re-direct to a /auth/free-subscription route that
-  // calls await SimplifyApi().createFreeSubscription()
-  async function handlePremiumSubscription() {
-    try {
-      await SimplifyApi().createPremiumSubscription(
-        PriceIds.STANDALONE_MONTHLY
-      );
-    } catch (error) {
-      console.error(error);
-    }
   }
 
   if (isSubmitting || isSubmitted) {
@@ -83,29 +67,17 @@ function RegistrationForm() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex h-full flex-col justify-center px-8"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="flex h-full flex-col justify-center px-8">
       <h3 className="mb-8 text-2xl font-light">Set up your account</h3>
       <div>
         <label htmlFor="fullName">
           <p>Full Name</p>
-          <Input
-            {...register('fullName', { required: true, minLength: 3 })}
-            className="mb-4 mt-2"
-          />
-          {errors?.fullName?.message === 'minLength' && (
-            <p role="alert">Minimum length is 3 characters</p>
-          )}
+          <Input {...register('fullName', { required: true, minLength: 3 })} className="mb-4 mt-2" />
+          {errors?.fullName?.message === 'minLength' && <p role="alert">Minimum length is 3 characters</p>}
         </label>
         <label htmlFor="email">
           <p>Email</p>
-          <Input
-            {...register('email', { required: true })}
-            className="mb-4 mt-2"
-            disabled
-          />
+          <Input {...register('email', { required: true })} className="mb-4 mt-2" disabled />
           {errors.email?.type === 'required' && <p>Email is required</p>}
         </label>
       </div>
@@ -116,40 +88,21 @@ function RegistrationForm() {
         {/* TODO:  https://ui.shadcn.com/docs/primitives/checkbox */}
         {/* we need the checkbox to show */}
         <div>
-          <input
-            {...register('hasCheckedTerms', { required: true })}
-            type="checkbox"
-            id="checkboxLabel"
-          />
+          <input {...register('hasCheckedTerms', { required: true })} type="checkbox" id="checkboxLabel" />
           <span>
             &nbsp;I agree to
-            <Link
-              href="/legal"
-              target="_blank"
-              className="text-green-600 hover:underline"
-            >
+            <Link href="/legal" target="_blank" className="text-green-600 hover:underline">
               Terms of Service&nbsp;
             </Link>
             and&nbsp;
-            <Link
-              href="/legal/privacy"
-              target="_blank"
-              className="text-green-600 hover:underline"
-            >
+            <Link href="/legal/privacy" target="_blank" className="text-green-600 hover:underline">
               Privacy Policy
             </Link>
           </span>
         </div>
-        {errors?.hasCheckedTerms?.type === 'required' && (
-          <p role="alert">Please accept terms before you continue.</p>
-        )}
+        {errors?.hasCheckedTerms?.type === 'required' && <p role="alert">Please accept terms before you continue.</p>}
       </label>
-      <Button
-        className="ml-auto mt-8 w-fit"
-        variant={'default'}
-        disabled={!isValid}
-        type="submit"
-      >
+      <Button className="ml-auto mt-4 w-fit" variant={'default'} disabled={!isValid} type="submit">
         Confirm
         <MDIIcon path={mdiChevronRight} />
       </Button>

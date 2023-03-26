@@ -1,12 +1,13 @@
 import httpStatus from 'http-status';
-import { Message, MessageType } from '@src/models/message.model';
-import ApiError from '@src/utils/ApiError';
+
+import { Message, MessageType } from '../models/message.model';
+import ApiError from '../utils/ApiError';
 
 /**
  * creates a message with with an "N/A" rating
  */
 export const createUserMessage = async (message: MessageType) => {
-  return await Message.create(message);
+  return Message.create(message);
 };
 
 /**
@@ -21,5 +22,5 @@ export const rateUserMessage = async ({ id, userId, rating }: { id: string; user
     throw new ApiError(httpStatus.BAD_REQUEST, 'Message already has rating');
   }
 
-  return await Message.findByIdAndUpdate(id, { rating }, { runValidators: true, new: true });
+  return Message.findByIdAndUpdate(id, { rating }, { runValidators: true, new: true });
 };

@@ -2,11 +2,10 @@ import { AuthenticatedRequestor } from './AuthenticatedRequestor';
 import settings from '@/settings';
 import type { SimplifyUser } from '@/types/simplifyApi';
 import AuthService from '@/models/AuthService';
-import type { PriceIds } from '@/types/appTypes';
+import { PriceIds } from '@/types/appTypes';
 
 const SERVER_AUTH_BASE = '/auth';
 const SERVER_PAYMENT_BASE = '/payment';
-
 /**
  * This function returns an AuthenticatedRequestor. It can be used in or outside of React. Outside of react the function will reach out
  * to AuthService to get the access token for the currently logged in user
@@ -21,14 +20,10 @@ export default function SimplifyApi(accessToken?: string): SimplifyApiClient {
   }
 
   if (token === undefined) {
-    throw new Error(
-      'You need to be authenticated by Firebase make SimplifyApi API calls'
-    );
+    throw new Error('You need to be authenticated by Firebase make SimplifyApi API calls');
   }
 
-  return new SimplifyApiClient(
-    new AuthenticatedRequestor(settings.simplifyBaseUrl, token)
-  );
+  return new SimplifyApiClient(new AuthenticatedRequestor(settings.simplifyBaseUrl, token));
 }
 
 class SimplifyApiClient {
@@ -55,15 +50,35 @@ class SimplifyApiClient {
     return await this.requestor.post({ url: `${SERVER_PAYMENT_BASE}/trial` });
   }
 
-  async createPremiumSubscription(priceId: PriceIds) {
+  async createCheckoutSession(data: { priceId: PriceIds; openaiApiKey: string; successUrl: string; cancelUrl: string }) {
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await this.requestor.post<any>({
-        url: `${SERVER_PAYMENT_BASE}/premium`,
-        data: { priceId },
+        url: `${SERVER_PAYMENT_BASE}/checkout-session`,
+        data,
       });
 
       return response.data;
+    } catch (error: any) {
+      // stripe sends 307 for re-direct
+      if (error?.response?.status === 307) {
+        return window.open(error.response.data.url, '_self');
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  async lifetimeAccessCheckout(data: { openaiApiKey: string; successUrl: string; cancelUrl: string }) {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      await this.requestor.post<any>({
+        url: `${SERVER_PAYMENT_BASE}/lifetime-checkout`,
+        data: {
+          ...data,
+          priceId: PriceIds.LIFETIME_CHAT_ACCESS,
+        },
+      });
     } catch (error: any) {
       // stripe sends 307 for re-direct
       if (error?.response?.status === 307) {

@@ -1,28 +1,29 @@
 /// <reference types="stripe-event-types" />
 /** NPM */
-import express from 'express';
-import Stripe from 'stripe';
-import helmet from 'helmet';
-import xss from 'xss-clean';
 import mongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
-import cors from 'cors';
 import httpStatus from 'http-status';
-import config from '@src/config/config';
-import * as morgan from '@src/config/morgan';
-/** Middlewares */
-import firebaseAuth from '@src/middleware/firebaseAuth';
+import express from 'express';
+import xss from 'xss-clean';
+import Stripe from 'stripe';
+import helmet from 'helmet';
+import cors from 'cors';
+
 import { errorHandler, errorConverter } from './middleware/error';
+import toJSONMiddleware from './middleware/toJSONMiddleware';
+import * as stripeService from './services/stripe.service';
+/** Middlewares */
+import firebaseAuth from './middleware/firebaseAuth';
+import * as morgan from './config/morgan';
+import { StripeWebhooks } from './types';
+import ApiError from './utils/ApiError';
+import config from './config/config';
+import logger from './config/logger';
+import stripe from './config/stripe';
 // FUTURE: rate limiting
 // import { authLimiter } from "./middlewares/rateLimiter";
 /** Modules */
-import AppRoutes from '@src/routes';
-import ApiError from '@src/utils/ApiError';
-import * as stripeService from '@src/services/stripe.service';
-import logger from './config/logger';
-import stripe from './config/stripe';
-import { StripeWebhooks } from './types';
-import toJSONMiddleware from './middleware/toJSONMiddleware';
+import AppRoutes from './routes';
 // !IMPORTANT start server with pm2
 
 // TODO: only allow specific origins
@@ -35,6 +36,7 @@ import toJSONMiddleware from './middleware/toJSONMiddleware';
 
 const app = express();
 
+// TODO: morgan setup logs?
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);
@@ -53,8 +55,8 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
     // verifying the signature sent by Stripe
     event = stripe.webhooks.constructEvent(request.body, sig, config.stripeEndpointSecret) as Stripe.DiscriminatedEvent;
   } catch (error: unknown) {
-    // @ts-ignore
-    logger.debug(`⚠️  Webhook signature verification failed.`, err.message);
+    // @ts-expect-error we don't need to type this
+    logger.debug(`⚠️  Webhook signature verification failed.`, error.message);
     response.status(400).send();
     return;
   }
@@ -65,6 +67,9 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
       // note: customer.email is string|null but when we create the customer with Stripe
       // we specify the user's email that should be used to uniquely identify the customer
       stripeService.addCustomerId(customer.email as string, customer.id);
+      break;
+    case StripeWebhooks.PaymentSucceeded:
+      stripeService.updateLifetimeAccessPayment(event.data.object);
       break;
     case StripeWebhooks.SubscriptionCreated:
       // FUTURE: email user with thank you, installation guide
@@ -121,8 +126,7 @@ app.use(firebaseAuth);
 //   app.use('/v1/auth', authLimiter);
 // }
 
-// v1 api routes
-app.use('/', AppRoutes);
+app.use('/api/v1/', AppRoutes);
 
 app.use(toJSONMiddleware);
 

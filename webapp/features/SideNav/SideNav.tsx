@@ -8,6 +8,7 @@ import { mdiBookOpenVariant } from '@mdi/js';
 import { Button } from '@/components/ui/Button';
 import { BILLING_ROUTE, DASHBOARD_ROUTE } from '@/constants';
 import { usePathname, useRouter } from 'next/navigation';
+import colors from 'tailwindcss/colors';
 
 interface SideNavItem {
   label: string;
@@ -32,9 +33,10 @@ function SideNav() {
   }, []);
 
   return (
-    <div className="px-4 py-8 w-full h-full flex flex-col">
-      <div className="pl-4 mb-8">
-        <h2 className="text-2xl">Dasboard</h2>
+    <div className="flex h-full w-full flex-col bg-green-800 px-4 py-12">
+      <div className="mb-8 pl-4">
+        <h2 className="text-2xl text-white">Excel Simplify</h2>
+        <div className="p-4 pt-2"></div>
       </div>
       {sideNavTabs.map(tab => {
         return <SideNavItem key={tab.route} tabItem={tab} />;
@@ -60,7 +62,7 @@ function SideNavItem({ tabItem }: { tabItem: SideNavItem }) {
         router.push(route);
       }}
     >
-      <MDIIcon path={iconPath} className="mr-4" />
+      <MDIIcon path={iconPath} className={'mr-4'} color={isItemActive ? colors.green[800] : colors.slate[50]} />
       {label}
     </Button>
   );

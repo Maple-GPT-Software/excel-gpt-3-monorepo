@@ -1,4 +1,4 @@
-import { SIMPLIFY_BASE_URL } from '../settings';
+import settings from '../settings';
 import { CompletionRating, GPTCompletion } from '../types';
 import { AuthenticatedRequestor } from './requestors';
 
@@ -23,7 +23,7 @@ export default function SimplifyApi(accessToken: string): SimplifyApiClient {
   if (!accessToken) {
     throw new Error(`You can't make Simplify API calls when not logged in!`);
   }
-  return new SimplifyApiClient(SIMPLIFY_BASE_URL, accessToken);
+  return new SimplifyApiClient(settings.simplifyBaseUrl, accessToken);
 }
 
 class SimplifyApiClient extends AuthenticatedRequestor {
