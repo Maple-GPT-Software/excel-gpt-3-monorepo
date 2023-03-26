@@ -5,7 +5,7 @@ const { replacer } = require('easy-tailwind');
 module.exports = {
   content: {
     files: [
-      './app/**/*.{js,ts,jsx,tsx, mdx}',
+      './app/**/*.{js,ts,jsx,tsx,mdx}',
       './pages/**/*.{js,ts,jsx,tsx}',
       './components/**/*.{js,ts,jsx,tsx}',
       './features/**/*.{js,ts,jsx,tsx}',
