@@ -13,31 +13,17 @@ const withMDX = require('@next/mdx')({
     remarkPlugins: [],
     rehypePlugins: [],
     // If you use `MDXProvider`, uncomment the following line.
-    // providerImportSource: "@mdx-js/react",
+    providerImportSource: '@mdx-js/react',
   },
 });
 
-module.exports = withPlugins(
-  [
-    [withBundleAnalyzer],
-    [
-      withMDX,
-      {
-        // Add any MDX-specific options here
-      },
-    ],
-  ],
-  {
-    experimental: {
-      appDir: true,
-      mdxRs: true,
-      fontLoaders: [
-        { loader: '@next/font/google', options: { subsets: ['latin'] } },
-      ],
-    },
-    // Configure pageExtensions to include md and mdx
-    pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
-    // Optionally, add any other Next.js config below
-    reactStrictMode: true,
-  }
-);
+module.exports = withPlugins([[withBundleAnalyzer], [withMDX]], {
+  experimental: {
+    appDir: true,
+    mdxRs: true,
+    fontLoaders: [{ loader: '@next/font/google', options: { subsets: ['latin'] } }],
+  },
+  pageExtensions: ['ts', 'tsx', 'md', 'mdx'],
+  // Optionally, add any other Next.js config below
+  reactStrictMode: true,
+});
