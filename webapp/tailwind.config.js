@@ -5,10 +5,11 @@ const { replacer } = require('easy-tailwind');
 module.exports = {
   content: {
     files: [
-      './app/**/*.{js,ts,jsx,tsx}',
+      './app/**/*.{js,ts,jsx,tsx,mdx}',
       './pages/**/*.{js,ts,jsx,tsx}',
       './components/**/*.{js,ts,jsx,tsx}',
       './features/**/*.{js,ts,jsx,tsx}',
+      './mdx-components.tsx',
     ],
     transform: {
       DEFAULT: replacer,

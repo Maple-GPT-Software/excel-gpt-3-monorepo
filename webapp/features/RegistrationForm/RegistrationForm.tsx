@@ -11,6 +11,7 @@ import { useAuthContext } from '@/contexts/AuthProvider';
 // Hooks
 import { AppSearchParams } from '@/hooks/useNavigateWithParams';
 // Components
+import Link from 'next/link';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
@@ -89,14 +90,14 @@ function RegistrationForm() {
         <div>
           <input {...register('hasCheckedTerms', { required: true })} type="checkbox" id="checkboxLabel" />
           <span>
-            I agree to
-            <a href="#0" className="text-green-600 hover:underline">
-              Terms of Service
-            </a>{' '}
-            and{' '}
-            <a href="#0" className="text-green-600 hover:underline">
+            &nbsp;I agree to
+            <Link href="/legal" target="_blank" className="text-green-600 hover:underline">
+              Terms of Service&nbsp;
+            </Link>
+            and&nbsp;
+            <Link href="/legal/privacy" target="_blank" className="text-green-600 hover:underline">
               Privacy Policy
-            </a>
+            </Link>
           </span>
         </div>
         {errors?.hasCheckedTerms?.type === 'required' && <p role="alert">Please accept terms before you continue.</p>}
