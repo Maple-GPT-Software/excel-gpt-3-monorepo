@@ -1,15 +1,15 @@
-// NPM
-import React, { useState, useEffect, createContext, useContext } from 'react';
-import { auth } from '@/service/firebase';
-import { useRouter } from 'next/navigation';
-// SERVICES
-import AuthService from '@/models/AuthService';
-// CONSTATNS
-import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
-// TYPES
-import type { ReactNode } from 'react';
-import type { SimplifyUser } from '@/types/simplifyApi';
 import type { User } from '@firebase/auth-types';
+import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, createContext, useContext } from 'react';
+import type { ReactNode } from 'react';
+
+import AuthService from '@/models/AuthService';
+
+import { auth, firebaseSignout } from '@/services/firebase';
+
+import type { SimplifyUser } from '@/types/simplifyApi';
+
+import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
 
 interface AuthContextType {
   hasFirebasedAuthenticated: boolean;
@@ -17,16 +17,23 @@ interface AuthContextType {
   firebaseUser?: User;
   /** user profile from simplify API */
   simplifyUser?: SimplifyUser;
-  setSimplifyUser: React.Dispatch<React.SetStateAction<SimplifyUser | undefined>>;
+  setSimplifyUser: React.Dispatch<
+    React.SetStateAction<SimplifyUser | undefined>
+  >;
+  logout?: () => void;
 }
 
 /**
  * We only render everything in /app/* when the user has been authenticated by firebase and they have an account we
  * use useUserContext which returns AuthContextType but without the optional types
  */
-type AuthenticatedSessionType = Required<AuthContextType>;
+type AuthenticatedSessionType = Required<AuthContextType> & {
+  logout: () => void;
+};
 
-const AuthContext = createContext<AuthContextType | undefined>({} as AuthContextType);
+const AuthContext = createContext<AuthContextType | undefined>(
+  {} as AuthContextType
+);
 
 // hook to get access to provider values outside of /app/*
 export function useAuthContext() {
@@ -56,19 +63,31 @@ function AuthProvider({ children }: { children: ReactNode }) {
    * if the user tries to access a route that requires them to be authenticated but they aren't we'll redirect them to signin
    * */
   const [firebaseUser, setFirebaseUser] = useState<User | undefined>(undefined);
-  const [simplifyUser, setSimplifyUser] = useState<SimplifyUser | undefined>(undefined);
-  const [hasFirebasedAuthenticated, setHasFirebaseAuthenticated] = useState(false);
+  const [simplifyUser, setSimplifyUser] = useState<SimplifyUser | undefined>(
+    undefined
+  );
+  const [hasFirebasedAuthenticated, setHasFirebaseAuthenticated] =
+    useState(false);
 
   const router = useRouter();
 
   function redirectUnauthenticatedUser() {
     // we don't need to re-direct if the user accesses these routes unathenticated
-    if (location.pathname.includes(SIGN_IN_ROUTE) || location.pathname.includes(SIGN_UP_ROUTE)) {
+    if (
+      location.pathname.includes(SIGN_IN_ROUTE) ||
+      location.pathname.includes(SIGN_UP_ROUTE)
+    ) {
       return;
     }
 
     // we replace the history to the user can't navback to the protected route they were at before redirect
     router.replace(SIGN_IN_ROUTE);
+  }
+
+  function logout() {
+    firebaseSignout();
+    setFirebaseUser(undefined);
+    setSimplifyUser(undefined);
   }
 
   useEffect(() => {
@@ -105,8 +124,9 @@ function AuthProvider({ children }: { children: ReactNode }) {
         const token = await user.getIdToken();
         AuthService.setRefreshedAccessToken(token);
       }
-      // TODO: specify interval for refresh
-    });
+      // refresh every 30 minutes
+      // we can be smarter about this later on
+    }, 30 * 60 * 1000);
 
     return () => {
       clearInterval(interval);
@@ -120,6 +140,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
         firebaseUser: firebaseUser as User,
         simplifyUser,
         setSimplifyUser,
+        logout,
       }}
     >
       {children}

@@ -1,8 +1,11 @@
 import { AuthenticatedRequestor } from './AuthenticatedRequestor';
-import settings from '@/settings';
-import type { SimplifyUser } from '@/types/simplifyApi';
+
 import AuthService from '@/models/AuthService';
+
 import { PriceIds } from '@/types/appTypes';
+import type { SimplifyUser } from '@/types/simplifyApi';
+
+import settings from '@/settings';
 
 const SERVER_AUTH_BASE = '/auth';
 const SERVER_PAYMENT_BASE = '/payment';
@@ -20,10 +23,14 @@ export default function SimplifyApi(accessToken?: string): SimplifyApiClient {
   }
 
   if (token === undefined) {
-    throw new Error('You need to be authenticated by Firebase make SimplifyApi API calls');
+    throw new Error(
+      'You need to be authenticated by Firebase make SimplifyApi API calls'
+    );
   }
 
-  return new SimplifyApiClient(new AuthenticatedRequestor(settings.simplifyBaseUrl, token));
+  return new SimplifyApiClient(
+    new AuthenticatedRequestor(settings.simplifyBaseUrl, token)
+  );
 }
 
 class SimplifyApiClient {
@@ -50,7 +57,12 @@ class SimplifyApiClient {
     return await this.requestor.post({ url: `${SERVER_PAYMENT_BASE}/trial` });
   }
 
-  async createCheckoutSession(data: { priceId: PriceIds; openaiApiKey: string; successUrl: string; cancelUrl: string }) {
+  async createCheckoutSession(data: {
+    priceId: PriceIds;
+    openaiApiKey: string;
+    successUrl: string;
+    cancelUrl: string;
+  }) {
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await this.requestor.post<any>({
@@ -69,7 +81,11 @@ class SimplifyApiClient {
     }
   }
 
-  async lifetimeAccessCheckout(data: { openaiApiKey: string; successUrl: string; cancelUrl: string }) {
+  async lifetimeAccessCheckout(data: {
+    openaiApiKey: string;
+    successUrl: string;
+    cancelUrl: string;
+  }) {
     // eslint-disable-next-line no-useless-catch
     try {
       await this.requestor.post<any>({

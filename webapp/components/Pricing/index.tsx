@@ -1,14 +1,19 @@
 'use client';
+
 import { useState } from 'react';
-import SectionTitle from '@/components/Common/SectionTitle';
-import OfferList from '@/components/Pricing/OfferList';
-import PricingBox from '@/components/Pricing/PricingBox';
+
 import {
   useNavigateWithParams,
   AppSearchParams,
 } from '@/hooks/useNavigateWithParams';
-import { SIGN_UP_ROUTE } from '@/constants';
+
+import SectionTitle from '@/components/Common/SectionTitle';
+import OfferList from '@/components/Pricing/OfferList';
+import PricingBox from '@/components/Pricing/PricingBox';
+
 import { SubscriptionURLParams } from '@/types/appTypes';
+
+import { SIGN_UP_ROUTE } from '@/constants';
 
 const Pricing = () => {
   const [isMonthly, setIsMonthly] = useState(true);
@@ -83,7 +88,7 @@ const Pricing = () => {
                       SubscriptionURLParams.PREMIUM,
                   });
                 }}
-                className="bg-green-600 flex w-full items-center justify-center rounded-md p-3 text-base font-semibold text-white transition duration-300 ease-in-out hover:bg-opacity-80 hover:shadow-signUp"
+                className="flex w-full items-center justify-center rounded-md bg-green-600 p-3 text-base font-semibold text-white transition duration-300 ease-in-out hover:bg-opacity-80 hover:shadow-signUp"
               >
                 Start Free Trial
               </button>

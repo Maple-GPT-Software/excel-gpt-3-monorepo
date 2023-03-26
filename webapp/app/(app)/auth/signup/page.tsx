@@ -1,21 +1,24 @@
 'use client';
-import React, { useState } from 'react';
-import { signInWithGoogle } from '@/service/firebase';
 
-import Link from 'next/link';
-
-import SimplifyApi from '@/api/SimplifyApi';
+import { signInWithGoogle } from '@/services/firebase';
 import { AxiosError } from 'axios';
 import { FirebaseError } from 'firebase/app';
 import { AuthErrorCodes } from 'firebase/auth';
 import Image from 'next/image';
+import Link from 'next/link';
+import React, { useState } from 'react';
+
+import SimplifyApi from '@/api/SimplifyApi';
+
+import { useAuthContext } from '@/contexts/AuthProvider';
+
+import { useNavigateWithParams } from '@/hooks/useNavigateWithParams';
+
 import {
   REGISTRATION_ROUTE,
   DASHBOARD_ROUTE,
   SIGN_IN_ROUTE,
 } from '@/constants';
-import { useAuthContext } from '@/contexts/AuthProvider';
-import { useNavigateWithParams } from '@/hooks/useNavigateWithParams';
 
 const SignupPage = () => {
   const { setSimplifyUser } = useAuthContext();
@@ -69,7 +72,7 @@ const SignupPage = () => {
       >
         <div className="container">
           <div className="-mx-4 flex flex-wrap">
-            <div className="w-full px-4 -mt-8">
+            <div className="-mt-8 w-full px-4">
               <div className="mx-auto max-w-[500px] rounded-md  bg-green-600 bg-opacity-5 py-10 px-6 font-thin dark:bg-dark sm:p-[60px]">
                 <h3 className="mb-14 text-center text-2xl  text-black dark:text-white sm:text-3xl">
                   Create your account
@@ -93,7 +96,7 @@ const SignupPage = () => {
                   </span>
                   Sign up with Google
                 </button>
-                <div className="text-center text-body-color flex cursor-pointer select-none text-sm font-medium">
+                <div className="text-body-color flex cursor-pointer select-none text-center text-sm font-medium">
                   <span>
                     By creating account means you agree to the
                     <a href="#0" className="text-green-600 hover:underline">

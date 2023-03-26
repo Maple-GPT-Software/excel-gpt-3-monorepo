@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
-import PublicNav from './PublicNav';
 import PublicFooter from './PublicFooter';
+import PublicNav from './PublicNav';
+import { ReactNode } from 'react';
 
 /** layout for all public routes */
 export default function layout({ children }: { children: ReactNode }) {

@@ -1,8 +1,7 @@
-import type { ReactNode } from 'react';
-import { Montserrat } from '@next/font/google';
-
-import 'node_modules/react-modal-video/css/modal-video.css';
 import '../styles/index.css';
+import { Montserrat } from '@next/font/google';
+import 'node_modules/react-modal-video/css/modal-video.css';
+import type { ReactNode } from 'react';
 
 const montserrat = Montserrat({
   weight: ['100', '300', '500'],

@@ -1,12 +1,15 @@
 'use client';
-import { Tabs, TabsList } from '@/components/ui/Tabs';
-import { useAuthContext } from '@/contexts/AuthProvider';
-import { TabsContent, TabsTrigger } from '@radix-ui/react-tabs';
-import type { FunctionComponent } from 'react';
-import PromptGuideContent from './promptGuide.mdx';
+
 import GoogleSheetContent from './googleSheet.mdx';
-import Overview from './overview.mdx';
 import OpenApiKeyGuide from './openAiKeyGuide.mdx';
+import Overview from './overview.mdx';
+import PromptGuideContent from './promptGuide.mdx';
+import type { FunctionComponent } from 'react';
+
+import { useAuthContext } from '@/contexts/AuthProvider';
+
+import { Tabs, TabsList } from '@/components/ui/Tabs';
+import { TabsContent, TabsTrigger } from '@/components/ui/Tabs';
 
 const Dashboard: FunctionComponent = () => {
   const { simplifyUser } = useAuthContext();
@@ -40,16 +43,16 @@ const Dashboard: FunctionComponent = () => {
           OpenAi API Key
         </TabsTrigger>
       </TabsList>
-      <TabsContent className="mt-8 mx-4" value="overview">
+      <TabsContent className="mx-4 mt-8" value="overview">
         <Overview />
       </TabsContent>
-      <TabsContent className="mt-8 mx-4" value="google sheet">
+      <TabsContent className="mx-4 mt-8" value="google sheet">
         <GoogleSheetContent />
       </TabsContent>
-      <TabsContent className="mt-8 mx-4" value="prompt guide">
+      <TabsContent className="mx-4 mt-8" value="prompt guide">
         <PromptGuideContent />
       </TabsContent>
-      <TabsContent className="mt-8 mx-4" value="openAi key">
+      <TabsContent className="mx-4 mt-8" value="openAi key">
         <OpenApiKeyGuide />
       </TabsContent>
     </Tabs>

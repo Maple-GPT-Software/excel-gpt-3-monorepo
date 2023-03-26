@@ -1,5 +1,5 @@
-import React from 'react';
 import Icon from '@mdi/react';
+import React from 'react';
 
 interface MDIIconProps {
   path: string;

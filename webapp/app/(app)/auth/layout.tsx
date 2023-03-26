@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
+
 import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
 
 function AuthLayout({ children }: { children: ReactNode }) {

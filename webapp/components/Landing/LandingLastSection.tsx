@@ -3,11 +3,17 @@ import Link from 'next/link';
 const LandingLastSection = () => {
   return (
     <>
-      <section id="home" className="relative z-10 flex h-screen w-full items-center overflow-hidden ">
+      <section
+        id="home"
+        className="relative z-10 flex h-screen w-full items-center overflow-hidden "
+      >
         <div className="container">
           <div className="-mx-4 flex flex-wrap">
             <div className="w-full px-4">
-              <div className="wow fadeInUp mx-auto max-w-[800px] text-center" data-wow-delay=".2s">
+              <div
+                className="wow fadeInUp mx-auto max-w-[800px] text-center"
+                data-wow-delay=".2s"
+              >
                 <h1 className="mb-5 text-3xl  leading-tight text-black dark:text-white sm:text-4xl sm:leading-tight md:text-5xl md:leading-tight">
                   Try the #1 Excel AI solution ExcelSimplify now!
                 </h1>
@@ -30,7 +36,13 @@ const LandingLastSection = () => {
           </div>
         </div>
         <div className="absolute bottom-0 left-0 z-[-1] opacity-30 lg:opacity-100">
-          <svg width="364" height="201" viewBox="0 0 364 201" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            width="364"
+            height="201"
+            viewBox="0 0 364 201"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path
               d="M5.88928 72.3303C33.6599 66.4798 101.397 64.9086 150.178 105.427C211.155 156.076 229.59 162.093 264.333 166.607C299.076 171.12 337.718 183.657 362.889 212.24"
               stroke="url(#paint0_linear_25:218)"

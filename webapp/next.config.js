@@ -19,7 +19,9 @@ module.exports = withPlugins([[withBundleAnalyzer], [withMDX]], {
   experimental: {
     appDir: true,
     mdxRs: true,
-    fontLoaders: [{ loader: '@next/font/google', options: { subsets: ['latin'] } }],
+    fontLoaders: [
+      { loader: '@next/font/google', options: { subsets: ['latin'] } },
+    ],
   },
   pageExtensions: ['ts', 'tsx', 'md', 'mdx'],
   // Optionally, add any other Next.js config below

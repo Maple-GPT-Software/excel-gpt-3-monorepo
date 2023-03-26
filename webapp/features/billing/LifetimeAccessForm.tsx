@@ -1,14 +1,18 @@
 'use client';
 
-import SimplifyApi from '@/api/SimplifyApi';
-import { Button } from '@/components/ui/Button';
-import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
-import { Input } from '@/components/ui/Input';
-import { BILLING_ROUTE, DASHBOARD_ROUTE } from '@/constants';
-import settings from '@/settings';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+
+import SimplifyApi from '@/api/SimplifyApi';
+
+import { Button } from '@/components/ui/Button';
+import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
+import { Input } from '@/components/ui/Input';
+
+import { BILLING_ROUTE, DASHBOARD_ROUTE } from '@/constants';
+
+import settings from '@/settings';
 
 interface LifetimeAccessFormType {
   openaiApiKey: string;
@@ -57,7 +61,10 @@ function LifetimeAccessForm() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <label htmlFor="openaiApiKey">
         <p className="mb-2">Open AI API Key</p>
-        <Input className="mb-8" {...register('openaiApiKey', { required: true })} />
+        <Input
+          className="mb-8"
+          {...register('openaiApiKey', { required: true })}
+        />
         <div className="flex">
           <p>Not sure how toget an API key?</p>
           <a className="mb-2 ml-2 text-green-600" href={DASHBOARD_ROUTE}>
@@ -75,7 +82,11 @@ function LifetimeAccessForm() {
       </div>
       <div className="float-right">
         {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-        <Button disabled={!isValid} className="float-right uppercase" variant="default">
+        <Button
+          disabled={!isValid}
+          className="float-right uppercase"
+          variant="default"
+        >
           checkout with Stripe
         </Button>
       </div>

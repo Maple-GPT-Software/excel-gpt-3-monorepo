@@ -1,11 +1,11 @@
 'use client';
-import clsx from 'classnames';
 
+import clsx from 'classnames';
+import { e } from 'easy-tailwind';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { PRICING_ROUTE, SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
-import { e } from 'easy-tailwind';
 
 const menuItems: { route: string; label: string }[] = [
   {
@@ -42,11 +42,14 @@ export default function PublicNav() {
     <>
       <header
         // TODO: get rid of classnames
-        className={clsx('header top-0 left-0 z-40 flex w-full items-center bg-transparent ', {
-          'dark:!bg-primary !fixed !z-[9999] !bg-white !bg-opacity-80 shadow-sticky backdrop-blur-sm !transition dark:!bg-opacity-20':
-            sticky,
-          absolute: !sticky,
-        })}
+        className={clsx(
+          'header top-0 left-0 z-40 flex w-full items-center bg-transparent ',
+          {
+            'dark:!bg-primary !fixed !z-[9999] !bg-white !bg-opacity-80 shadow-sticky backdrop-blur-sm !transition dark:!bg-opacity-20':
+              sticky,
+            absolute: !sticky,
+          }
+        )}
       >
         <div className="container">
           <div className="relative -mx-4 flex items-center justify-between">
@@ -54,7 +57,9 @@ export default function PublicNav() {
               <Link
                 data-test-id="home-link"
                 href="/"
-                className={`header-logo block w-full ${sticky ? 'py-5 lg:py-2' : 'py-8'} `}
+                className={`header-logo block w-full ${
+                  sticky ? 'py-5 lg:py-2' : 'py-8'
+                } `}
               >
                 <span className="text-primary">
                   Excel<span className="text-body-color">Simplify</span>
@@ -100,7 +105,10 @@ export default function PublicNav() {
                 </nav>
               </div>
               <div className="flex items-center justify-end pr-16 lg:pr-0">
-                <Link href={SIGN_IN_ROUTE} className="py-3 px-7 text-base  text-dark hover:opacity-70 dark:text-white">
+                <Link
+                  href={SIGN_IN_ROUTE}
+                  className="py-3 px-7 text-base  text-dark hover:opacity-70 dark:text-white"
+                >
                   Sign In
                 </Link>
                 <Link

@@ -1,19 +1,23 @@
 'use client';
+
 // NPM
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
+// MISC
+// SERVICE
+import { signInWithGoogle } from '@/services/firebase';
 import { AxiosError } from 'axios';
 import { FirebaseError } from 'firebase/app';
 import { AuthErrorCodes } from 'firebase/auth';
-// CONTEXTS
-import { useAuthContext } from '@/contexts/AuthProvider';
-// SERVICE
-import { signInWithGoogle } from '@/service/firebase';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 // API
 import SimplifyApi from '@/api/SimplifyApi';
-// MISC
+
+// CONTEXTS
+import { useAuthContext } from '@/contexts/AuthProvider';
+
 import { DASHBOARD_ROUTE, SIGN_UP_ROUTE } from '@/constants';
 
 const SigninPage = () => {

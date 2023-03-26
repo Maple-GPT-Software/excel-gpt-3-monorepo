@@ -1,8 +1,8 @@
 'use client';
 
-import * as React from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { e } from 'easy-tailwind';
+import * as React from 'react';
 
 const Tabs = TabsPrimitive.Root;
 
@@ -13,7 +13,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={e(
-      'flex items-center justify-center rounded-md bg-transparent border-b-2 border-green-600 p-1 mt-8 dark:bg-slate-800',
+      'mt-8 flex items-center justify-center rounded-md border-b-2 border-green-600 bg-transparent p-1 dark:bg-slate-800',
       className
     )}
     {...props}

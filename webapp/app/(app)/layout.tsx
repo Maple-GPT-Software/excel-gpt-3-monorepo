@@ -1,11 +1,10 @@
 'use client';
 
-import type { ReactNode } from 'react';
-
-import { ThemeProvider } from 'next-themes';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ThemeProvider } from 'next-themes';
+import type { ReactNode } from 'react';
+
 import AuthProvider from '@/contexts/AuthProvider';
 
 const queryClient = new QueryClient();

@@ -1,21 +1,36 @@
 'use client';
 
-import { Button } from '@/components/ui/Button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/Dialog';
-import { useAuthenticatedContext } from '@/contexts/AuthProvider';
-import { LifetimeAccessForm } from '@/features/billing';
 import { differenceInDays } from 'date-fns';
 import React, { FunctionComponent, ReactNode, useMemo } from 'react';
+
+import { useAuthenticatedContext } from '@/contexts/AuthProvider';
+
+import { LifetimeAccessForm } from '@/features/billing';
+
+import { Button } from '@/components/ui/Button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/Dialog';
 
 function BillingPage() {
   const { simplifyUser } = useAuthenticatedContext();
 
   const subscriptionDaysRemaining = useMemo(() => {
-    const daysRemaining = differenceInDays(simplifyUser.stripeCurrentPeriodEnd * 1000, new Date());
+    const daysRemaining = differenceInDays(
+      simplifyUser.stripeCurrentPeriodEnd * 1000,
+      new Date()
+    );
     return Math.max(daysRemaining, 0);
   }, [simplifyUser]);
 
-  const lifetimeAccessStatus = simplifyUser.hasLifetimeAccess ? 'Active' : 'Inactive';
+  const lifetimeAccessStatus = simplifyUser.hasLifetimeAccess
+    ? 'Active'
+    : 'Inactive';
 
   return (
     <div>
@@ -35,8 +50,9 @@ function BillingPage() {
                 <DialogHeader>
                   <DialogTitle>Lifetime Access</DialogTitle>
                   <DialogDescription className="text-slate-800">
-                    Unlock lifetime access to our AI tool for Google Sheets and Excel. Upgrade your spreadsheets with this
-                    lifetime offer for enhanced productivity. Get unlimited access today.
+                    Unlock lifetime access to our AI tool for Google Sheets and
+                    Excel. Upgrade your spreadsheets with this lifetime offer
+                    for enhanced productivity. Get unlimited access today.
                   </DialogDescription>
                 </DialogHeader>
                 <LifetimeAccessForm />
@@ -50,9 +66,13 @@ function BillingPage() {
       <SectionWrapper testId="subscription-wrapper">
         <div className="mb-2 flex justify-between">
           <h2>Subscription - Free Trial</h2>
-          <p className="text-green-800">{subscriptionDaysRemaining} days left</p>
+          <p className="text-green-800">
+            {subscriptionDaysRemaining} days left
+          </p>
         </div>
-        <p className="font-bold">Purchase your lifetime access to use AI without limitations</p>
+        <p className="font-bold">
+          Purchase your lifetime access to use AI without limitations
+        </p>
       </SectionWrapper>
     </div>
   );
@@ -60,9 +80,15 @@ function BillingPage() {
 
 export default BillingPage;
 
-const SectionWrapper: FunctionComponent<{ testId?: string; children: ReactNode }> = ({ children, testId }) => {
+const SectionWrapper: FunctionComponent<{
+  testId?: string;
+  children: ReactNode;
+}> = ({ children, testId }) => {
   return (
-    <div data-test-id={testId} className="mb-4 rounded border border-solid border-green-800 p-4">
+    <div
+      data-test-id={testId}
+      className="mb-4 rounded border border-solid border-green-800 p-4"
+    >
       {children}
     </div>
   );

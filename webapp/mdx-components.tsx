@@ -12,31 +12,31 @@ import {
 const Heading1: FunctionComponent<
   DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>
 > = ({ children }) => {
-  return <h1 className="text-4xl font-bold mb-8">{children}</h1>;
+  return <h1 className="mb-8 text-4xl font-bold">{children}</h1>;
 };
 
 const Heading2: FunctionComponent<
   DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>
 > = ({ children }) => {
-  return <h2 className="text-3xl font-bold mb-6">{children}</h2>;
+  return <h2 className="mb-6 text-3xl font-bold">{children}</h2>;
 };
 
 const Heading3: FunctionComponent<
   DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>
 > = ({ children }) => {
-  return <h3 className="text-2xl font-bold mb-4">{children}</h3>;
+  return <h3 className="mb-4 text-2xl font-bold">{children}</h3>;
 };
 
 const UnorderedList: FunctionComponent<
   DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement>
 > = ({ children }) => {
-  return <ul className="list-disc list-inside pl-8 mb-4">{children}</ul>;
+  return <ul className="mb-4 list-inside list-disc pl-8">{children}</ul>;
 };
 
 const OrderedList: FunctionComponent<
   DetailedHTMLProps<OlHTMLAttributes<HTMLOListElement>, HTMLOListElement>
 > = ({ children }) => {
-  return <ol className="list-decimal list-inside pl-8 mb-4">{children}</ol>;
+  return <ol className="mb-4 list-inside list-decimal pl-8">{children}</ol>;
 };
 
 const ListItem: FunctionComponent<

@@ -42,7 +42,7 @@ const LandingReviewSection = () => {
         />
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
-          {testimonialData.map((testimonial) => (
+          {testimonialData.map(testimonial => (
             <ReviewCard key={testimonial.id} testimonial={testimonial} />
           ))}
         </div>

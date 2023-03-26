@@ -1,11 +1,14 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import type { FunctionComponent, ReactNode } from 'react';
+
 import { useAuthContext } from '@/contexts/AuthProvider';
-import { useRouter } from 'next/navigation';
-import { AUTH_REFRESH_ROUTE, ROUTE_BEFORE_REFRESH } from '@/constants';
+
 import SideNav from '@/features/SideNav';
+
+import { AUTH_REFRESH_ROUTE, ROUTE_BEFORE_REFRESH } from '@/constants';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -33,7 +36,7 @@ const AppLayout: FunctionComponent<AppLayoutProps> = ({ children }) => {
   return (
     <div className="grid h-screen w-screen grid-cols-[250px_1fr]">
       <SideNav />
-      <div className="px-4 pt-12">{children}</div>
+      <div className="h-screen overflow-scroll px-4 pt-12">{children}</div>
     </div>
   );
 };

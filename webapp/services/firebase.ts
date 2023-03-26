@@ -25,8 +25,6 @@ googleProvider.setCustomParameters({ prompt: 'select_account' });
 export const signInWithGoogle = async () =>
   await signInWithPopup(auth, googleProvider);
 
-export const signOutWithGoogle = async () => {
+export const firebaseSignout = async () => {
   await signOut(auth);
 };
-
-export {};

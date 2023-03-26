@@ -1,16 +1,20 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import type { FunctionComponent } from 'react';
+
+import SimplifyApi from '@/api/SimplifyApi';
+
+import { useAuthContext } from '@/contexts/AuthProvider';
+
 import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
-import { useRouter } from 'next/navigation';
+
 import {
   DASHBOARD_ROUTE,
   ROUTE_BEFORE_REFRESH,
   SIGN_IN_ROUTE,
 } from '@/constants';
-import SimplifyApi from '@/api/SimplifyApi';
-import { useAuthContext } from '@/contexts/AuthProvider';
 
 /**
  * This component will show a loading state until firebase has authenticated the session
@@ -44,7 +48,7 @@ const AuthRefresh: FunctionComponent = () => {
   }, [firebaseUser, hasFirebasedAuthenticated, router, setSimplifyUser]);
 
   return (
-    <div className="bg-white fixed w-full h-full top-0 left-0">
+    <div className="fixed top-0 left-0 h-full w-full bg-white">
       <CenteredSpinnner>
         <p className="mt-4"> Getting things ready </p>
       </CenteredSpinnner>

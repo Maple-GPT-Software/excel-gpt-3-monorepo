@@ -50,8 +50,14 @@ const LandingTrustedSection = () => {
               className="wow fadeInUp dark:bg-primary flex flex-wrap items-center justify-center rounded-md bg-green-600 py-8 px-8 dark:bg-opacity-5 sm:px-10 md:py-[40px] md:px-[50px] xl:p-[50px] 2xl:py-[60px] 2xl:px-[70px]"
               data-wow-delay=".1s"
             >
-              {brandsData.map((brand) => (
-                <SingleBrand key={brand.id} id={brand.id} image={brand.image} name={brand.image} href={brand.href} />
+              {brandsData.map(brand => (
+                <SingleBrand
+                  key={brand.id}
+                  id={brand.id}
+                  image={brand.image}
+                  name={brand.image}
+                  href={brand.href}
+                />
               ))}
             </div>
           </div>
