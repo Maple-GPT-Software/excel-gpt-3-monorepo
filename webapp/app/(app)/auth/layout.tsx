@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
+import { HOME_ROUTE, SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
 
 function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div>
       <nav className="align-items-center flex h-16 justify-between p-8">
-        <p>logo placeholder</p>
+        <Link href={HOME_ROUTE}>Excel Simplify</Link>
         <div>
           <Link
             className="py-2 px-6 text-base text-dark hover:opacity-70"

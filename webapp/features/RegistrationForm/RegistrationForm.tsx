@@ -17,7 +17,11 @@ import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
 import { Input } from '@/components/ui/Input';
 import MDIIcon from '@/components/ui/MDIIcon';
 
-import { DASHBOARD_ROUTE } from '@/constants';
+import {
+  DASHBOARD_ROUTE,
+  PRIVATE_POLICIES,
+  TERMS_AND_CONDITIONS,
+} from '@/constants';
 
 interface RegistrationFormType {
   fullName: string;
@@ -108,7 +112,7 @@ function RegistrationForm() {
           <span>
             &nbsp;I agree to
             <Link
-              href="/legal"
+              href={TERMS_AND_CONDITIONS}
               target="_blank"
               className="text-green-600 hover:underline"
             >
@@ -116,7 +120,7 @@ function RegistrationForm() {
             </Link>
             and&nbsp;
             <Link
-              href="/legal/privacy"
+              href={PRIVATE_POLICIES}
               target="_blank"
               className="text-green-600 hover:underline"
             >
