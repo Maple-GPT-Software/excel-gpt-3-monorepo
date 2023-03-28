@@ -1,11 +1,11 @@
 const colors = require('tailwindcss/colors');
-const { replacer } = require('easy-tailwind');
+const { replacer } = require('easy-tailwind/transform');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: {
     files: [
-      './app/**/*.{js,ts,jsx,tsx,mdx}',
+      './app/**/*.{js,ts,jsx,tsx}',
       './pages/**/*.{js,ts,jsx,tsx}',
       './components/**/*.{js,ts,jsx,tsx}',
       './features/**/*.{js,ts,jsx,tsx}',
@@ -32,14 +32,14 @@ module.exports = {
       green: colors.green,
       black: colors.black,
     },
-    screens: {
-      xs: '450px',
-      sm: '575px',
-      md: '768px',
-      lg: '992px',
-      xl: '1200px',
-      '2xl': '1400px',
-    },
+    // screens: {
+    //   xs: '450px',
+    //   sm: '575px',
+    //   md: '768px',
+    //   lg: '992px',
+    //   xl: '1200px',
+    //   '2xl': '1400px',
+    // },
     extend: {
       boxShadow: {
         signUp: '0px 5px 10px rgba(4, 10, 34, 0.2)',

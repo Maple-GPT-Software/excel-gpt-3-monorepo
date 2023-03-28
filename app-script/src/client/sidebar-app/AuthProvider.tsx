@@ -71,9 +71,8 @@ function AuthProvider({ children }: AuthProviderProps) {
     // TODO: unsubscribe from onAuthStateChanged
     window.getAuth().onAuthStateChanged(async (user) => {
       if (user) {
-        const accessToken = await user.getIdToken();
-
         try {
+          const accessToken = await user.getIdToken();
           const profile = await SimplifyApi(accessToken).getUserProfile();
           setWaitingForFirebase(false);
           setUserProfile(profile);
@@ -91,27 +90,6 @@ function AuthProvider({ children }: AuthProviderProps) {
     });
   }, []);
 
-  useEffect(() => {
-    window.getAuth().onIdTokenChanged((user) => {
-      // the case where the user has logged out is handled by onAuthStateChanged listener
-      // we get this event when the user first logs in and when firebase periodically refreshes the user's token
-      if (user) {
-        user
-          .getIdToken()
-          .then((token) => {
-            setAccessToken(token);
-          })
-          .catch((e) => {
-            // firebase API call fails
-            signOut();
-          })
-          .finally(() => {
-            setWaitingForFirebase(false);
-          });
-      }
-    });
-  });
-
   /** Refresh access token every 50 minutes */
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -121,7 +99,7 @@ function AuthProvider({ children }: AuthProviderProps) {
         const token = await user.getIdToken();
         setAccessToken(token);
       }
-    }, 50 * 60 * 1000);
+    }, 30 * 60 * 1000);
 
     return () => {
       clearInterval(interval);

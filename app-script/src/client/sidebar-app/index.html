@@ -72,6 +72,8 @@
       const auth = getAuth(app);
       const googleProvider = new GoogleAuthProvider();
 
+      googleProvider.setCustomParameters({ prompt: 'select_account' });
+
       const firebaseStateDiv = document.getElementById('FIREBASE_STATE');
       firebaseStateDiv.setAttribute('data-is-ready', 'TRUE');
 

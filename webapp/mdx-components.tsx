@@ -57,6 +57,12 @@ const Bold: FunctionComponent<
   return <b className="font-bold">{children}</b>;
 };
 
+const Link: FunctionComponent<
+  DetailedHTMLProps<HTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>
+> = ({ children }) => {
+  return <a className="underline">{children}</a>;
+};
+
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     h1: Heading1,
