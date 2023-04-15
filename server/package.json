@@ -11,7 +11,6 @@
     "type-check": "tsc --noEmit",
     "build": "rm -rf dist && swc src -d dist",
     "start": "NODE_ENV=production node ./dist/index.js",
-    "stop": "pm2 stop all",
     "dev": "concurrently \"npm run watch-compile\" \"npm run watch-dev\"",
     "watch-compile": "swc src -w --out-dir dist",
     "watch-dev": "NODE_ENV=development nodemon --exec node -r @swc-node/register ./src/index.ts",

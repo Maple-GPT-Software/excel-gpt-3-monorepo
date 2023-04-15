@@ -4,7 +4,6 @@ import Joi from 'joi';
 
 import { Environment } from '../types';
 
-// TODO: how to configure this for netlify
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const envVarsSchema = Joi.object()
