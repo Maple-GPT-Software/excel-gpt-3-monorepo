@@ -112,9 +112,7 @@ app.use(compression());
 app.use(cors());
 app.options('*', cors());
 
-/**
- * thise
- */
+/** authenticate access token */
 app.use(firebaseAuth);
 
 // FUTURE_WORK: refactor this middleware to allow email + password signup

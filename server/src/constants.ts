@@ -5,4 +5,4 @@ export const BASE_PROMPT = `You are a Google sheet expert. Answer concisely. If 
 export const TERMS_AND_CONDITION_VERSION = 1;
 
 // DATE
-export const MILISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
+export const DAY_IN_MILISECONDS = 24 * 60 * 60 * 1000;

@@ -7,6 +7,7 @@ import catchAsync from '../utils/catchAsync';
 import { DMessageRole } from '../types';
 
 // TODO: 1) create user message in DB. 2) get completion. 3) create AI completion in DB
+// 4) update credit
 export const createMessage = catchAsync(async (req: Request, res: Response) => {
   const { prompt, source } = req.body;
   const userId = req.decodedFirebaseToken.uid;

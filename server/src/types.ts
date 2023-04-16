@@ -49,7 +49,7 @@ export enum StripeWebhooks {
 
 // USER ============================================================
 
-// NOTE: _id: is the uid from firebase
+// NOTE: _id: is firebase's uid converted into a 24 character hex string
 export interface DUser {
   email: string;
   name: string;

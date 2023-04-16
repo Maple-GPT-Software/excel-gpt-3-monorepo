@@ -8,7 +8,10 @@ export const createUser = async (newUser: DUser) => {
   if (await User.isEmailTaken(newUser.email)) {
     throw new ApiError(httpStatus.CONFLICT, 'Email already taken');
   }
-  return User.create(newUser);
+  console.log('new user ', newUser);
+  const newUserDoc = new User(newUser);
+  return newUserDoc.save();
+  // return User.create(newUser);
 };
 
 export const getUserById = async (userId: string) => {

@@ -42,12 +42,14 @@ const userSchema = new Schema<DUser, UserModel>({
   hasAcceptedTerms: {
     type: Boolean,
     required: true,
-    lowercase: true,
   },
   acceptedTermsVersion: {
     type: Number,
     required: true,
-    lowercase: true,
+  },
+  simplifyTrialEnd: {
+    type: Number,
+    required: true,
   },
   stripeLifetimeAccessPaymentId: {
     type: String,

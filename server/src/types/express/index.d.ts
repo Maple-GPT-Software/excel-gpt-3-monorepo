@@ -2,6 +2,8 @@
 
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 
+import { DUserObject } from '../../models/user.model';
+
 export {};
 
 // This allows us to extend the types from Express and do stuff
@@ -14,6 +16,8 @@ declare global {
       decodedFirebaseToken: Required<DecodedIdToken>;
       /** only true when the user has paid for lifetime access */
       hasLifetimeAccess?: boolean;
+      /** added by addUserToRequest middleware for protected routes */
+      user: DUserObject;
     }
   }
 }

@@ -2,6 +2,8 @@ import { Response, Request } from 'express';
 
 import httpStatus from 'http-status';
 
+import mongoose from 'mongoose';
+
 import { TERMS_AND_CONDITION_VERSION } from '../constants';
 import * as userService from '../services/user.service';
 import { endOfDay } from '../utils/dateUtils';
@@ -11,7 +13,6 @@ import ApiError from '../utils/ApiError';
 export const signup = catchAsync(async (req: Request, res: Response) => {
   const { uid: userId, email } = req.decodedFirebaseToken;
 
-  // TODO: specify _id using firebase's uid property
   const newUser = {
     userId,
     email,
@@ -22,6 +23,7 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
     referrer: req.body.referrer ?? '',
     // 5 day free subscription
     simplifyTrialEnd: endOfDay(5),
+    _id: new mongoose.Types.ObjectId(userId),
   };
   const user = await userService.createUser(newUser);
   res.status(httpStatus.CREATED).send({ user });
