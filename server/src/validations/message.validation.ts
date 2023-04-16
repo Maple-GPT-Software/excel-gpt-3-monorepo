@@ -14,6 +14,9 @@ export const createMessage = {
       .valid(...Object.values(IClientSource))
       .required(),
   }),
+  query: Joi.object().keys({
+    conversationId: Joi.string().required(),
+  }),
 };
 
 export const rateMessage = {

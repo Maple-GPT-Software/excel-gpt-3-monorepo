@@ -55,6 +55,7 @@ export const createCheckoutSession = catchAsync(async (req: Request, res: Respon
   res.status(httpStatus.TEMPORARY_REDIRECT).send(session);
 });
 
+// TODO: remove openaiKey as payload for createLifetimeAccessPurchaseSession
 export const createLifetimeAccessPurchaseSession = catchAsync(async (req: Request, res: Response) => {
   const { email } = req.decodedFirebaseToken;
   const { successUrl, cancelUrl, openaiApiKey } = req.body;

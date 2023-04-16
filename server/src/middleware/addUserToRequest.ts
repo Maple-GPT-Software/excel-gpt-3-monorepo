@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import httpStatus from 'http-status';
 
-import { User } from '../models/user.model';
+import { DUserObject, User } from '../models/user.model';
 import ApiError from '../utils/ApiError';
 
 export const addUserToRequest: RequestHandler = async (req, res, next) => {
@@ -10,12 +10,12 @@ export const addUserToRequest: RequestHandler = async (req, res, next) => {
 
     const user = (await User.findById(uid))?.toObject();
 
-    if (!user) {
+    if (user === undefined) {
       next(new ApiError(httpStatus.NOT_FOUND, 'User not found'));
       return;
     }
 
-    req.user = user;
+    req.user = user as DUserObject;
 
     next();
   } catch (error) {

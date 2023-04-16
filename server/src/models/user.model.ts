@@ -1,11 +1,19 @@
-import { Model, Schema, model, Types } from 'mongoose';
+import { Model, Schema, model, Types, Document } from 'mongoose';
 import validator from 'validator';
 
 import { DUser } from '../types';
 
-export type DUserObject = DUser & {
+export type DUserObject = Required<DUser> & {
   _id: Types.ObjectId;
 };
+
+export type DUserDocument = Document<unknown, any, DUser> &
+  Omit<
+    DUser & {
+      _id: Types.ObjectId;
+    },
+    never
+  >;
 
 /**
  * Extending moongose Model to add statics
@@ -15,60 +23,68 @@ interface UserModel extends Model<DUser> {
   isEmailTaken: (email: string) => Promise<boolean>;
 }
 
-const userSchema = new Schema<DUser, UserModel>({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    lowercase: true,
-    // we technically don't need this for OAuth signups
-    // unless if we allow email/pasword signups
-    validate(value: string) {
-      if (!validator.isEmail(value)) {
-        throw new Error('Invalid email');
-      }
+const userSchema = new Schema<DUser, UserModel>(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      // we technically don't need this for OAuth signups
+      // unless if we allow email/pasword signups
+      validate(value: string) {
+        if (!validator.isEmail(value)) {
+          throw new Error('Invalid email');
+        }
+      },
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    referrer: {
+      type: String,
+      required: false,
+      lowercase: true,
+    },
+    hasAcceptedTerms: {
+      type: Boolean,
+      required: true,
+    },
+    acceptedTermsVersion: {
+      type: Number,
+      required: true,
+    },
+    simplifyTrialEnd: {
+      type: Number,
+      required: true,
+    },
+    stripeLifetimeAccessPaymentId: {
+      type: String,
+      required: false,
+      default: '',
+    },
+    stripeCustomerId: {
+      type: String,
+      required: false,
+    },
+    stripeCurrentPeriodEnd: {
+      type: Number,
+      required: false,
+    },
+    stripeStatus: {
+      type: String,
+      required: false,
+    },
+    credits: {
+      type: String,
+      require: false,
+      default: 0,
     },
   },
-  name: {
-    type: String,
-    required: true,
-  },
-  referrer: {
-    type: String,
-    required: false,
-    lowercase: true,
-  },
-  hasAcceptedTerms: {
-    type: Boolean,
-    required: true,
-  },
-  acceptedTermsVersion: {
-    type: Number,
-    required: true,
-  },
-  simplifyTrialEnd: {
-    type: Number,
-    required: true,
-  },
-  stripeLifetimeAccessPaymentId: {
-    type: String,
-    required: false,
-    default: '',
-  },
-  stripeCustomerId: {
-    type: String,
-    required: false,
-  },
-  stripeCurrentPeriodEnd: {
-    type: Number,
-    required: false,
-  },
-  stripeStatus: {
-    type: String,
-    required: false,
-  },
-});
+  { timestamps: true }
+);
 
 /** Remove properties before Document is sent to client */
 userSchema.methods.toJSON = function () {

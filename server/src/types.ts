@@ -1,5 +1,8 @@
 import Stripe from 'stripe';
 
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
 // ENUM FOR ENVIRONMENT
 export enum Environment {
   PROD = 'production',
@@ -106,15 +109,17 @@ export enum DMessageRating {
   DISLIK = 'DISLIKE',
 }
 
-export enum DMessageRole {
+export enum DMessageAuthor {
   ASSISTANT = 'assistant',
   USER = 'user',
 }
 
 export interface DMessageBase {
+  /** the conversation this message belongs to */
+  conversationId: string;
   /** user the message belongs to */
   userId: string;
-  role: DMessageRole;
+  author: DMessageAuthor;
   content: string;
   source: IClientSource;
 }
@@ -125,9 +130,15 @@ export interface DMessage extends DMessageBase {
   totalTokens?: number;
   model?: string;
   rating?: DMessageRating | '';
+  memoryCount?: string;
 }
 
-export type DAsssistantMessage = Omit<Required<DMessage>, 'rating'>;
+export interface DAsssistantMessage extends DMessage {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+  model: string;
+}
 
 // FUTURE: custom prompts that the user wants to use
 // PROMPTS ==========================================================

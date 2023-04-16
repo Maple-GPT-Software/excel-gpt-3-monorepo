@@ -3,25 +3,37 @@ import httpStatus from 'http-status';
 
 import * as messageService from '../services/message.service';
 import * as openAIService from '../services/openai.service';
+import * as creditService from '../services/credit.service';
+import { OpenAiModels } from '../config/openai';
 import catchAsync from '../utils/catchAsync';
-import { DMessageRole } from '../types';
 
-// TODO: 1) create user message in DB. 2) get completion. 3) create AI completion in DB
-// 4) update credit
 export const createMessage = catchAsync(async (req: Request, res: Response) => {
   const { prompt, source } = req.body;
+  const { conversationId } = req.params;
   const userId = req.decodedFirebaseToken.uid;
+  const { user } = req;
 
   const message = await messageService.createUserMessage({
     userId,
-    role: DMessageRole.USER,
+    conversationId,
     content: prompt,
     source,
   });
 
-  const completion: any = await openAIService.getChatCompletion(prompt, userId);
+  const aiCompletion = await openAIService.getChatCompletion(prompt, userId);
 
-  res.send(message);
+  // only deduct credis from those that have purchased lifetime access
+  if (user.stripeLifetimeAccessPaymentId !== '') {
+    await creditService.deductCreditsByTokenUsage(
+      userId,
+      aiCompletion.usage.total_tokens,
+      aiCompletion.model as OpenAiModels
+    );
+  }
+
+  const aiMessage = await messageService.createAssistantMessage(message.toObject(), aiCompletion);
+
+  res.send(aiMessage);
 });
 
 export const rateMessage = catchAsync(async (req: Request, res: Response) => {

@@ -18,8 +18,10 @@ export async function getChatCompletion(prompt: string, user: string) {
     // FUTURE: if user has openaiApi key we can cache an instance of OpenAIApi with their key
     // const openai = await getOpenAiInstanceByUser(user);
 
-    // @ts-expect-error .createChatCompletion is a valid method, maintainers likely forgot to add it to types
-    const { data } = await openaiInstance.createChatCompletion({
+    const {
+      data: { model, choices, usage },
+      // @ts-expect-error openai types not up to date
+    } = await openaiInstance.createChatCompletion({
       ...basePromptConfig,
       user,
       // FUTURE: memory
@@ -36,7 +38,15 @@ export async function getChatCompletion(prompt: string, user: string) {
       ],
     });
 
-    return data;
+    if (!choices[0].message || !usage) {
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Interval server error');
+    }
+
+    return {
+      model,
+      message: choices[0].message.content,
+      usage,
+    };
   } catch (error) {
     logger.http('#getCompletion ', error);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Interval server error');

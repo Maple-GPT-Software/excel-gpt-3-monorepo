@@ -1,8 +1,14 @@
-import { Model, Schema, model } from 'mongoose';
+import { Model, Types, Schema, model } from 'mongoose';
 
-import { DMessage, DMessageRating, IClientSource } from '../types';
+import { DMessage, DMessageRating, IClientSource, DMessageBase, DAsssistantMessage, DMessageAuthor } from '../types';
 
-// export DMessageObject =
+export type DUserMessageObject = DMessageBase & {
+  _id: Types.ObjectId;
+};
+
+export type DAssistantMessageObject = DAsssistantMessage & {
+  _id: Types.ObjectId;
+};
 
 /**
  * Extending moongose Model to add statics
@@ -15,8 +21,17 @@ interface MessageModel extends Model<DMessage> {
 
 const messageSchema = new Schema<DMessage, MessageModel>(
   {
+    conversationId: {
+      type: String,
+      required: true,
+    },
     userId: {
       type: String,
+      required: true,
+    },
+    author: {
+      type: String,
+      enum: Object.values(DMessageAuthor),
       required: true,
     },
     content: {
@@ -42,7 +57,8 @@ const messageSchema = new Schema<DMessage, MessageModel>(
       type: String,
       /** its better to leave out enum check for now because openai is rapidly iterating and we might get a random bug if they return a different model name */
       // enum: [...Object.values(OpenAiModels)],
-      required: true,
+      required: false,
+      default: '',
     },
     rating: {
       type: String,

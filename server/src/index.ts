@@ -4,6 +4,7 @@ import config from './config/config';
 import logger from './config/logger';
 import app from './app';
 
+// eslint-disable-next-line import/no-mutable-exports
 let server: any;
 
 /** easy hack to get dyno IP address */
@@ -51,3 +52,5 @@ process.on('SIGTERM', () => {
     server.close();
   }
 });
+
+export default server;
