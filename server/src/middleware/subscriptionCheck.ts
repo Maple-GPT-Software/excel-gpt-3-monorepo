@@ -2,20 +2,22 @@ import { RequestHandler } from 'express';
 import httpStatus from 'http-status';
 import Stripe from 'stripe';
 
-import { User, UserType } from '../models/user.model';
+import { User } from '../models/user.model';
 import ApiError from '../utils/ApiError';
+import { DUser } from '../types';
 
 /**
  * This middleware is used for request made to messages to check if free trial users still have access to use chat
  * and adds hasLifetimeAccess to req for dailyMessagesLimiter
  */
+// TODO: refactor this to only check if the user has enough credits to make a request
 export const lifetimeAccessCheck: RequestHandler = async (req, res, next) => {
   try {
     const { email } = req.decodedFirebaseToken;
 
     const { stripeLifetimeAccessPaymentId, stripeCurrentPeriodEnd, stripeStatus } = (await User.findOne({
       email,
-    })) as UserType;
+    })) as DUser;
 
     if (stripeLifetimeAccessPaymentId !== '') {
       req.hasLifetimeAccess = true;
@@ -47,7 +49,7 @@ export const lifetimeAccessCheck: RequestHandler = async (req, res, next) => {
 //     // TODO: fix the subscription check
 //     const { stripeLifetimeAccessPaymentId, stripeCurrentPeriodEnd, stripeStatus, openaiApiKey } = (await User.findOne({
 //       email,
-//     })) as UserType;
+//     })) as DUser;
 
 //     /** lifetime access checks */
 //     if (stripeLifetimeAccessPaymentId !== '') {

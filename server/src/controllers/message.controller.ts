@@ -1,29 +1,24 @@
 import { Response, Request } from 'express';
-
 import httpStatus from 'http-status';
-
-import catchAsync from '../utils/catchAsync';
 
 import * as messageService from '../services/message.service';
 import * as openAIService from '../services/openai.service';
-import { BASE_PROMP_VERSION } from '../constants';
+import catchAsync from '../utils/catchAsync';
+import { DMessageRole } from '../types';
 
+// TODO: 1) create user message in DB. 2) get completion. 3) create AI completion in DB
 export const createMessage = catchAsync(async (req: Request, res: Response) => {
   const { prompt, source } = req.body;
   const userId = req.decodedFirebaseToken.uid;
 
-  const completion: any = await openAIService.getChatCompletion(prompt, userId);
   const message = await messageService.createUserMessage({
     userId,
-    prompt,
-    model: completion.model,
-    completion: completion.choices[0].message.content ?? '',
-    promptTokens: completion.usage?.prompt_tokens ?? 0,
-    completionTokens: completion.usage?.completion_tokens ?? 0,
-    totalTokens: completion.usage?.total_tokens ?? 0,
+    role: DMessageRole.USER,
+    content: prompt,
     source,
-    promptVersion: BASE_PROMP_VERSION,
   });
+
+  const completion: any = await openAIService.getChatCompletion(prompt, userId);
 
   res.send(message);
 });

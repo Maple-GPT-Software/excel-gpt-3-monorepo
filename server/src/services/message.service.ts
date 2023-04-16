@@ -1,12 +1,13 @@
 import httpStatus from 'http-status';
 
-import { Message, MessageType } from '../models/message.model';
+import { Message } from '../models/message.model';
 import ApiError from '../utils/ApiError';
+import { DMessageBase } from '../types';
 
 /**
  * creates a message with with an "N/A" rating
  */
-export const createUserMessage = async (message: MessageType) => {
+export const createUserMessage = async (message: DMessageBase) => {
   return Message.create(message);
 };
 

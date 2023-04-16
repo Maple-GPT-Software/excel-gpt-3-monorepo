@@ -1,7 +1,8 @@
 import httpStatus from 'http-status';
 
-import { getOpenAiInstanceByUser } from './openaiCache.service';
-import { basePromptConfig } from '../config/openai';
+import { OpenAIApi } from 'openai';
+
+import openai, { basePromptConfig } from '../config/openai';
 import { BASE_PROMPT } from '../constants';
 import ApiError from '../utils/ApiError';
 import logger from '../config/logger';
@@ -12,14 +13,20 @@ import logger from '../config/logger';
  */
 export async function getChatCompletion(prompt: string, user: string) {
   try {
-    const openai = await getOpenAiInstanceByUser(user);
+    const openaiInstance: OpenAIApi = openai;
+
+    // FUTURE: if user has openaiApi key we can cache an instance of OpenAIApi with their key
+    // const openai = await getOpenAiInstanceByUser(user);
+
     // @ts-expect-error .createChatCompletion is a valid method, maintainers likely forgot to add it to types
-    const { data } = await openai.createChatCompletion({
+    const { data } = await openaiInstance.createChatCompletion({
       ...basePromptConfig,
       user,
+      // FUTURE: memory
       messages: [
         {
           role: 'system',
+          // TODO: pass in conversation so that we can define temperature and system prompt
           content: BASE_PROMPT,
         },
         {

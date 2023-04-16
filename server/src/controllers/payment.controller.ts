@@ -61,8 +61,8 @@ export const createLifetimeAccessPurchaseSession = catchAsync(async (req: Reques
 
   const user = await User.findOne({ email });
 
-  if (user?.openaiApiKey !== '' && user?.stripeLifetimeAccessPaymentId !== '') {
-    throw new ApiError(httpStatus.FORBIDDEN, 'An open ai API key already exists on your account');
+  if (user?.stripeLifetimeAccessPaymentId !== '') {
+    throw new ApiError(httpStatus.FORBIDDEN, 'You already purchased a lifetime subscription!');
   } else if (!user?.stripeCustomerId) {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
   }

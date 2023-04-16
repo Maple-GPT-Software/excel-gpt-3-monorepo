@@ -11,6 +11,7 @@ import ApiError from '../utils/ApiError';
 export const signup = catchAsync(async (req: Request, res: Response) => {
   const { uid: userId, email } = req.decodedFirebaseToken;
 
+  // TODO: specify _id using firebase's uid property
   const newUser = {
     userId,
     email,

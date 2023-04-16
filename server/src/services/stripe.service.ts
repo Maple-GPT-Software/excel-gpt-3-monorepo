@@ -3,11 +3,12 @@ import Stripe from 'stripe';
 
 import { Document } from 'mongoose';
 
-import { User, UserType } from '../models/user.model';
+import { User } from '../models/user.model';
 import ApiError from '../utils/ApiError';
 import logger from '../config/logger';
 import stripe from '../config/stripe';
 import settings from '../settings';
+import { DUser } from '../types';
 
 interface SessionBase {
   /** price id from Stripe dashboard UI */
@@ -168,9 +169,9 @@ export const updateLifetimeAccessPayment = async (paymentIntent: Stripe.PaymentI
 /** updates the lifetime access payment intent ID on the user's profile */
 const updateLifetimeAccess = async (
   paymentIntent: Stripe.PaymentIntent,
-  user: Document<unknown, any, UserType> &
+  user: Document<unknown, any, DUser> &
     Omit<
-      UserType & {
+      DUser & {
         _id: any;
       },
       never

@@ -1,60 +1,42 @@
 import { Model, Schema, model } from 'mongoose';
 
-import { ClientSources } from '../types';
+import { DMessage, DMessageRating, IClientSource } from '../types';
 
-export enum CompletionRating {
-  LIKE = 'LIKE',
-  DISLIKE = 'DISLIKE',
-}
-
-export interface MessageType {
-  /** the uid decoded from firebase auth token */
-  userId: string;
-  prompt: string;
-  completion: string;
-  promptTokens: number;
-  completionTokens: number;
-  totalTokens: number;
-  model: string;
-  rating?: CompletionRating | '';
-  source: ClientSources;
-  promptVersion: number;
-}
+// export DMessageObject =
 
 /**
  * Extending moongose Model to add statics
  * https://mongoosejs.com/docs/typescript/statics.html
  */
-interface MessageModel extends Model<MessageType> {
+interface MessageModel extends Model<DMessage> {
   canRateMessage: (messageId: string, userId: string) => Promise<boolean>;
   isMessageUnrated: (messageId: string) => Promise<boolean>;
 }
 
-const messageSchema = new Schema<MessageType, MessageModel>(
+const messageSchema = new Schema<DMessage, MessageModel>(
   {
     userId: {
       type: String,
       required: true,
     },
-    prompt: {
-      type: String,
-      required: true,
-    },
-    completion: {
+    content: {
       type: String,
       required: true,
     },
     promptTokens: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
     },
     completionTokens: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
     },
     totalTokens: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
     },
     model: {
       type: String,
@@ -64,16 +46,12 @@ const messageSchema = new Schema<MessageType, MessageModel>(
     },
     rating: {
       type: String,
-      enum: [...Object.values(CompletionRating), ''],
+      enum: Object.values(DMessageRating),
       default: '',
     },
     source: {
       type: String,
-      enum: [...Object.values(ClientSources)],
-      required: true,
-    },
-    promptVersion: {
-      type: Number,
+      enum: Object.values(IClientSource),
       required: true,
     },
   },
@@ -100,7 +78,6 @@ messageSchema.methods.toJSON = function () {
   delete obj.totalTokens;
   delete obj.model;
   delete obj.source;
-  delete obj.promptVersion;
 
   return obj;
 };
@@ -125,4 +102,4 @@ messageSchema.statics.isMessageUnrated = async function (id: string) {
   return !message?.rating;
 };
 
-export const Message = model<MessageType, MessageModel>('Message', messageSchema);
+export const Message = model<DMessage, MessageModel>('Message', messageSchema);
