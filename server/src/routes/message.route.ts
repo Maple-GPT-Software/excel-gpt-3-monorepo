@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { freeTrialCheck, hasSufficientCredits } from '../middleware/apiAccessChecks';
-import { addConversationToRequest } from '../middleware/addConversationToRequest';
+import { addConversationToRequest } from '../middleware/conversation.middleware';
 import * as messageController from '../controllers/message.controller';
 import * as messageValidation from '../validations/message.validation';
 import { addUserToRequest } from '../middleware/addUserToRequest';

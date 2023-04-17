@@ -36,7 +36,6 @@ export async function getChatCompletion(conversation: DConversationObject, promp
         content: message.content,
       };
     });
-    console.log('chatMessages ', chatMessages);
 
     const {
       data: { model, choices, usage },
@@ -69,7 +68,6 @@ export async function getChatCompletion(conversation: DConversationObject, promp
     };
   } catch (error) {
     logger.http('#getCompletion ', error);
-    console.log(error.response.data);
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'openai.service > #getChatCompletion : Interval server error');
   }
 }

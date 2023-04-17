@@ -1,10 +1,18 @@
-import { Schema, model, ObjectId, Types } from 'mongoose';
+import { Schema, model, ObjectId, Types, Document } from 'mongoose';
 
 import { DConversation, IClientSource } from '../types';
 
 export type DConversationObject = DConversation & {
   _id: Types.ObjectId;
 };
+
+export type DConversationDocument = Document<unknown, any, DConversation> &
+  Omit<
+    DConversation & {
+      _id: Types.ObjectId;
+    },
+    never
+  >;
 
 const conversationSchema = new Schema<DConversation>(
   {
@@ -15,6 +23,11 @@ const conversationSchema = new Schema<DConversation>(
     name: {
       type: String,
       required: true,
+    },
+    isSaved: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     systemPrompt: {
       type: String,

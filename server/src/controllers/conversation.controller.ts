@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 
-import { Conversation } from '../models/conversation.model';
+import { Conversation, DConversationDocument } from '../models/conversation.model';
 import { SYSTEM_PROMPT_MAP } from '../constants';
 import catchAsync from '../utils/catchAsync';
 import ApiError from '../utils/ApiError';
@@ -17,6 +17,7 @@ export const createConversation = catchAsync(async (req: Request, res: Response)
   try {
     const conversation = await Conversation.create({
       userId,
+      isSaved: false,
       name: 'new conversation',
       systemPrompt: SYSTEM_PROMPT_MAP[systemPromptKey],
       temperature,
@@ -27,11 +28,40 @@ export const createConversation = catchAsync(async (req: Request, res: Response)
   } catch (error) {
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
-      'conversation.controller > #createConversationError: while creating new conversation'
+      'conversation.controller > #createConversationError: error while creating new conversation'
     );
   }
 });
 
-// export const deleteConversation = catchAsync(async (req: Request, res: Response) => {});
+export const deleteConversation = catchAsync(async (req: Request, res: Response) => {
+  const { id: conversationId } = req.params;
 
-// export const updateConversation = catchAsync(async (req: Request, res: Response) => {});
+  await Conversation.findByIdAndDelete(conversationId);
+
+  res.status(httpStatus.OK).send();
+});
+
+export const updateConversation = catchAsync(async (req: Request, res: Response) => {
+  const { isSaved, name }: { isSaved: boolean | undefined; name: string | undefined } = req.body;
+  const { id: conversationId } = req.params;
+  try {
+    const conversationDoc = (await Conversation.findById(conversationId)) as DConversationDocument;
+
+    if (isSaved !== undefined) {
+      conversationDoc.isSaved = isSaved;
+    }
+
+    if (name !== undefined) {
+      conversationDoc.name = name;
+    }
+
+    const updatedConversationDoc = await conversationDoc.save();
+
+    res.status(httpStatus.OK).send(updatedConversationDoc);
+  } catch (error) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'conversation.controller > #updateConversation: error while updating conversation'
+    );
+  }
+});

@@ -28,3 +28,26 @@ export const addConversationToRequest: RequestHandler = async (req, res, next) =
     next(new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to retrieve conversaton'));
   }
 };
+
+export const canAccessConversation: RequestHandler = async (req, res, next) => {
+  const { id } = req.params;
+  const { uid: userId } = req.decodedFirebaseToken;
+
+  try {
+    const conversation = (await Conversation.findById(id))?.toObject();
+
+    if (conversation === undefined) {
+      next(new ApiError(httpStatus.NOT_FOUND, 'Conversation not found'));
+      return;
+    }
+
+    if (conversation.userId !== userId) {
+      next(new ApiError(httpStatus.FORBIDDEN, 'Access forbidden'));
+      return;
+    }
+
+    next();
+  } catch (error) {
+    next(new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to validate conversaton access'));
+  }
+};
