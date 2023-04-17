@@ -14,5 +14,11 @@ export const createUser = async (newUser: DUser) => {
 };
 
 export const getUserById = async (userId: string) => {
-  return User.findOne({ userId });
+  const user = await User.findById(userId);
+
+  if (user === null) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  return user;
 };

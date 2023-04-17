@@ -4,7 +4,7 @@ import httpStatus from 'http-status';
 
 /** 24 hours */
 const DAILY_WINDOW = 24 * 60 * 60 * 1000;
-const FREE_TRIAL_MAX_DAILY_REQUESTS = 2;
+const FREE_TRIAL_MAX_DAILY_REQUESTS = 20;
 
 /**
  * middleware to be used to check how many requests a user has made within a daily window
@@ -15,6 +15,7 @@ export const dailyMessagesLimiter = rateLimit({
   windowMs: DAILY_WINDOW,
   /** skip rate limiting for those with lifetime access */
   skip: (req) => {
+    // TODO: refactor rate limiting for those with credits but no API key
     return req.hasLifetimeAccess ?? false;
   },
   max: () => {

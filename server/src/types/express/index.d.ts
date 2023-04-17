@@ -2,6 +2,7 @@
 
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 
+import { DConversationObject } from '../../models/conversation.model';
 import { DUserObject } from '../../models/user.model';
 
 export {};
@@ -18,6 +19,8 @@ declare global {
       hasLifetimeAccess?: boolean;
       /** added by addUserToRequest middleware for protected routes */
       user: DUserObject;
+      /** added by addConversationToRequest middleware for protected routes */
+      conversation: DConversationObject;
     }
   }
 }

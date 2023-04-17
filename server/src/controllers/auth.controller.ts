@@ -31,8 +31,5 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
 
 export const login = catchAsync(async (req: Request, res: Response) => {
   const user = await userService.getUserById(req.decodedFirebaseToken.uid);
-  if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-  }
-  res.send(user);
+  res.status(200).send(user);
 });

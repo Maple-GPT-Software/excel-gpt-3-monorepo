@@ -9,18 +9,18 @@ import catchAsync from '../utils/catchAsync';
 
 export const createMessage = catchAsync(async (req: Request, res: Response) => {
   const { prompt, source } = req.body;
-  const { conversationId } = req.params;
+  const { conversationId } = req.query;
   const userId = req.decodedFirebaseToken.uid;
-  const { user } = req;
+  const { user, conversation } = req;
 
   const message = await messageService.createUserMessage({
     userId,
-    conversationId,
+    conversationId: conversationId as string,
     content: prompt,
     source,
   });
 
-  const aiCompletion = await openAIService.getChatCompletion(prompt, userId);
+  const aiCompletion = await openAIService.getChatCompletion(conversation, prompt);
 
   // only deduct credis from those that have purchased lifetime access
   if (user.stripeLifetimeAccessPaymentId !== '') {

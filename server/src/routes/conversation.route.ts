@@ -1,14 +1,18 @@
 import express from 'express';
 
+import * as conversationController from '../controllers/conversation.controller';
+import * as conversationValidation from '../validations/conversation.validation';
 import validate from '../middleware/validate';
 
 const router = express.Router();
 
-router.post('/', () => console.log('hello world'));
+router.post('/', validate(conversationValidation.newConversation), conversationController.createConversation);
 
-router.delete('/:id', () => console.log('hello world'));
+// // TODO: validate request body and params
+// // TODO: check conversation access
+// router.delete('/:id', conversationController.deleteConversation);
 
-// for saving / renaming
-router.patch('/edit/:id', () => console.log('hello world'));
+// // TODO: check conversation access
+// router.patch('/edit/:id', conversationController.updateConversation);
 
 export default router;

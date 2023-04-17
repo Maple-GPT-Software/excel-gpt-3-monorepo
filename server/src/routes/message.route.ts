@@ -1,6 +1,7 @@
 import express from 'express';
 
 import { freeTrialCheck, hasSufficientCredits } from '../middleware/apiAccessChecks';
+import { addConversationToRequest } from '../middleware/addConversationToRequest';
 import * as messageController from '../controllers/message.controller';
 import * as messageValidation from '../validations/message.validation';
 import { addUserToRequest } from '../middleware/addUserToRequest';
@@ -13,8 +14,9 @@ router.use(addUserToRequest, freeTrialCheck, hasSufficientCredits);
 
 router.post(
   '/',
-  rateLimitMiddleware.dailyMessagesLimiter,
   validate(messageValidation.createMessage),
+  rateLimitMiddleware.dailyMessagesLimiter,
+  addConversationToRequest,
   messageController.createMessage
 );
 

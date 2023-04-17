@@ -62,7 +62,7 @@ const messageSchema = new Schema<DMessage, MessageModel>(
     },
     rating: {
       type: String,
-      enum: Object.values(DMessageRating),
+      enum: [...Object.values(DMessageRating), ''],
       default: '',
     },
     source: {
@@ -83,7 +83,7 @@ messageSchema.methods.toJSON = function () {
   obj.id = obj._id;
   // preserve special characters such as "\n" so that clients can split up
   // completion and render formulas appropriately
-  obj.completion = encodeURI(obj.completion);
+  obj.content = encodeURI(obj.content);
 
   delete obj._id;
   delete obj.__v;
