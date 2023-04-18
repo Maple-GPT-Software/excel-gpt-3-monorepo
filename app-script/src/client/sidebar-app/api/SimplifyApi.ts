@@ -31,7 +31,6 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     super(baseUrl, accessToken);
   }
 
-  // TODO: AuthenticatedRequestor should return a raw response
   async getUserProfile(): Promise<SimplifyUserProfile> {
     const res = await this.post('/auth/login', {});
 
@@ -42,11 +41,18 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     return res.json();
   }
 
+  // TOOD: conversation ID
   async getCompletion(prompt: string): Promise<GPTCompletion> {
-    const response = await this.post(`/${MESSAGE_BASE}`, {
-      prompt,
-      source: 'APPSCRIPT',
+    const queryParams = new URLSearchParams({
+      conversationId: '643e0517ac1a954843283dfc',
     });
+    const response = await this.post(
+      `/${MESSAGE_BASE}?${queryParams.toString()}`,
+      {
+        prompt,
+        source: 'APPSCRIPT',
+      }
+    );
 
     if (response.status === 500) {
       throw new Error('Unexpected Error. Please try again.');
@@ -61,7 +67,7 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     return {
       ...completion,
       // back-end encodes special characters so that they aren't escaped by browser
-      message: decodeURI(completion.completion),
+      content: decodeURIComponent(completion.content).replaceAll('`', ''),
       status: 'success',
     };
   }

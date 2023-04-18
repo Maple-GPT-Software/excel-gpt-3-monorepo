@@ -72,7 +72,11 @@ const UserPrompt = (props: ChatInputProps) => {
     dispatch({
       type: ChatReducerActionTypes.ADD_USER_PROMPT,
       // TODO: format data table and formula
-      payload: clientUserPrompt,
+      payload: {
+        id: Math.random().toString(),
+        content: clientUserPrompt,
+        author: 'user',
+      },
     });
 
     // scroll to bottom of chat container after user's prompt is added
@@ -155,14 +159,6 @@ const UserPrompt = (props: ChatInputProps) => {
     setFormula('');
   }
 
-  function clearConversationHandler() {
-    dispatch({ type: ChatReducerActionTypes.CLEAR_MESSAGES });
-    setInput('');
-    setDataTable('');
-    setFormula('');
-    setIsMenuOpen(false);
-  }
-
   return (
     <div className="prompt-wrapper">
       <div className="text-area-wrapper" style={{ position: 'relative' }}>
@@ -228,12 +224,6 @@ const UserPrompt = (props: ChatInputProps) => {
                     <p>Insert selected values</p>
                   </button>
                 )}
-                <button
-                  className="clear-conversation-wrapper"
-                  onClick={clearConversationHandler}
-                >
-                  <p>Clear conversation</p>
-                </button>
               </>
             )}
           </div>

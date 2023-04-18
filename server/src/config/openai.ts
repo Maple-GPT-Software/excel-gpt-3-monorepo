@@ -7,11 +7,6 @@ export enum OpenAiModels {
   TURBO_0301 = 'gpt-3.5-turbo-0301',
 }
 
-export const modelCostPer1KTokens: { [key in OpenAiModels]: number } = {
-  [OpenAiModels.TURBO]: 0.002,
-  [OpenAiModels.TURBO_0301]: 0.002,
-};
-
 const configuration = new Configuration({
   apiKey: config.openAi,
   organization: 'org-WdaykyBMcZad17H1WbC3trTM',
