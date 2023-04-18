@@ -27,7 +27,11 @@ const firebaseAuth: RequestHandler = async (req, res, next) => {
 
     const decodedToken = await admin.auth().verifyIdToken(idToken);
 
-    req.decodedFirebaseToken = decodedToken as Required<DecodedIdToken>;
+    req.decodedFirebaseToken = {
+      ...decodedToken,
+      // FUTURE: cache this calculation
+      uid: firebaseUidTo24CharHexString(decodedToken.uid),
+    } as Required<DecodedIdToken>;
 
     next();
   } catch (error: any) {
@@ -36,3 +40,8 @@ const firebaseAuth: RequestHandler = async (req, res, next) => {
 };
 
 export default firebaseAuth;
+
+/** create a 24 character hex string for mongoose's ObjectId constructor */
+export function firebaseUidTo24CharHexString(uid: string) {
+  return Buffer.from(uid, 'utf-8').subarray(0, 12).toString('hex');
+}

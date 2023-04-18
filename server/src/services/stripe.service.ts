@@ -1,9 +1,7 @@
 import httpStatus from 'http-status';
 import Stripe from 'stripe';
 
-import { Document } from 'mongoose';
-
-import { User, UserType } from '../models/user.model';
+import { User } from '../models/user.model';
 import ApiError from '../utils/ApiError';
 import logger from '../config/logger';
 import stripe from '../config/stripe';
@@ -75,39 +73,6 @@ export const createSubscriptionSession = async (stripeCustomerId: string, option
   }
 };
 
-export const createPaymentSession = async (stripeCustomerId: string, options: SessionBase) => {
-  const { successUrl, cancelUrl, priceId, quantity = 1 } = options;
-  try {
-    const session = await stripe.checkout.sessions.create({
-      success_url: successUrl,
-      cancel_url: cancelUrl,
-      customer: stripeCustomerId,
-      line_items: [
-        {
-          price: priceId,
-          quantity,
-        },
-      ],
-      mode: 'payment',
-      currency: 'usd',
-      payment_intent_data: {
-        metadata: {
-          priceId,
-        },
-      },
-      expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
-    });
-
-    return session;
-  } catch (error) {
-    // Stripe was not able to create a checkout session for whatever reason
-    logger.error('#createSubscriptionSession failed', error);
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to checkout with Stripe');
-  }
-};
-
-// TODO: separate functions for subscription and payment API calls
-
 /**
  * Called when user wants to cancel their subscription. We will cancel their
  * subscription immediately, if we do it client side the user can arbitrary params to Stripe
@@ -115,7 +80,7 @@ export const createPaymentSession = async (stripeCustomerId: string, options: Se
  */
 export const cancelSubscriptionById = async (email: string, id: string) => {
   try {
-    // TODO: revise this only users with subscriptions cancel, just
+    // TODO: check if a user has an active subscription to cancel
     const customer = (await stripe.customers.list({ email, limit: 1 })).data.length;
 
     // at this point, in the client app, the user is authenticated
@@ -144,46 +109,5 @@ export const updateSubscription = async (subscription: Stripe.Subscription) => {
   const { customer: stripeCustomerId, current_period_end: stripeCurrentPeriodEnd, status: stripeStatus } = subscription;
   User.findOneAndUpdate({ stripeCustomerId }, { stripeCurrentPeriodEnd, stripeStatus }).catch((e) => {
     logger.notice('#addSubscription unable to update stripe subscription', subscription, e);
-  });
-};
-
-/**
- * when webhook receives payment_intent.succeeded, we only save the payment intent id if
- * payment was successful
- */
-export const updateLifetimeAccessPayment = async (paymentIntent: Stripe.PaymentIntent) => {
-  const { customer: stripeCustomerId, metadata } = paymentIntent;
-  const user = await User.findOne({ stripeCustomerId });
-
-  /** we fail silently, this should never happen because we create stripe customerid on signup */
-  if (!user) {
-    return;
-  }
-
-  if (metadata?.priceId === settings.stripePriceIds.lifetimeChatAccess) {
-    updateLifetimeAccess(paymentIntent, user);
-  }
-};
-
-/** updates the lifetime access payment intent ID on the user's profile */
-const updateLifetimeAccess = async (
-  paymentIntent: Stripe.PaymentIntent,
-  user: Document<unknown, any, UserType> &
-    Omit<
-      UserType & {
-        _id: any;
-      },
-      never
-    >
-) => {
-  const { id: paymentIntentId } = paymentIntent;
-
-  if (user.stripeLifetimeAccessPaymentId !== '') {
-    logger.notice('#updateLifetimeAccess user already has lifetime access', user.email);
-  }
-
-  console.log('updating user profile');
-  user.updateOne({ stripeLifetimeAccessPaymentId: paymentIntentId }).catch((e) => {
-    logger.notice('#updateLifetimeAccess unable to update user profile', paymentIntent, user.email, e);
   });
 };

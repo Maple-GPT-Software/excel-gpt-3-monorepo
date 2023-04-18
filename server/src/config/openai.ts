@@ -22,12 +22,6 @@ const openai = new OpenAIApi(configuration);
 export const basePromptConfig: CreateCompletionRequest = {
   model: OpenAiModels.TURBO,
   max_tokens: 250,
-  /**
-   * between 0 and 2. Higher values like 0.8 will make the output more random,
-   * while lower values like 0.2 will make it more focused and deterministic.
-   * https://platform.openai.com/docs/api-reference/completions/create#completions/create-temperature
-   */
-  temperature: 0.4,
   // one completion per prompt
   n: 1,
 };

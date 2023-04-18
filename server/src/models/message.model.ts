@@ -1,79 +1,73 @@
-import { Model, Schema, model } from 'mongoose';
+import { Model, Types, Schema, model } from 'mongoose';
 
-import { ClientSources } from '../types';
+import { DMessage, DMessageRating, IClientSource, DMessageBase, DAsssistantMessage, DMessageAuthor } from '../types';
 
-export enum CompletionRating {
-  LIKE = 'LIKE',
-  DISLIKE = 'DISLIKE',
-}
+export type DUserMessageObject = DMessageBase & {
+  _id: Types.ObjectId;
+};
 
-export interface MessageType {
-  /** the uid decoded from firebase auth token */
-  userId: string;
-  prompt: string;
-  completion: string;
-  promptTokens: number;
-  completionTokens: number;
-  totalTokens: number;
-  model: string;
-  rating?: CompletionRating | '';
-  source: ClientSources;
-  promptVersion: number;
-}
+export type DAssistantMessageObject = DAsssistantMessage & {
+  _id: Types.ObjectId;
+};
 
 /**
  * Extending moongose Model to add statics
  * https://mongoosejs.com/docs/typescript/statics.html
  */
-interface MessageModel extends Model<MessageType> {
+interface MessageModel extends Model<DMessage> {
   canRateMessage: (messageId: string, userId: string) => Promise<boolean>;
   isMessageUnrated: (messageId: string) => Promise<boolean>;
 }
 
-const messageSchema = new Schema<MessageType, MessageModel>(
+const messageSchema = new Schema<DMessage, MessageModel>(
   {
+    conversationId: {
+      type: String,
+      required: true,
+    },
     userId: {
       type: String,
       required: true,
     },
-    prompt: {
+    author: {
       type: String,
+      enum: Object.values(DMessageAuthor),
       required: true,
     },
-    completion: {
+    content: {
       type: String,
       required: true,
     },
     promptTokens: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
     },
     completionTokens: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
     },
     totalTokens: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
     },
     model: {
       type: String,
       /** its better to leave out enum check for now because openai is rapidly iterating and we might get a random bug if they return a different model name */
       // enum: [...Object.values(OpenAiModels)],
-      required: true,
+      required: false,
+      default: '',
     },
     rating: {
       type: String,
-      enum: [...Object.values(CompletionRating), ''],
+      enum: [...Object.values(DMessageRating), ''],
       default: '',
     },
     source: {
       type: String,
-      enum: [...Object.values(ClientSources)],
-      required: true,
-    },
-    promptVersion: {
-      type: Number,
+      enum: Object.values(IClientSource),
       required: true,
     },
   },
@@ -89,7 +83,7 @@ messageSchema.methods.toJSON = function () {
   obj.id = obj._id;
   // preserve special characters such as "\n" so that clients can split up
   // completion and render formulas appropriately
-  obj.completion = encodeURI(obj.completion);
+  obj.content = encodeURI(obj.content);
 
   delete obj._id;
   delete obj.__v;
@@ -100,7 +94,6 @@ messageSchema.methods.toJSON = function () {
   delete obj.totalTokens;
   delete obj.model;
   delete obj.source;
-  delete obj.promptVersion;
 
   return obj;
 };
@@ -125,4 +118,4 @@ messageSchema.statics.isMessageUnrated = async function (id: string) {
   return !message?.rating;
 };
 
-export const Message = model<MessageType, MessageModel>('Message', messageSchema);
+export const Message = model<DMessage, MessageModel>('Message', messageSchema);

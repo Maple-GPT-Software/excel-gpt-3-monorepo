@@ -31,11 +31,18 @@ export enum CompletionRating {
   DISLIKE = 'DISLIKE',
 }
 
+export interface UserMessageType {
+  id: string;
+  author: 'user';
+  content: string;
+}
+
 /** the completion we get back from the back-end */
 export interface GPTCompletion {
-  message: string;
   /** completion's id */
   id: string;
+  content: string;
+  author: 'assistant';
   /**
    * we can optimistically update the rating, if server doesn't answer with
    * 200 we can undo the optimistic update

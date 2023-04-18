@@ -17,6 +17,7 @@ const logger = winston.createLogger({
     winston.format.splat(),
     winston.format.printf(({ level, message }) => `${level}: ${message}`)
   ),
+  // TODO: AXIOM logging
   transports: [
     new winston.transports.Console({
       stderrLevels: ['error'],

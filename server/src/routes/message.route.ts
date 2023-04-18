@@ -1,19 +1,22 @@
 import express from 'express';
 
+import { addConversationToRequest } from '../middleware/conversation.middleware';
+import * as subscriptionMiddleware from '../middleware/subscription.middleware';
 import * as messageController from '../controllers/message.controller';
 import * as messageValidation from '../validations/message.validation';
-import { lifetimeAccessCheck } from '../middleware/subscriptionCheck';
+import { addUserToRequest } from '../middleware/addUserToRequest';
 import * as rateLimitMiddleware from '../middleware/rateLimit';
 import validate from '../middleware/validate';
 
 const router = express.Router();
 
-router.use(lifetimeAccessCheck);
+router.use(addUserToRequest, subscriptionMiddleware.addSubscriptionTypeToReq, subscriptionMiddleware.subscriptionCheck);
 
 router.post(
   '/',
-  rateLimitMiddleware.dailyMessagesLimiter,
   validate(messageValidation.createMessage),
+  rateLimitMiddleware.dailyMessagesLimiter,
+  addConversationToRequest,
   messageController.createMessage
 );
 

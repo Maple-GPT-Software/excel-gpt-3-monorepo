@@ -2,6 +2,9 @@
 
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 
+import { DConversationObject } from '../../models/conversation.model';
+import { DUserObject } from '../../models/user.model';
+
 export {};
 
 // This allows us to extend the types from Express and do stuff
@@ -12,8 +15,14 @@ declare global {
     export interface Request {
       /** We only use providers that require email for registration, e.g Google, Facebook */
       decodedFirebaseToken: Required<DecodedIdToken>;
-      /** only true when the user has paid for lifetime access */
-      hasLifetimeAccess?: boolean;
+      /** added by addHasSubcription middleware for protected routes / rate limiting */
+      hasPaidSubscription?: boolean;
+      /** added by addUserToRequest middleware for protected routes */
+      user: DUserObject;
+      /** added by addConversationToRequest middleware for protected routes */
+      conversation: DConversationObject;
     }
   }
 }
+
+// TODO: make user & conversation optional

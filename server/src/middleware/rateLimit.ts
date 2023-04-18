@@ -4,24 +4,29 @@ import httpStatus from 'http-status';
 
 /** 24 hours */
 const DAILY_WINDOW = 24 * 60 * 60 * 1000;
-const FREE_TRIAL_MAX_DAILY_REQUESTS = 2;
+const FREE_TRIAL_MAX_DAILY_REQUESTS = 10;
+const PAID_SUBSCRIPTION_MAX_DAILY_REQUESTS = 60;
 
 /**
  * middleware to be used to check how many requests a user has made within a daily window
  * must be used after the subscriptionCheck middleware.
  */
 export const dailyMessagesLimiter = rateLimit({
-  /** 24 hour window */
   windowMs: DAILY_WINDOW,
-  /** skip rate limiting for those with lifetime access */
-  skip: (req) => {
-    return req.hasLifetimeAccess ?? false;
-  },
-  max: () => {
-    return FREE_TRIAL_MAX_DAILY_REQUESTS;
+  max: (req) => {
+    const { hasPaidSubscription } = req;
+
+    return hasPaidSubscription ? PAID_SUBSCRIPTION_MAX_DAILY_REQUESTS : FREE_TRIAL_MAX_DAILY_REQUESTS;
   },
   message: async (request: Request, response: Response) => {
-    response.status(httpStatus.TOO_MANY_REQUESTS).send({ message: 'You can only make 20 requests per day while trialing' });
+    const { hasPaidSubscription } = request;
+    if (hasPaidSubscription) {
+      response.status(httpStatus.TOO_MANY_REQUESTS).send({ message: `You've made too many requests today.` });
+    } else {
+      response
+        .status(httpStatus.TOO_MANY_REQUESTS)
+        .send({ message: 'You can only make 10 requests per day while trialing' });
+    }
   },
   /**
    * By default express-rate-limit uses IP address to keep track of daily reqs per window

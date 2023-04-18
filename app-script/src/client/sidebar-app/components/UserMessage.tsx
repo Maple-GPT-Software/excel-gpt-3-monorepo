@@ -1,13 +1,12 @@
 import React from 'react';
-import { UserInput } from '../Chat';
+import { UserMessageType } from '../types';
 import DataTable from './DataTable';
-
-import './UserMessage.style.css';
-import CodeBlockMessage from './CodeBlockMessage';
 import { CSV, FORMULA, USER_RANGE } from '../constants';
+import CodeBlockMessage from './CodeBlockMessage';
+import './UserMessage.style.css';
 
-function UserMessage({ prompt }: { prompt: UserInput }) {
-  const promptParts = prompt.split('\n');
+function UserMessage({ prompt: { content } }: { prompt: UserMessageType }) {
+  const promptParts = content.split('\n');
 
   return (
     <div className="user-message-wrapper">

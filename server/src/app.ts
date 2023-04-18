@@ -1,5 +1,4 @@
 /// <reference types="stripe-event-types" />
-/** NPM */
 import mongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
 import httpStatus from 'http-status';
@@ -8,11 +7,9 @@ import xss from 'xss-clean';
 import Stripe from 'stripe';
 import helmet from 'helmet';
 import cors from 'cors';
-
 import { errorHandler, errorConverter } from './middleware/error';
 import toJSONMiddleware from './middleware/toJSONMiddleware';
 import * as stripeService from './services/stripe.service';
-/** Middlewares */
 import firebaseAuth from './middleware/firebaseAuth';
 import * as morgan from './config/morgan';
 import { StripeWebhooks } from './types';
@@ -24,7 +21,6 @@ import stripe from './config/stripe';
 // import { authLimiter } from "./middlewares/rateLimiter";
 /** Modules */
 import AppRoutes from './routes';
-// !IMPORTANT start server with pm2
 
 // TODO: only allow specific origins
 // const corsOptions = {
@@ -68,9 +64,6 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
       // we specify the user's email that should be used to uniquely identify the customer
       stripeService.addCustomerId(customer.email as string, customer.id);
       break;
-    case StripeWebhooks.PaymentSucceeded:
-      stripeService.updateLifetimeAccessPayment(event.data.object);
-      break;
     case StripeWebhooks.SubscriptionCreated:
       // FUTURE: email user with thank you, installation guide
       stripeService.updateSubscription(event.data.object);
@@ -112,9 +105,7 @@ app.use(compression());
 app.use(cors());
 app.options('*', cors());
 
-/**
- * thise
- */
+/** authenticate access token */
 app.use(firebaseAuth);
 
 // FUTURE_WORK: refactor this middleware to allow email + password signup

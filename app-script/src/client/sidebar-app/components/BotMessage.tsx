@@ -12,12 +12,13 @@ import SimplifyApi from '../api/SimplifyApi';
 interface BotMessageProps {
   completion: GPTCompletion;
   dispatch: React.Dispatch<ChatActions>;
+  requestStatus: 'FETCHING' | 'SUCCESS' | 'FAIL';
 }
 
-function BotMessage({ completion, dispatch }: BotMessageProps) {
-  const { message, id, rating, status } = completion;
+function BotMessage({ completion, dispatch, requestStatus }: BotMessageProps) {
+  const { content, id, rating, status } = completion;
 
-  if (!message) {
+  if (!content) {
     return (
       <div className="bot-message-wrapper">
         <LoadingEllipsis />
@@ -28,24 +29,24 @@ function BotMessage({ completion, dispatch }: BotMessageProps) {
   if (status === 'fail') {
     return (
       <div className="bot-message-wrapper">
-        <p style={{ color: '#dc2626' }}>{message}</p>
+        <p style={{ color: '#dc2626' }}>{content}</p>
       </div>
     );
   }
 
-  const messageParts = message.split('\n');
+  const messageParts = content.split('\n');
 
   return (
     <div className="bot-message-wrapper">
-      {messageParts.map((message, index) => {
-        if (message.startsWith('=')) {
+      {messageParts.map((content, index) => {
+        if (content.startsWith('=')) {
           return (
             <>
-              <CodeBlockMessage formula={message} key={index} />
+              <CodeBlockMessage formula={content} key={index} />
               <br />
             </>
           );
-        } else if (!message) {
+        } else if (!content) {
           return null;
         } else {
           return (
@@ -53,7 +54,7 @@ function BotMessage({ completion, dispatch }: BotMessageProps) {
               <p
                 key={index}
                 dangerouslySetInnerHTML={{
-                  __html: message.replace(/\n/g, '<br>'),
+                  __html: content.replace(/\n/g, '<br>'),
                 }}
                 style={{ wordBreak: 'break-word' }}
               ></p>
@@ -62,7 +63,7 @@ function BotMessage({ completion, dispatch }: BotMessageProps) {
           );
         }
       })}
-      {/* TODO: conditionally render this based on rating property on completion */}
+
       <RateCompletion id={id} rating={rating} dispatch={dispatch} />
     </div>
   );

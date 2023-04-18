@@ -1,9 +1,22 @@
+import Stripe from 'stripe';
+
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
 // ENUM FOR ENVIRONMENT
 export enum Environment {
   PROD = 'production',
   DEV = 'development',
   TEST = 'test',
 }
+
+export enum IClientSource {
+  APPSCRIPT = 'APPSCRIPT',
+  WEBAPP = 'WEBAPP',
+  EXCEL = 'EXCEL',
+}
+
+// STRIPE WEBHOOK EVENTS ================================================
 
 /**
  * Stripe webhook events https://stripe.com/docs/api/events/types
@@ -37,8 +50,92 @@ export enum StripeWebhooks {
   SubscriptionDeleted = 'customer.subscription.deleted',
 }
 
-export enum ClientSources {
-  APPSCRIPT = 'APPSCRIPT',
-  WEBAPP = 'WEBAPP',
-  EXCEL = 'EXCEL',
+// USER ============================================================
+
+// NOTE: _id: is firebase's uid converted into a 24 character hex string
+export interface DUser {
+  email: string;
+  name: string;
+  /** e.g, Concordia */
+  referrer: string;
+  /** terms and conditions and the version the user has accepted */
+  hasAcceptedTerms: boolean;
+  acceptedTermsVersion: number;
+  /**
+   * We don't have to keep all the metadata associated with a subscription because Stripe's client facing SDK has no rate limiting. Server side API however has a limit of 100 reads/min.
+   */
+  /** stripe customer id associated with user's email */
+  stripeCustomerId?: string;
+  /** the end of the bill cycle of the user's subscription */
+  stripeCurrentPeriodEnd?: number;
+  /**
+   * possible statuses: paid, incomplete, trialing, active, past_due, canceled. We don't allow users to pause their subscription.
+   */
+  stripeStatus?: Stripe.Subscription.Status;
+  // /** the user's open AI API key */
+  // openaiApiKey: string;
 }
+
+// CONVERSATION ==========================================================
+
+export interface DConversation {
+  userId: string;
+  name: string;
+  isSaved: boolean;
+  systemPrompt: string;
+  /**
+   * between 0 and 2. Higher values like 0.8 will make the output more random,
+   * while lower values like 0.2 will make it more focused and deterministic.
+   * https://platform.openai.com/docs/api-reference/completions/create#completions/create-temperature
+   */
+  temperature: number;
+  /** the client that created this conversation */
+  source: IClientSource;
+  // FUTURE: folderId: string
+}
+
+// MESSAGES ==========================================================
+
+export enum DMessageRating {
+  LIKE = 'LIKE',
+  DISLIK = 'DISLIKE',
+}
+
+export enum DMessageAuthor {
+  ASSISTANT = 'assistant',
+  USER = 'user',
+}
+
+export interface DMessageBase {
+  /** the conversation this message belongs to */
+  conversationId: string;
+  /** user the message belongs to */
+  userId: string;
+  author: DMessageAuthor;
+  content: string;
+  source: IClientSource;
+}
+
+export interface DMessage extends DMessageBase {
+  promptTokens?: number;
+  completionTokens?: number;
+  totalTokens?: number;
+  model?: string;
+  rating?: DMessageRating | '';
+  memoryCount?: string;
+}
+
+export interface DAsssistantMessage extends DMessage {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+  model: string;
+}
+
+// FUTURE: custom prompts that the user wants to use
+// PROMPTS ==========================================================
+
+// export interface DSystemPrompt {
+//   userId: string;
+//   prompt: string;
+// }

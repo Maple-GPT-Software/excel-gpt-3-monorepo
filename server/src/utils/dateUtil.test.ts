@@ -1,4 +1,5 @@
-import * as dateUtil from '../src/utils/dateUtils';
+import * as dateUtil from './dateUtils';
+
 /** Tue Mar 21 2023 07:00:00 GMT+0000 as unix timestamp in seconds */
 const MARCH_21_2023 = 1679382000;
 /** march 15 2023 12:00:00pm on */
@@ -15,6 +16,6 @@ describe('dateUtil.', () => {
   it('should return the 21st of March 00:00:00 when passing in 5 days to add', () => {
     jest.useFakeTimers().setSystemTime(new Date(MARCH_15_2023));
 
-    expect(dateUtil.endOfDay(5)).toBe(1679382000);
+    expect(dateUtil.endOfDay(5)).toBe(MARCH_21_2023);
   });
 });

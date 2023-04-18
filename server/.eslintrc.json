@@ -17,6 +17,7 @@
     "ecmaVersion": 2018
   },
   "rules": {
+    "camelcase": "off",
     "no-console": "warn",
     "func-names": "off",
     "no-underscore-dangle": "off",

@@ -1,8 +1,10 @@
+import { ChatCompletionRequestMessageRoleEnum, OpenAIApi } from 'openai';
 import httpStatus from 'http-status';
 
-import { getOpenAiInstanceByUser } from './openaiCache.service';
-import { basePromptConfig } from '../config/openai';
-import { BASE_PROMPT } from '../constants';
+import { DConversationObject } from '../models/conversation.model';
+import openai, { basePromptConfig } from '../config/openai';
+import { Message } from '../models/message.model';
+import { SYSTEM_PROMPT_MAP } from '../constants';
 import ApiError from '../utils/ApiError';
 import logger from '../config/logger';
 
@@ -10,18 +12,44 @@ import logger from '../config/logger';
  * we to specify user this for abuse detection
  * https://platform.openai.com/docs/api-reference/completions/create#completions/create-user
  */
-export async function getChatCompletion(prompt: string, user: string) {
+export async function getChatCompletion(conversation: DConversationObject, prompt: string) {
   try {
-    const openai = await getOpenAiInstanceByUser(user);
-    // @ts-expect-error .createChatCompletion is a valid method, maintainers likely forgot to add it to types
-    const { data } = await openai.createChatCompletion({
+    const openaiInstance: OpenAIApi = openai;
+
+    // FUTURE: if user has openaiApi key we can cache an instance of OpenAIApi with their key
+    // const openai = await getOpenAiInstanceByUser(user);
+
+    const { temperature, systemPrompt, userId, _id } = conversation;
+
+    const conversationHistory = await Message.find({ conversationId: _id.toString() })
+      .sort({ createdAt: 'descending' })
+      .limit(4)
+      .lean()
+      .exec();
+
+    const chatMessages = conversationHistory.map((message) => {
+      return {
+        role:
+          message.author === 'user'
+            ? ChatCompletionRequestMessageRoleEnum.User
+            : ChatCompletionRequestMessageRoleEnum.Assistant,
+        content: message.content,
+      };
+    });
+
+    const {
+      data: { model, choices, usage },
+      // @ts-expect-error openai types not up to date
+    } = await openaiInstance.createChatCompletion({
       ...basePromptConfig,
-      user,
+      temperature,
+      user: userId,
       messages: [
         {
           role: 'system',
-          content: BASE_PROMPT,
+          content: systemPrompt,
         },
+        ...chatMessages,
         {
           role: 'user',
           content: prompt,
@@ -29,9 +57,19 @@ export async function getChatCompletion(prompt: string, user: string) {
       ],
     });
 
-    return data;
+    if (!choices[0].message || !usage) {
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'openai.service > #getChatCompletion : Interval server error');
+    }
+
+    return {
+      model,
+      message: choices[0].message.content,
+      usage,
+    };
   } catch (error) {
     logger.http('#getCompletion ', error);
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Interval server error');
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'openai.service > #getChatCompletion : Interval server error');
   }
 }
+
+// TODO: rety comppletion

@@ -1,31 +1,28 @@
 import { Response, Request } from 'express';
-
 import httpStatus from 'http-status';
-
-import catchAsync from '../utils/catchAsync';
 
 import * as messageService from '../services/message.service';
 import * as openAIService from '../services/openai.service';
-import { BASE_PROMP_VERSION } from '../constants';
+import catchAsync from '../utils/catchAsync';
 
 export const createMessage = catchAsync(async (req: Request, res: Response) => {
   const { prompt, source } = req.body;
+  const { conversationId } = req.query;
   const userId = req.decodedFirebaseToken.uid;
+  const { user, conversation } = req;
 
-  const completion: any = await openAIService.getChatCompletion(prompt, userId);
   const message = await messageService.createUserMessage({
     userId,
-    prompt,
-    model: completion.model,
-    completion: completion.choices[0].message.content ?? '',
-    promptTokens: completion.usage?.prompt_tokens ?? 0,
-    completionTokens: completion.usage?.completion_tokens ?? 0,
-    totalTokens: completion.usage?.total_tokens ?? 0,
+    conversationId: conversationId as string,
+    content: prompt,
     source,
-    promptVersion: BASE_PROMP_VERSION,
   });
 
-  res.send(message);
+  const aiCompletion = await openAIService.getChatCompletion(conversation, prompt);
+
+  const aiMessage = await messageService.createAssistantMessage(message.toObject(), aiCompletion);
+
+  res.send(aiMessage);
 });
 
 export const rateMessage = catchAsync(async (req: Request, res: Response) => {

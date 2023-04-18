@@ -2,7 +2,7 @@
 import React, { useRef, useCallback } from 'react';
 import { useImmerReducer } from 'use-immer';
 // TYPES
-import { CompletionRating, GPTCompletion } from './types';
+import { CompletionRating, GPTCompletion, UserMessageType } from './types';
 // COMPONENTS
 import UserPrompt from './components/UserPrompt';
 import UserMessage from './components/UserMessage';
@@ -11,12 +11,10 @@ import ExamplePrompts from './components/ExamplePrompts';
 
 import './Chat.style.css';
 
-export type UserInput = string;
-
 export interface ChatState {
   /** the state of the application. Fetching when we're waiting for the AI to answer */
   status: 'FETCHING' | 'SUCCESS' | 'FAIL';
-  messages: (GPTCompletion | UserInput)[];
+  messages: (GPTCompletion | UserMessageType)[];
 }
 
 export enum ChatReducerActionTypes {
@@ -29,7 +27,7 @@ export enum ChatReducerActionTypes {
 }
 
 export type ChatActions =
-  | { type: ChatReducerActionTypes.ADD_USER_PROMPT; payload: UserInput }
+  | { type: ChatReducerActionTypes.ADD_USER_PROMPT; payload: UserMessageType }
   | {
       type: ChatReducerActionTypes.ADD_GPT_COMPLETION_SUCCESS;
       payload: GPTCompletion;
@@ -60,7 +58,8 @@ const chatReducer = (draft: ChatState, action: ChatActions) => {
       // when the user adds a prompt we add a temporary completion so that a loading state can be shown
       // when the API call completes we'll remove it and push response as the last entry in the messages array
       draft.messages.push({
-        message: '',
+        content: '',
+        author: 'assistant',
         id: `${Math.random()}`,
         rating: '',
         status: 'success',
@@ -76,8 +75,9 @@ const chatReducer = (draft: ChatState, action: ChatActions) => {
       /** remove most recent placeholder message */
       draft.messages.pop();
       draft.messages.push({
-        message: action.payload,
         id: `${Math.random()}`,
+        author: 'assistant',
+        content: action.payload,
         rating: '',
         status: 'fail',
       });
@@ -139,14 +139,17 @@ function Chat() {
         {!chatState.messages.length && <ExamplePrompts />}
         {!!chatState.messages.length &&
           chatState.messages.map((message, index) => {
-            if (typeof message === 'string') {
-              return <UserMessage key={index} prompt={message as UserInput} />;
+            if (message.author === 'user') {
+              return (
+                <UserMessage key={index} prompt={message as UserMessageType} />
+              );
             } else {
               return (
                 <BotMessage
                   dispatch={dispatch}
                   key={index}
                   completion={message as GPTCompletion}
+                  requestStatus={chatState.status}
                 />
               );
             }

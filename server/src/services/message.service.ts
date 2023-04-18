@@ -1,13 +1,34 @@
+import { CreateChatCompletionResponse, CreateCompletionResponseUsage } from 'openai';
 import httpStatus from 'http-status';
 
-import { Message, MessageType } from '../models/message.model';
+import { DUserMessageObject, Message } from '../models/message.model';
+import { DMessageBase, DMessageAuthor, PartialBy } from '../types';
 import ApiError from '../utils/ApiError';
 
 /**
  * creates a message with with an "N/A" rating
  */
-export const createUserMessage = async (message: MessageType) => {
-  return Message.create(message);
+export const createUserMessage = async (message: PartialBy<DMessageBase, 'author'>) => {
+  return Message.create({ ...message, author: DMessageAuthor.USER });
+};
+
+export const createAssistantMessage = async (
+  userMessage: DUserMessageObject,
+  { model, message, usage }: { model: string; message: string; usage: CreateCompletionResponseUsage }
+) => {
+  const { prompt_tokens, completion_tokens, total_tokens } = usage;
+
+  return Message.create({
+    conversationId: userMessage.conversationId,
+    userId: userMessage.userId,
+    author: DMessageAuthor.ASSISTANT,
+    content: message,
+    source: userMessage.source,
+    promptTokens: prompt_tokens,
+    completionTokens: completion_tokens,
+    totalTokens: total_tokens,
+    model,
+  });
 };
 
 /**

@@ -28,30 +28,30 @@ async function getFromCache<T>(key: string): Promise<T | undefined> {
  * @param userId | userId of user making this request
  * @returns Promise<OpenAIApi>
  */
-export async function getOpenAiInstanceByUser(userId: string): Promise<OpenAIApi> {
-  // TODO: use default api key for trial users
-  const user = await User.findOne({ userId });
-  // todo: update key for open ai cache to `openai-instance-${userId}`
-  const cachedOpenAiInstance = await getFromCache<OpenAIApi>(userId);
+// export async function getOpenAiInstanceByUser(userId: string): Promise<OpenAIApi> {
+//   // TODO: use default api key for trial users
+//   const user = await User.findOne({ userId });
+//   // todo: update key for open ai cache to `openai-instance-${userId}`
+//   const cachedOpenAiInstance = await getFromCache<OpenAIApi>(userId);
 
-  // user has openai instance in cache
-  if (cachedOpenAiInstance !== undefined) {
-    return cachedOpenAiInstance;
+//   // user has openai instance in cache
+//   if (cachedOpenAiInstance !== undefined) {
+//     return cachedOpenAiInstance;
 
-    // does not have instance in cache but user has provided openai key
-  } else if (user?.openaiApiKey) {
-    const decryptedApiKey = decryptData(user.openaiApiKey);
-    const userOpenaiInstance = new OpenAIApi(
-      new Configuration({
-        apiKey: decryptedApiKey,
-      })
-    );
+//     // does not have instance in cache but user has provided openai key
+//   } else if (user?.openaiApiKey) {
+//     const decryptedApiKey = decryptData(user.openaiApiKey);
+//     const userOpenaiInstance = new OpenAIApi(
+//       new Configuration({
+//         apiKey: decryptedApiKey,
+//       })
+//     );
 
-    await addToCache(userId, userOpenaiInstance);
+//     await addToCache(userId, userOpenaiInstance);
 
-    return userOpenaiInstance;
-  }
+//     return userOpenaiInstance;
+//   }
 
-  // default openai instance with our API key for free trial users
-  return openai;
-}
+//   // default openai instance with our API key for free trial users
+//   return openai;
+// }

@@ -1,5 +1,6 @@
 import express from 'express';
 
+import conversationRoutes from './conversation.route';
 import messageRoutes from './message.route';
 import paymentRoutes from './payment.route';
 import authRoutes from './auth.route';
@@ -18,6 +19,10 @@ const AppRoutes = [
   {
     path: '/payment',
     route: paymentRoutes,
+  },
+  {
+    path: '/conversation',
+    route: conversationRoutes,
   },
 ];
 
