@@ -110,8 +110,8 @@ const clientConfig = ({ isDevClientWrapper }) => ({
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
-      react: '@preact/compat',
-      'react-dom': '@preact/compat',
+      react: 'preact/compat',
+      'react-dom': 'preact/compat',
       '@prefresh/core': path.resolve(
         __dirname,
         'node_modules',

@@ -37,7 +37,6 @@
     "@radix-ui/react-dialog": "^1.0.2",
     "immer": "^9.0.17",
     "preact": "^10.13.1",
-    "preact-compat": "^3.19.0",
     "react-bootstrap": "^2.4.0",
     "react-router-dom": "^6.8.0",
     "use-immer": "^0.8.1"

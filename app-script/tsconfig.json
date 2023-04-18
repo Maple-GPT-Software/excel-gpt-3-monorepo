@@ -5,6 +5,10 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["gas-types-detailed"],
     "jsx": "react",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "react": ["./node_modules/preact/compat"],
+      "react-dom": ["./node_modules/preact/compat/"]
+    }
   }
 }
