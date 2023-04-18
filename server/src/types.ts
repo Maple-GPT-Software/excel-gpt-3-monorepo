@@ -61,7 +61,6 @@ export interface DUser {
   /** terms and conditions and the version the user has accepted */
   hasAcceptedTerms: boolean;
   acceptedTermsVersion: number;
-  simplifyTrialEnd: number;
   /**
    * We don't have to keep all the metadata associated with a subscription because Stripe's client facing SDK has no rate limiting. Server side API however has a limit of 100 reads/min.
    */
@@ -73,7 +72,6 @@ export interface DUser {
    * possible statuses: paid, incomplete, trialing, active, past_due, canceled. We don't allow users to pause their subscription.
    */
   stripeStatus?: Stripe.Subscription.Status;
-  /** the amount of unused credits. For every API call we calculate calculate the cost of the user's API call. */
   // /** the user's open AI API key */
   // openaiApiKey: string;
 }

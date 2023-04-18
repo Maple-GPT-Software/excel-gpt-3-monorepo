@@ -6,10 +6,12 @@ import mongoose from 'mongoose';
 
 import { TERMS_AND_CONDITION_VERSION } from '../constants';
 import * as userService from '../services/user.service';
-import { endOfDay } from '../utils/dateUtils';
 import catchAsync from '../utils/catchAsync';
-import ApiError from '../utils/ApiError';
 
+/**
+ * creates basic user profile when the user authenticates with firebase
+ * Stripe property values are added by webhook event handlers
+ * */
 export const signup = catchAsync(async (req: Request, res: Response) => {
   const { uid: userId, email } = req.decodedFirebaseToken;
 
@@ -21,11 +23,11 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
     hasAcceptedTerms: req.body.hasAcceptedTerms,
     acceptedTermsVersion: TERMS_AND_CONDITION_VERSION,
     referrer: req.body.referrer ?? '',
-    // 5 day free subscription
-    simplifyTrialEnd: endOfDay(5),
     _id: new mongoose.Types.ObjectId(userId),
   };
+
   const user = await userService.createUser(newUser);
+
   res.status(httpStatus.CREATED).send({ user });
 });
 

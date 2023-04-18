@@ -15,6 +15,8 @@ declare global {
     export interface Request {
       /** We only use providers that require email for registration, e.g Google, Facebook */
       decodedFirebaseToken: Required<DecodedIdToken>;
+      /** added by addHasSubcription middleware for protected routes / rate limiting */
+      hasPaidSubscription?: boolean;
       /** added by addUserToRequest middleware for protected routes */
       user: DUserObject;
       /** added by addConversationToRequest middleware for protected routes */

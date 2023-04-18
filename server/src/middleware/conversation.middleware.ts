@@ -4,6 +4,7 @@ import httpStatus from 'http-status';
 import { Conversation, DConversationObject } from '../models/conversation.model';
 import ApiError from '../utils/ApiError';
 
+/** middleware that adds the conversation as a property of request */
 export const addConversationToRequest: RequestHandler = async (req, res, next) => {
   try {
     const { conversationId } = req.query;
@@ -29,6 +30,7 @@ export const addConversationToRequest: RequestHandler = async (req, res, next) =
   }
 };
 
+/** middleware that checks if the user has access to the conversation */
 export const canAccessConversation: RequestHandler = async (req, res, next) => {
   const { id } = req.params;
   const { uid: userId } = req.decodedFirebaseToken;

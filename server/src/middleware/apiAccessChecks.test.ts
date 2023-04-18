@@ -1,4 +1,4 @@
-import { isSimplifyTrialValid, isStripeSubscriptionInvalid } from './apiAccessChecks';
+import { isSimplifyTrialValid, isStripeSubscriptionInvalid } from './subscription.middleware.';
 
 // Wed Feb 01 2023 08:00:00 GMT+0000 as unix timestamp in seconds since Epoch
 const FEB_6_2023 = 1675670400;

@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { freeTrialCheck, hasSufficientCredits } from '../middleware/apiAccessChecks';
+import * as subscriptionMiddleware from '../middleware/subscription.middleware.';
 import { addConversationToRequest } from '../middleware/conversation.middleware';
 import * as messageController from '../controllers/message.controller';
 import * as messageValidation from '../validations/message.validation';
@@ -10,7 +10,7 @@ import validate from '../middleware/validate';
 
 const router = express.Router();
 
-router.use(addUserToRequest, freeTrialCheck, hasSufficientCredits);
+router.use(addUserToRequest, subscriptionMiddleware.addSubscriptionTypeToReq, subscriptionMiddleware.subscriptionCheck);
 
 router.post(
   '/',

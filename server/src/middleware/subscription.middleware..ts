@@ -4,26 +4,32 @@ import Stripe from 'stripe';
 
 import ApiError from '../utils/ApiError';
 
-export const freeTrialCheck: RequestHandler = async (req, res, next) => {
+export const addSubscriptionTypeToReq: RequestHandler = async (req, res, next) => {
   const {
-    user: { simplifyTrialEnd },
+    user: { stripeStatus, stripeCurrentPeriodEnd },
   } = req;
 
-  if (!isSimplifyTrialValid(simplifyTrialEnd)) {
-    next(new ApiError(httpStatus.FORBIDDEN, 'Your free trial has expired'));
-    return;
+  if (stripeStatus === 'active' || (stripeStatus === 'canceled' && stripeCurrentPeriodEnd - getCurrentUnixSeconds() < 0)) {
+    req.hasPaidSubscription = true;
+  } else {
+    req.hasPaidSubscription = false;
   }
 
   next();
 };
 
-export function isSimplifyTrialValid(trialEnd: number) {
-  if (getCurrentUnixSeconds() < trialEnd) {
-    return true;
+export const subscriptionCheck: RequestHandler = async (req, res, next) => {
+  const {
+    user: { stripeCurrentPeriodEnd, stripeStatus },
+  } = req;
+
+  if (isStripeSubscriptionInvalid(stripeCurrentPeriodEnd, stripeStatus)) {
+    next(new ApiError(httpStatus.FORBIDDEN, 'Your subscription has ended.'));
+    return;
   }
 
-  return false;
-}
+  next();
+};
 
 /** Checks if the current subscription is invalid. Canceled subscriptions are good until current date > current period end */
 export function isStripeSubscriptionInvalid(
@@ -36,15 +42,15 @@ export function isStripeSubscriptionInvalid(
   }
 
   /**
-   * Stripe's current period end is a Unix timestamp (seconds since epoch), so it has no timezone information
-   * the calculation above is valid regardless of the timezone the server is in
+   * - Stripe's current period end is a Unix timestamp (seconds since epoch), so it has no timezone information
+   *   the calculation above is valid regardless of the timezone the server is in
+   * - subscription can be cancelled but we permit access to APIs until current date > currentPeriodEnd
    */
   const hasCurrentPeriodExpired = stripeCurrentPeriodEnd - getCurrentUnixSeconds() < 0;
 
   if (hasCurrentPeriodExpired || stripeStatus === 'past_due') {
     return true;
   } else if (stripeStatus === 'trialing' || stripeStatus === 'active' || stripeStatus === 'canceled') {
-    // subscription can be cancelled but we permit access to APIs until current date > currentPeriodEnd
     return false;
   }
 

@@ -3,8 +3,6 @@ import httpStatus from 'http-status';
 
 import * as messageService from '../services/message.service';
 import * as openAIService from '../services/openai.service';
-import * as creditService from '../services/credit.service';
-import { OpenAiModels } from '../config/openai';
 import catchAsync from '../utils/catchAsync';
 
 export const createMessage = catchAsync(async (req: Request, res: Response) => {

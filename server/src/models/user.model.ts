@@ -3,13 +3,14 @@ import validator from 'validator';
 
 import { DUser } from '../types';
 
+// Required<DUser> makes .stripeCurrentPeriodEnd and .stripeStatus required on object
 export type DUserObject = Required<DUser> & {
   _id: Types.ObjectId;
 };
 
 export type DUserDocument = Document<unknown, any, DUser> &
   Omit<
-    DUser & {
+    Required<DUser> & {
       _id: Types.ObjectId;
     },
     never
@@ -53,10 +54,6 @@ const userSchema = new Schema<DUser, UserModel>(
       required: true,
     },
     acceptedTermsVersion: {
-      type: Number,
-      required: true,
-    },
-    simplifyTrialEnd: {
       type: Number,
       required: true,
     },
