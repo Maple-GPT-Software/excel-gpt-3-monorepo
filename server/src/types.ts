@@ -67,11 +67,6 @@ export interface DUser {
    */
   /** stripe customer id associated with user's email */
   stripeCustomerId?: string;
-  /**
-   * IMPORTANT: this is updated once when the user's payment has succeeded
-   * the payment id associated with lifetime access purchase. Empty string by default
-   * */
-  stripeLifetimeAccessPaymentId?: string;
   /** the end of the bill cycle of the user's subscription */
   stripeCurrentPeriodEnd?: number;
   /**
@@ -79,7 +74,6 @@ export interface DUser {
    */
   stripeStatus?: Stripe.Subscription.Status;
   /** the amount of unused credits. For every API call we calculate calculate the cost of the user's API call. */
-  credits?: number;
   // /** the user's open AI API key */
   // openaiApiKey: string;
 }

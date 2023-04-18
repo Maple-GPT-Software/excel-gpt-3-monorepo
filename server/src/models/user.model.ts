@@ -60,11 +60,6 @@ const userSchema = new Schema<DUser, UserModel>(
       type: Number,
       required: true,
     },
-    stripeLifetimeAccessPaymentId: {
-      type: String,
-      required: false,
-      default: '',
-    },
     stripeCustomerId: {
       type: String,
       required: false,
@@ -77,11 +72,6 @@ const userSchema = new Schema<DUser, UserModel>(
       type: String,
       required: false,
     },
-    credits: {
-      type: String,
-      require: false,
-      default: 0,
-    },
   },
   { timestamps: true }
 );
@@ -89,8 +79,6 @@ const userSchema = new Schema<DUser, UserModel>(
 /** Remove properties before Document is sent to client */
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
-
-  obj.hasLifetimeAccess = obj.stripeLifetimeAccessPaymentId !== '';
 
   delete obj._id;
   delete obj.__v;

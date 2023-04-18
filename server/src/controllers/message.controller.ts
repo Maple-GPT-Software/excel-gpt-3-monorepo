@@ -22,15 +22,6 @@ export const createMessage = catchAsync(async (req: Request, res: Response) => {
 
   const aiCompletion = await openAIService.getChatCompletion(conversation, prompt);
 
-  // only deduct credis from those that have purchased lifetime access
-  if (user.stripeLifetimeAccessPaymentId !== '') {
-    await creditService.deductCreditsByTokenUsage(
-      userId,
-      aiCompletion.usage.total_tokens,
-      aiCompletion.model as OpenAiModels
-    );
-  }
-
   const aiMessage = await messageService.createAssistantMessage(message.toObject(), aiCompletion);
 
   res.send(aiMessage);

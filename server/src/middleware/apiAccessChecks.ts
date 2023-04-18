@@ -6,38 +6,11 @@ import ApiError from '../utils/ApiError';
 
 export const freeTrialCheck: RequestHandler = async (req, res, next) => {
   const {
-    user: { stripeLifetimeAccessPaymentId, simplifyTrialEnd },
+    user: { simplifyTrialEnd },
   } = req;
-
-  // FUTURE: if user has openaiApiKey we can skip to next middleware
-  // user has paid for lifetime access
-  if (stripeLifetimeAccessPaymentId !== '') {
-    next();
-    return;
-  }
 
   if (!isSimplifyTrialValid(simplifyTrialEnd)) {
     next(new ApiError(httpStatus.FORBIDDEN, 'Your free trial has expired'));
-    return;
-  }
-
-  next();
-};
-
-export const hasSufficientCredits: RequestHandler = async (req, res, next) => {
-  const {
-    user: { stripeLifetimeAccessPaymentId, credits },
-  } = req;
-
-  // FUTURE: if user has openaiApiKey we can skip to next middleware
-  // free trial user
-  if (stripeLifetimeAccessPaymentId === '') {
-    next();
-    return;
-  }
-
-  if (credits === undefined || credits === 0) {
-    next(new ApiError(httpStatus.FORBIDDEN, 'You have insufficient credits.'));
     return;
   }
 

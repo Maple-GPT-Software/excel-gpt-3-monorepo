@@ -15,8 +15,6 @@ declare global {
     export interface Request {
       /** We only use providers that require email for registration, e.g Google, Facebook */
       decodedFirebaseToken: Required<DecodedIdToken>;
-      /** only true when the user has paid for lifetime access */
-      hasLifetimeAccess?: boolean;
       /** added by addUserToRequest middleware for protected routes */
       user: DUserObject;
       /** added by addConversationToRequest middleware for protected routes */
