@@ -1,7 +1,7 @@
 import express from 'express';
 
-import * as subscriptionMiddleware from '../middleware/subscription.middleware.';
 import { addConversationToRequest } from '../middleware/conversation.middleware';
+import * as subscriptionMiddleware from '../middleware/subscription.middleware';
 import * as messageController from '../controllers/message.controller';
 import * as messageValidation from '../validations/message.validation';
 import { addUserToRequest } from '../middleware/addUserToRequest';

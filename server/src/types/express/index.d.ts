@@ -24,3 +24,5 @@ declare global {
     }
   }
 }
+
+// TODO: make user & conversation optional

@@ -20,7 +20,7 @@ export const createAssistantMessage = async (
 
   return Message.create({
     conversationId: userMessage.conversationId,
-    userId: userMessage._id.toString(),
+    userId: userMessage.userId,
     author: DMessageAuthor.ASSISTANT,
     content: message,
     source: userMessage.source,

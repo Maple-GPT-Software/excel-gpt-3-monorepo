@@ -1,26 +1,8 @@
-import { isSimplifyTrialValid, isStripeSubscriptionInvalid } from './subscription.middleware.';
+import { isStripeSubscriptionInvalid } from './subscription.middleware';
 
 // Wed Feb 01 2023 08:00:00 GMT+0000 as unix timestamp in seconds since Epoch
 const FEB_6_2023 = 1675670400;
 const FEB_28_2023 = 1677571200;
-
-/** SIMPLIFY trial constants */
-/** Feb 11 2023 23:59:59 */
-const FEB_10_2023_1_SECOND_BEFORE_MIDNIGHT = 1676102399999;
-const FEB_11_2023_START = 1676102400;
-/** Feb 11 2023 00:00:01 */
-const FEB_11_2023_1_SECOND_PAST = 1676102401000;
-
-describe('isSimplifyTrialValid', () => {
-  it('should return true if the current date is before trial end date', () => {
-    jest.useFakeTimers().setSystemTime(new Date(FEB_10_2023_1_SECOND_BEFORE_MIDNIGHT));
-    expect(isSimplifyTrialValid(FEB_11_2023_START)).toBe(true);
-  });
-  it('should return false when the current date is past the trial end date', () => {
-    jest.useFakeTimers().setSystemTime(new Date(FEB_11_2023_1_SECOND_PAST));
-    expect(isSimplifyTrialValid(FEB_11_2023_START)).toBe(false);
-  });
-});
 
 describe('isStripeSubscriptionInvalid', () => {
   describe('isSubscriptionInvalid free subscription tests', () => {

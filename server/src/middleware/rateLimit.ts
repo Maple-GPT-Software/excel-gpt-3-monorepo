@@ -4,8 +4,7 @@ import httpStatus from 'http-status';
 
 /** 24 hours */
 const DAILY_WINDOW = 24 * 60 * 60 * 1000;
-// TODO: undo this check
-const FREE_TRIAL_MAX_DAILY_REQUESTS = 2;
+const FREE_TRIAL_MAX_DAILY_REQUESTS = 10;
 const PAID_SUBSCRIPTION_MAX_DAILY_REQUESTS = 60;
 
 /**

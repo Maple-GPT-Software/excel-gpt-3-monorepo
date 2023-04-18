@@ -9,6 +9,11 @@ export const addSubscriptionTypeToReq: RequestHandler = async (req, res, next) =
     user: { stripeStatus, stripeCurrentPeriodEnd },
   } = req;
 
+  if (stripeStatus === undefined || stripeCurrentPeriodEnd === undefined) {
+    next(new ApiError(httpStatus.FORBIDDEN, 'You do not have an active trial or subscription.'));
+    return;
+  }
+
   if (stripeStatus === 'active' || (stripeStatus === 'canceled' && stripeCurrentPeriodEnd - getCurrentUnixSeconds() < 0)) {
     req.hasPaidSubscription = true;
   } else {
@@ -22,6 +27,11 @@ export const subscriptionCheck: RequestHandler = async (req, res, next) => {
   const {
     user: { stripeCurrentPeriodEnd, stripeStatus },
   } = req;
+
+  if (stripeStatus === undefined || stripeCurrentPeriodEnd === undefined) {
+    next(new ApiError(httpStatus.FORBIDDEN, 'You do not have an active trial or subscription.'));
+    return;
+  }
 
   if (isStripeSubscriptionInvalid(stripeCurrentPeriodEnd, stripeStatus)) {
     next(new ApiError(httpStatus.FORBIDDEN, 'Your subscription has ended.'));
