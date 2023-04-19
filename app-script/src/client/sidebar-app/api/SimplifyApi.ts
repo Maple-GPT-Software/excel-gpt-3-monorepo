@@ -17,7 +17,29 @@ export interface SimplifyUserProfile {
   userId: string;
 }
 
+/** MESSAGE TYPES */
+export enum DMessageAuthor {
+  USER = 'user',
+  ASSISTANT = 'assistant',
+}
+
+export interface DMessageBase {
+  author: DMessageAuthor;
+  content: string;
+  id: string;
+}
+
+export type DUserMessage = DMessageBase & {
+  author: DMessageAuthor.USER;
+};
+
+export type DAssistantMessage = DMessageBase & {
+  author: DMessageAuthor.ASSISTANT;
+  rating: 'LIKE' | 'DISLIKE' | '';
+};
+
 const MESSAGE_BASE = 'message';
+const CONVERSATION_BASE = 'conversation';
 
 export default function SimplifyApi(accessToken: string): SimplifyApiClient {
   if (!accessToken) {
@@ -82,5 +104,27 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     }
 
     return;
+  }
+
+  async getConversations(): Promise<any> {
+    const res = await this.get(`/${CONVERSATION_BASE}`);
+
+    return res.json();
+  }
+
+  async getConversationMessages(
+    id: string
+  ): Promise<(DAssistantMessage | DUserMessage)[]> {
+    const res = await this.get(`/${CONVERSATION_BASE}/messages/${id}`);
+    const messages = (await res.json()) as (DAssistantMessage | DUserMessage)[];
+
+    if (messages.length === 0) {
+      return [];
+    }
+
+    return messages.map((el) => ({
+      ...el,
+      content: decodeURIComponent(el.content).replaceAll('`', ''),
+    }));
   }
 }

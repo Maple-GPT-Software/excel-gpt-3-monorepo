@@ -11,6 +11,10 @@ const router = express.Router();
 
 router.use(addUserToRequest);
 
+router.get('/', conversationController.getConversation);
+
+router.get('/messages/:id', conversationController.getConversationMessages);
+
 router.post(
   '/',
   subscriptionMiddleware.subscriptionCheck,

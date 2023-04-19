@@ -2,9 +2,46 @@ import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 
 import { Conversation, DConversationDocument } from '../models/conversation.model';
+import { Message } from '../models/message.model';
 import { SYSTEM_PROMPT_MAP } from '../constants';
 import catchAsync from '../utils/catchAsync';
 import ApiError from '../utils/ApiError';
+
+export const getConversation = catchAsync(async (req: Request, res: Response) => {
+  const { uid: userId } = req.decodedFirebaseToken;
+
+  try {
+    const conversations = await Conversation.find({ userId });
+    res.status(httpStatus.OK).send(conversations);
+  } catch (error) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'conversation.controller > #createConversationError: error while loading your conversations'
+    );
+  }
+});
+
+export const getConversationMessages = catchAsync(async (req: Request, res: Response) => {
+  const { uid: userId } = req.decodedFirebaseToken;
+  const { id: conversationId } = req.params;
+
+  try {
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Conversation does not exist');
+    }
+
+    if (conversation.userId !== userId) {
+      throw new ApiError(httpStatus.FORBIDDEN, 'You do not have access');
+    }
+
+    const messages = await Message.find({ conversationId }).sort().exec();
+
+    res.status(httpStatus.OK).send(messages);
+  } catch (error) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+  }
+});
 
 export const createConversation = catchAsync(async (req: Request, res: Response) => {
   const {

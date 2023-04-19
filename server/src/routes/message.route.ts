@@ -10,12 +10,14 @@ import validate from '../middleware/validate';
 
 const router = express.Router();
 
-router.use(addUserToRequest, subscriptionMiddleware.addSubscriptionTypeToReq, subscriptionMiddleware.subscriptionCheck);
+router.use(addUserToRequest);
 
 router.post(
   '/',
   validate(messageValidation.createMessage),
   rateLimitMiddleware.dailyMessagesLimiter,
+  subscriptionMiddleware.addSubscriptionTypeToReq,
+  subscriptionMiddleware.subscriptionCheck,
   addConversationToRequest,
   messageController.createMessage
 );

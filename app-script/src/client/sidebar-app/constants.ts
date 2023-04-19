@@ -6,6 +6,7 @@ export const USER_ALREADY_EXISTS = 'USER_ALREADY_EXISTS';
 export const LOGIN_ROUTE = '/login';
 export const SIGNUP_ROUTE = '/signup';
 export const CHAT_ROUTE = '/chat';
+export const CONVERSATION_CHECK_ROUTE = '/conversation';
 
 // ========== CHAT CONSTANTS
 /** the bot returns formulas in this format so that we can render it nicely in the UI */

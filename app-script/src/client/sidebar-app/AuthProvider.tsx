@@ -8,9 +8,10 @@ import React, {
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import Login from './Login';
 import Refresh from './Refresh';
-import { CHAT_ROUTE } from './constants';
+import { CHAT_ROUTE, CONVERSATION_CHECK_ROUTE } from './constants';
 import AuthenticatedLayout from './components/AuthenticatedLayout';
 import SimplifyApi, { SimplifyUserProfile } from './api/SimplifyApi';
+import ConversationCheck from './ConversationCheck';
 
 /**
  * WARNING! When making changes to this component you have to restart the dev server :(
@@ -78,8 +79,7 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     // https://medium.com/geekculture/firebase-auth-with-react-and-typescript-abeebcd7940a
-    // TODO: unsubscribe from onAuthStateChanged
-    window.getAuth().onAuthStateChanged(async (user) => {
+    const unsubscribe = window.getAuth().onAuthStateChanged(async (user) => {
       if (user) {
         const accessToken = await user.getIdToken();
 
@@ -87,7 +87,7 @@ function AuthProvider({ children }: AuthProviderProps) {
           const profile = await SimplifyApi(accessToken).getUserProfile();
           setWaitingForFirebase(false);
           setUserProfile(profile);
-          navgiate(CHAT_ROUTE);
+          navgiate(CONVERSATION_CHECK_ROUTE);
         } catch (error: any) {
           const { message } = error;
           console.log(message);
@@ -99,6 +99,10 @@ function AuthProvider({ children }: AuthProviderProps) {
         navgiate('/');
       }
     });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -122,19 +126,17 @@ function AuthProvider({ children }: AuthProviderProps) {
     });
   });
 
-  /** Refresh access token every 50 minutes */
   useEffect(() => {
-    const interval = setInterval(async () => {
-      const user = window.getAuth().currentUser;
-
+    /** update access token when access token refreshes */
+    const unsubscribe = window.getAuth().onIdTokenChanged(async (user) => {
       if (user) {
         const token = await user.getIdToken();
         setAccessToken(token);
       }
-    }, 50 * 60 * 1000);
+    });
 
     return () => {
-      clearInterval(interval);
+      unsubscribe();
     };
   }, []);
 
@@ -151,7 +153,11 @@ function AuthProvider({ children }: AuthProviderProps) {
       {waitingForFirebase && <Refresh />}
       <Routes>
         <Route index element={<Login />} />
-        <Route path={CHAT_ROUTE} element={<AuthenticatedLayout />} />
+        <Route
+          path={CONVERSATION_CHECK_ROUTE}
+          element={<ConversationCheck />}
+        />
+        <Route path={`${CHAT_ROUTE}/:id`} element={<AuthenticatedLayout />} />
       </Routes>
     </AuthContext.Provider>
   );

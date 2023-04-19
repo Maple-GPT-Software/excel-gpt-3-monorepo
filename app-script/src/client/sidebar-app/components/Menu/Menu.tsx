@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Menu.style.css';
 import { useAuthContext, useAuthenticatedContext } from '../../AuthProvider';
 import { SimplifyUserProfile } from '../../api/SimplifyApi';
+import ConversationList from './ConversationList';
 
 function Menu() {
   const { signOut, userProfile } = useAuthenticatedContext();
@@ -35,7 +36,7 @@ function Menu() {
       </nav>
       <div className={`menu-wrapper ${showMenu ? 'show' : ''}`}>
         <div className="menu-main">
-          {menuMode === 'DEFAULT' && <div> Conversation Menu </div>}
+          {menuMode === 'DEFAULT' && <ConversationList />}
           {menuMode === 'EDIT_CONVERSATION' && (
             <div> Edit Conversation View </div>
           )}
