@@ -1,6 +1,6 @@
 import React, {
-  createContext,
   ReactNode,
+  createContext,
   useContext,
   useEffect,
   useState,
@@ -18,15 +18,14 @@ import SimplifyApi, { SimplifyUserProfile } from './api/SimplifyApi';
  * However component that are children of <Routes /> are not affected by the refresh loop
  */
 
-const AuthContext = createContext<
-  | {
-      userProfile: SimplifyUserProfile | undefined;
-      accessToken: string;
-      loginWithGoogle: () => void;
-      signOut: () => void;
-    }
-  | undefined
->(undefined);
+interface AuthContextType {
+  userProfile?: SimplifyUserProfile;
+  accessToken: string;
+  loginWithGoogle: () => void;
+  signOut: () => void;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
@@ -36,6 +35,17 @@ export const useAuthContext = () => {
   }
 
   return context;
+};
+
+/** Auth context with userProfile and other optional properties defined. Safe to use this hook within a child of authenticated layout */
+export const useAuthenticatedContext = () => {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw Error('must be wrapped in AuthContext.Provider');
+  }
+
+  return context as Required<AuthContextType>;
 };
 
 interface AuthProviderProps {

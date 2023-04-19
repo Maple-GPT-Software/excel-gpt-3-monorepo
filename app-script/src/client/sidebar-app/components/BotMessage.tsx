@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch } from 'react';
 import CodeBlockMessage from './CodeBlockMessage';
 import { CompletionRating, GPTCompletion } from '../types';
 import LoadingEllipsis from './LoadingEllipsis';
@@ -11,7 +11,7 @@ import SimplifyApi from '../api/SimplifyApi';
 
 interface BotMessageProps {
   completion: GPTCompletion;
-  dispatch: React.Dispatch<ChatActions>;
+  dispatch: Dispatch<ChatActions>;
   requestStatus: 'FETCHING' | 'SUCCESS' | 'FAIL';
 }
 

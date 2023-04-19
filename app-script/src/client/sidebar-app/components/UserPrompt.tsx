@@ -159,6 +159,16 @@ const UserPrompt = (props: ChatInputProps) => {
     setFormula('');
   }
 
+  let counterBgColor = '#22c55e';
+
+  if (totalInputCharacters > 300) {
+    counterBgColor = '#f59e0b';
+  }
+
+  if (inputExceedsMaximum) {
+    counterBgColor = '#ef4444';
+  }
+
   return (
     <div className="prompt-wrapper">
       <div className="text-area-wrapper" style={{ position: 'relative' }}>
@@ -186,7 +196,7 @@ const UserPrompt = (props: ChatInputProps) => {
         <p
           className="character-count"
           style={{
-            backgroundColor: inputExceedsMaximum ? '#ef4444' : '#22c55e',
+            backgroundColor: counterBgColor,
           }}
         >{`${totalInputCharacters}/400`}</p>
         {/* MENU FOR TO SELECT INSERT FORMULA OR RANGE */}

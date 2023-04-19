@@ -7,8 +7,8 @@
     "jsx": "react",
     "esModuleInterop": true,
     "paths": {
-      "react": ["./node_modules/preact/compat"],
-      "react-dom": ["./node_modules/preact/compat/"]
+      "react": ["./node_modules/preact/compact"],
+      "react-dom": ["./node_modules/preact/compact/"]
     }
   }
 }

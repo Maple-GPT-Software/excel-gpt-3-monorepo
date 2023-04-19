@@ -25,12 +25,12 @@ const observer = new MutationObserver((mutationList) => {
   for (const mutation of mutationList) {
     if (mutation.type === 'attributes') {
       // eslint-disable-next-line no-console
-      console.log('attribute changed', firebaseStateDiv.attributes);
+      // console.log('attribute changed', firebaseStateDiv.attributes);
       firebaseStateDiv.innerHTML = '';
       firebaseStateDiv.style = '';
 
       // eslint-disable-next-line no-console
-      console.log('inside MutationObserver');
+      // console.log('inside MutationObserver');
       root.render(
         <BrowserRouter
           basename={isProd ? '/userCodeAppPanel' : '/sidebar-app-impl.html'}

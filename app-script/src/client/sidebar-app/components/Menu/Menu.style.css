@@ -1,0 +1,167 @@
+/* ============== NAVBAR */
+.nav {
+  padding: 0 12px;
+  background-color: var(--primary-dark);
+  display: flex;
+  justify-content: space-between;
+}
+
+.menu-wrapper {
+  padding: 12px;
+  padding-top: 45px;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  position: fixed;
+  transform: translateX(-100vw);
+  transition: all 400ms ease-in-out;
+  background-image: linear-gradient(
+    to right top,
+    #0f172a,
+    #1c2539,
+    #2a3549,
+    #384459,
+    #475569
+  );
+  z-index: 100;
+  display: grid;
+  grid-template-rows: 1fr 100px;
+}
+
+.menu-wrapper.show {
+  transform: translateX(0);
+}
+
+/* ================ MENU FOOTER */
+.menu-footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.trial-warning {
+  display: flex;
+  justify-content: space-between;
+}
+
+.trial-warning-text {
+  font-size: 14px;
+  line-height: 24px;
+  color: white;
+}
+
+.trial-warning-link {
+  padding: 6px 12px;
+  color: white;
+  border: solid thin white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.button-logout {
+  margin-top: 12px;
+  padding: 6px 12px;
+  width: 100%;
+  background: none;
+  border: solid thin white;
+  border-radius: 6px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+/* ===================== HAMBURGER ICON */
+.hamburger-menu {
+  z-index: 101;
+  left: 12px;
+  top: 12px;
+}
+
+.hamburger-menu input {
+  display: block;
+  width: 32px;
+  height: 32px;
+  position: absolute;
+
+  cursor: pointer;
+
+  opacity: 0;
+  z-index: 2;
+
+  -webkit-touch-callout: none;
+}
+
+.hamburger-menu {
+  top: 12px;
+  position: fixed;
+}
+
+.hamburger-menu span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  margin-bottom: 5px;
+  position: relative;
+
+  background: white;
+  border-radius: 3px;
+
+  z-index: 1;
+
+  transform-origin: 4px 0px;
+
+  transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1),
+    background 0.5s cubic-bezier(0.77, 0.2, 0.05, 1), opacity 0.55s ease;
+}
+
+.hamburger-menu span:first-child {
+  transform-origin: 0% 0%;
+}
+
+.hamburger-menu span:nth-last-child(2) {
+  transform-origin: 0% 100%;
+}
+
+.hamburger-menu input:checked ~ span:first-of-type {
+  opacity: 1;
+  transform: rotate(45deg) translate(2px, -1px);
+}
+
+.hamburger-menu input:checked ~ span:nth-last-child(2) {
+  opacity: 0;
+  transform: rotate(0deg) scale(0.2, 0.2);
+}
+
+.hamburger-menu input:checked ~ span:last-of-type {
+  transform: rotate(-45deg) translate(2px, -1px);
+}
+
+/* ===================== LOGOUT ICON */
+.gg-log-off {
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  border-radius: 16px;
+  border: 2px solid;
+  transform: scale(var(--ggs, 1));
+  width: 16px;
+  height: 16px;
+  border-top: 2px solid transparent;
+  color: white;
+}
+
+.gg-log-off::before {
+  content: '';
+  display: block;
+  box-sizing: border-box;
+  position: absolute;
+  border-radius: 3px;
+  height: 8px;
+  width: 2px;
+  background: currentColor;
+  left: 5px;
+  bottom: 6px;
+  color: white;
+}
