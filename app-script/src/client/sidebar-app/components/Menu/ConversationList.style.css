@@ -1,0 +1,50 @@
+.new-conversation-button {
+  padding: 12px;
+  width: 100%;
+  background-color: transparent;
+  color: white;
+  border: solid thin #52525b;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.new-conversation-button:hover {
+  background-color: #3f3f469e;
+}
+
+.conversation-list .divisor {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  height: 1px;
+  width: 100%;
+  border-top: solid thin #52525b;
+}
+
+.conversation-item {
+  padding: 12px;
+  color: white;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.conversation-item.selected {
+  background-color: #52525b;
+}
+
+.conversation-item:hover {
+  background-color: #52525b;
+}
+
+.conversation-item p {
+  max-width: 175px;
+  white-space: nowrap;
+  overflow: scroll;
+}
+
+.conversation-item button {
+  background-color: transparent;
+  border: none;
+  color: white;
+}

@@ -25,6 +25,7 @@ function ConversationCheck() {
     }
 
     if (conversations.length === 0) {
+      // TODO: create first conversatio and re-direct to CHAT_ROUTE
       console.log('no conversations');
     } else {
       navigate(`${CHAT_ROUTE}/${conversations[0].id}`, {

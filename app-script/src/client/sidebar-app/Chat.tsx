@@ -132,8 +132,7 @@ const chatReducer = (draft: ChatState, action: ChatActions) => {
 
 function Chat() {
   const { accessToken } = useAuthenticatedContext();
-  const params = useParams();
-  const conversationId = params.id;
+  const { conversationId } = useParams();
 
   const promptWrapperRef = useRef<HTMLDivElement>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
@@ -145,6 +144,7 @@ function Chat() {
     }
   );
 
+  // TODO: error state???
   const { isLoading: loadingMessages } = useSWR(
     conversationId ? messageKeyFactory.messagesById(conversationId) : null,
     ([, conversationId]) =>

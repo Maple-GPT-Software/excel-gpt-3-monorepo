@@ -1,15 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Menu.style.css';
-import { useAuthContext, useAuthenticatedContext } from '../../AuthProvider';
-import { SimplifyUserProfile } from '../../api/SimplifyApi';
+import { useAuthenticatedContext } from '../../AuthProvider';
 import ConversationList from './ConversationList';
+import { useParams } from 'react-router-dom';
 
 function Menu() {
+  // IMPORTANT: we can only parse the conversation out of url because we have 1 route
+  // if ever that changes we need a global store for the conversation id
+  const { conversationId } = useParams();
+  /** id of conversation to highlight or currently being edited */
+  const [selectedConversationId, setSelectedConversationId] =
+    useState(conversationId);
   const { signOut, userProfile } = useAuthenticatedContext();
   const [showMenu, setShowMenu] = useState(false);
-  const [menuMode, setMenuMode] = useState<'DEFAULT' | 'EDIT_CONVERSATION'>(
-    'DEFAULT'
-  );
+  const [menuMode, setMenuMode] = useState<
+    'DEFAULT' | 'EDIT_CONVERSATION' | 'CREATE_CONVERSATION'
+  >('DEFAULT');
+
+  function enterCreateConversationMode() {
+    setMenuMode('CREATE_CONVERSATION');
+  }
+
+  function enterEditConversationMode(id: string) {
+    setSelectedConversationId(id);
+  }
+
+  function onLeaveEditConversationMode() {
+    if (!conversationId) {
+      return;
+    }
+
+    setSelectedConversationId(conversationId);
+  }
+
+  /** sync selected conversation id with the conversationId in the url params */
+  useEffect(() => {
+    if (conversationId) {
+      setSelectedConversationId(conversationId);
+    }
+  }, [conversationId]);
 
   const trialExpiration = getSubscriptionDaysRemaining(
     userProfile.stripeCurrentPeriodEnd
@@ -36,10 +65,14 @@ function Menu() {
       </nav>
       <div className={`menu-wrapper ${showMenu ? 'show' : ''}`}>
         <div className="menu-main">
-          {menuMode === 'DEFAULT' && <ConversationList />}
-          {menuMode === 'EDIT_CONVERSATION' && (
-            <div> Edit Conversation View </div>
+          {menuMode === 'DEFAULT' && (
+            <ConversationList selectedConversationId={selectedConversationId} />
           )}
+          {menuMode === 'CREATE_CONVERSATION' ||
+            (menuMode === 'EDIT_CONVERSATION' && (
+              // TODO: when creating/editing pass in mode
+              <div> Edit Conversation View </div>
+            ))}
         </div>
 
         {menuMode === 'DEFAULT' && (

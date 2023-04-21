@@ -157,7 +157,10 @@ function AuthProvider({ children }: AuthProviderProps) {
           path={CONVERSATION_CHECK_ROUTE}
           element={<ConversationCheck />}
         />
-        <Route path={`${CHAT_ROUTE}/:id`} element={<AuthenticatedLayout />} />
+        <Route
+          path={`${CHAT_ROUTE}/:conversationId`}
+          element={<AuthenticatedLayout />}
+        />
       </Routes>
     </AuthContext.Provider>
   );

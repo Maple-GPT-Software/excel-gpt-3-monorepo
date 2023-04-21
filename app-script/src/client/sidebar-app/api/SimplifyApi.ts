@@ -2,6 +2,8 @@ import settings from '../settings';
 import { CompletionRating, GPTCompletion } from '../types';
 import { AuthenticatedRequestor } from './requestors';
 
+const SOURCE = 'APPSCRIPT';
+
 export const enum SubscriptionStatuses {
   ACTIVE = 'active',
   TRIALING = 'trialing',
@@ -17,7 +19,28 @@ export interface SimplifyUserProfile {
   userId: string;
 }
 
-/** MESSAGE TYPES */
+/** =============== CONVERSATION TYPES */
+export const systemPromptTypeMap = {
+  googleSheetChat: 'Google Sheet Assistant',
+  googleAppScriptChat: 'Google AppScript Assistant',
+  generalAiChat: 'General AI Assistant',
+};
+
+export interface DConversation {
+  id: string;
+  userId: string;
+  isSaved: boolean;
+  name: string;
+  temperature: number;
+}
+
+export interface NewConversation {
+  temperature: number;
+  systemPromptType: keyof typeof systemPromptTypeMap;
+}
+
+/** =============== MESSAGE TYPES */
+
 export enum DMessageAuthor {
   USER = 'user',
   ASSISTANT = 'assistant',
@@ -72,7 +95,7 @@ class SimplifyApiClient extends AuthenticatedRequestor {
       `/${MESSAGE_BASE}?${queryParams.toString()}`,
       {
         prompt,
-        source: 'APPSCRIPT',
+        source: SOURCE,
       }
     );
 
@@ -106,7 +129,7 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     return;
   }
 
-  async getConversations(): Promise<any> {
+  async getConversations(): Promise<DConversation[]> {
     const res = await this.get(`/${CONVERSATION_BASE}`);
 
     return res.json();
@@ -126,5 +149,18 @@ class SimplifyApiClient extends AuthenticatedRequestor {
       ...el,
       content: decodeURIComponent(el.content).replaceAll('`', ''),
     }));
+  }
+
+  async createNewConversation({
+    temperature,
+    systemPromptType,
+  }: NewConversation): Promise<DConversation> {
+    const res = await this.post(`/${CONVERSATION_BASE}`, {
+      temperature,
+      systemPromptKey: systemPromptType,
+      source: SOURCE,
+    });
+
+    return res.json();
   }
 }

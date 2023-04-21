@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
-import { DConversation, IClientSource, PartialBy } from '../types';
 import { SYSTEM_PROMPT_MAP } from '../constants';
+import { IClientSource } from '../types';
 
 export const newConversation = {
   body: Joi.object().keys({

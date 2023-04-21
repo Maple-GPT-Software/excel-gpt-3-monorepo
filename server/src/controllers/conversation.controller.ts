@@ -7,10 +7,11 @@ import { SYSTEM_PROMPT_MAP } from '../constants';
 import catchAsync from '../utils/catchAsync';
 import ApiError from '../utils/ApiError';
 
-export const getConversation = catchAsync(async (req: Request, res: Response) => {
+export const getConversations = catchAsync(async (req: Request, res: Response) => {
   const { uid: userId } = req.decodedFirebaseToken;
 
   try {
+    // TOOD: sort conversation by updatedAt
     const conversations = await Conversation.find({ userId });
     res.status(httpStatus.OK).send(conversations);
   } catch (error) {

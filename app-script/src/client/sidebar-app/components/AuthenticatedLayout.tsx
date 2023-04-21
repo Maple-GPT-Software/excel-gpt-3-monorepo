@@ -4,6 +4,7 @@ import { useAuthContext } from '../AuthProvider';
 import { SubscriptionStatuses } from '../api/SimplifyApi';
 
 import './AuthenticatedLayout.style.css';
+
 import Menu from './Menu/Menu';
 import { SWRConfig } from 'swr';
 
