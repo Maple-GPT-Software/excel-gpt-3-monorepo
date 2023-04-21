@@ -5,6 +5,7 @@ import SimplifyApi from './api/SimplifyApi';
 import { useAuthenticatedContext } from './AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { CHAT_ROUTE } from './constants';
+import { CenteredLoadingEllipsis } from './components/LoadingEllipsis';
 
 function ConversationCheck() {
   const { accessToken } = useAuthenticatedContext();
@@ -33,17 +34,9 @@ function ConversationCheck() {
   }, [loadingConversations, conversations]);
 
   return (
-    <h1
-      style={{
-        textAlign: 'center',
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        marginLeft: '-25%',
-      }}
-    >
-      Loading Conversations
-    </h1>
+    <CenteredLoadingEllipsis>
+      <p>loading your conversations </p>
+    </CenteredLoadingEllipsis>
   );
 }
 

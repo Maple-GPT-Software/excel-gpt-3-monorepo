@@ -12,6 +12,7 @@ import { useParams } from 'react-router-dom';
 import messageKeyFactory from './messageQueryFactory';
 import SimplifyApi from './api/SimplifyApi';
 import { useAuthenticatedContext } from './AuthProvider';
+import { CenteredLoadingEllipsis } from './components/LoadingEllipsis';
 
 export interface ChatState {
   /** the state of the application. Fetching when we're waiting for the AI to answer */
@@ -144,11 +145,7 @@ function Chat() {
     }
   );
 
-  const {
-    data: messages,
-    isLoading,
-    mutate,
-  } = useSWR(
+  const { isLoading: loadingMessages } = useSWR(
     conversationId ? messageKeyFactory.messagesById(conversationId) : null,
     ([, conversationId]) =>
       SimplifyApi(accessToken).getConversationMessages(conversationId),
@@ -173,8 +170,14 @@ function Chat() {
   return (
     <div className="chat-wrapper">
       <section className="messages-wrapper">
-        {!chatState.messages.length && <ExamplePrompts />}
-        {!!chatState.messages.length &&
+        {loadingMessages && (
+          <CenteredLoadingEllipsis>
+            <p> loading messsages </p>
+          </CenteredLoadingEllipsis>
+        )}
+        {!chatState.messages.length && !loadingMessages && <ExamplePrompts />}
+        {chatState.messages.length &&
+          !loadingMessages &&
           chatState.messages.map((message, index) => {
             if (message.author === 'user') {
               return (

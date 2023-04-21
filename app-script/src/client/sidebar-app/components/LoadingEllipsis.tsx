@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import './LoadingEllipsis.style.css';
 
@@ -14,3 +14,12 @@ function LoadingEllipsis() {
 }
 
 export default LoadingEllipsis;
+
+export function CenteredLoadingEllipsis({ children }: { children: ReactNode }) {
+  return (
+    <div className="centered-loading-ellipsis">
+      <LoadingEllipsis />
+      {children && <div className="children-wrapper">{children}</div>}
+    </div>
+  );
+}
