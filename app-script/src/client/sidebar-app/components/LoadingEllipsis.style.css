@@ -1,17 +1,3 @@
-.lds-ellipsis {
-  display: inline-block;
-  position: relative;
-}
-
-.lds-ellipsis div {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--secondary-main);
-  animation-timing-function: cubic-bezier(0, 1, 1, 0);
-}
-
 .centered-loading-ellipsis {
   height: 100%;
   width: 100%;
@@ -25,8 +11,26 @@
   margin-left: -90px;
 }
 
+.centered-loading-ellipsis.dark-mode .lds-ellipsis div {
+  background: white;
+}
+
 .centered-loading-ellipsis .children-wrapper {
   margin-top: 24px;
+}
+
+.lds-ellipsis {
+  display: inline-block;
+  position: relative;
+}
+
+.lds-ellipsis div {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--secondary-main);
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 
 .lds-ellipsis div:nth-child(1) {

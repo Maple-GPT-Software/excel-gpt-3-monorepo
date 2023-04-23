@@ -39,4 +39,16 @@ export class AuthenticatedRequestor {
       body: JSON.stringify(body),
     });
   }
+
+  async delete(endpoint: string) {
+    const url = this.baseUrl + endpoint;
+
+    return await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.accessToken}`,
+      },
+    });
+  }
 }

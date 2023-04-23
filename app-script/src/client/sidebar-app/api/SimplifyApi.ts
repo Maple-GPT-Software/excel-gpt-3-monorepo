@@ -20,11 +20,12 @@ export interface SimplifyUserProfile {
 }
 
 /** =============== CONVERSATION TYPES */
-export const systemPromptTypeMap = {
-  googleSheetChat: 'Google Sheet Assistant',
-  googleAppScriptChat: 'Google AppScript Assistant',
-  generalAiChat: 'General AI Assistant',
-};
+
+export enum DConversationPromptType {
+  googleSheetChat = 'googleSheetChat',
+  googleAppScriptChat = 'googleAppScriptChat',
+  generalAiChat = 'generalAiChat',
+}
 
 export interface DConversation {
   id: string;
@@ -32,11 +33,13 @@ export interface DConversation {
   isSaved: boolean;
   name: string;
   temperature: number;
+  promptType: DConversationPromptType;
 }
 
 export interface NewConversation {
+  name: string;
+  promptType: DConversationPromptType;
   temperature: number;
-  systemPromptType: keyof typeof systemPromptTypeMap;
 }
 
 /** =============== MESSAGE TYPES */
@@ -86,7 +89,7 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     return res.json();
   }
 
-  // TOOD: conversation ID
+  // TODO: conversation ID
   async getCompletion(prompt: string): Promise<GPTCompletion> {
     const queryParams = new URLSearchParams({
       conversationId: '643e0517ac1a954843283dfc',
@@ -152,15 +155,24 @@ class SimplifyApiClient extends AuthenticatedRequestor {
   }
 
   async createNewConversation({
+    name,
     temperature,
-    systemPromptType,
+    promptType,
   }: NewConversation): Promise<DConversation> {
     const res = await this.post(`/${CONVERSATION_BASE}`, {
+      name,
       temperature,
-      systemPromptKey: systemPromptType,
+      promptType,
       source: SOURCE,
     });
 
     return res.json();
   }
+
+  async deleteConversation(id: string): Promise<DConversation> {
+    const res = await this.delete(`/${CONVERSATION_BASE}/${id}`);
+
+    return res.json();
+  }
+  // TODO: EDIT CONVERSATION
 }

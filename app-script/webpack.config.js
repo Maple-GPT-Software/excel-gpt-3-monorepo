@@ -171,7 +171,6 @@ const clientConfig = ({ isDevClientWrapper }) => ({
       },
     ],
   },
-  // devtool : isProd ? 'source-map' : 'cheap-module-source-map'
 });
 
 // DynamicCdnWebpackPlugin settings
@@ -236,6 +235,7 @@ const clientConfigs = clientEntrypoints.map((clientEntrypoint) => {
   const isDevClientWrapper = false;
   return {
     ...clientConfig({ isDevClientWrapper }),
+    devtool: isProd ? undefined : 'inline-source-map',
     name: clientEntrypoint.name,
     entry: clientEntrypoint.entry,
     target: 'web',

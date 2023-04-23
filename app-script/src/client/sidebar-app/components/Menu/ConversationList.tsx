@@ -3,29 +3,59 @@ import useSWR from 'swr';
 import { useAuthenticatedContext } from '../../AuthProvider';
 import SimplifyApi, { DConversation } from '../../api/SimplifyApi';
 import conversationKeyFactory from './conversationQueryKeys';
+import { useSWRConfig } from 'swr';
 
 import './ConversationList.style.css';
 import Icon from '../Icon';
 import useOnClickOutside from '../../hooks/useOnClickOutside';
 
 function ConversationList({
+  accessToken,
   selectedConversationId,
+  onCreateConversationClick,
+  conversations,
+  updateSelectedId,
 }: {
+  accessToken: string;
   selectedConversationId: string | undefined;
+  onCreateConversationClick: () => void;
+  conversations: DConversation[];
+  updateSelectedId: (k: string) => void;
 }) {
   const conversationListRef = useRef<HTMLDivElement>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const { data: conversations } = useSWR<DConversation[]>(
-    conversationKeyFactory.all
-  );
+
+  const { mutate } = useSWRConfig();
+
+  function deleteConversationHandler(conversationId: string) {
+    mutate(conversationKeyFactory.all, () =>
+      SimplifyApi(accessToken)
+        .deleteConversation(conversationId)
+        .then((data) => {
+          if (conversations.length > 1) {
+            updateSelectedId(conversations[0].id);
+            setIsDeleting(false);
+          }
+
+          return data;
+        })
+    );
+  }
 
   useOnClickOutside(conversationListRef, () => {
-    setIsDeleting(false);
+    if (isDeleting) {
+      setIsDeleting(false);
+    }
   });
 
   return (
     <div className="conversation-list" ref={conversationListRef}>
-      <button className="new-conversation-button">+ New Conversation</button>
+      <button
+        className="new-conversation-button"
+        onClick={onCreateConversationClick}
+      >
+        + New Conversation
+      </button>
       <div className="divisor"></div>
       {conversations?.length &&
         conversations.map((conversation) => {
@@ -35,6 +65,7 @@ function ConversationList({
             <div
               key={conversation.id}
               className={`conversation-item ${isSelected ? 'selected' : ''}`}
+              onClick={() => updateSelectedId(conversation.id)}
             >
               <p>{conversation.name}</p>
               <div ref={(ref) => {}} className="conversation-item-actions">
@@ -65,7 +96,10 @@ function ConversationList({
                 )}
                 {isSelected && isDeleting && (
                   <>
-                    <button title="confirm delete">
+                    <button
+                      title="confirm delete"
+                      onClick={() => deleteConversationHandler(conversation.id)}
+                    >
                       <Icon
                         pathName="CHECK"
                         strokeColor="white"

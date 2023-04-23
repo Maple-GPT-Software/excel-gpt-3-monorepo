@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 
 import { Conversation, DConversationDocument } from '../models/conversation.model';
+import { DConversationPromptType } from '../types';
 import { Message } from '../models/message.model';
 import { SYSTEM_PROMPT_MAP } from '../constants';
 import catchAsync from '../utils/catchAsync';
@@ -46,18 +47,20 @@ export const getConversationMessages = catchAsync(async (req: Request, res: Resp
 
 export const createConversation = catchAsync(async (req: Request, res: Response) => {
   const {
-    systemPromptKey,
+    promptType,
     temperature,
     source,
-  }: { systemPromptKey: keyof typeof SYSTEM_PROMPT_MAP; temperature: number; source: string } = req.body;
+    name,
+  }: { promptType: DConversationPromptType; temperature: number; source: string; name: string } = req.body;
   const { uid: userId } = req.decodedFirebaseToken;
 
   try {
     const conversation = await Conversation.create({
       userId,
       isSaved: false,
-      name: 'new conversation',
-      systemPrompt: SYSTEM_PROMPT_MAP[systemPromptKey],
+      name,
+      systemPrompt: SYSTEM_PROMPT_MAP[promptType],
+      promptType,
       temperature,
       source,
     });
@@ -74,9 +77,9 @@ export const createConversation = catchAsync(async (req: Request, res: Response)
 export const deleteConversation = catchAsync(async (req: Request, res: Response) => {
   const { id: conversationId } = req.params;
 
-  await Conversation.findByIdAndDelete(conversationId);
+  const conversation = await Conversation.findByIdAndDelete(conversationId, { returnDocument: 'before' });
 
-  res.status(httpStatus.OK).send();
+  res.status(httpStatus.OK).send(conversation);
 });
 
 export const updateConversation = catchAsync(async (req: Request, res: Response) => {

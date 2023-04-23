@@ -15,9 +15,15 @@ function LoadingEllipsis() {
 
 export default LoadingEllipsis;
 
-export function CenteredLoadingEllipsis({ children }: { children: ReactNode }) {
+export function CenteredLoadingEllipsis({
+  children,
+  darkMode = false,
+}: {
+  children: ReactNode;
+  darkMode?: boolean;
+}) {
   return (
-    <div className="centered-loading-ellipsis">
+    <div className={`centered-loading-ellipsis ${darkMode ? 'dark-mode' : ''}`}>
       <LoadingEllipsis />
       {children && <div className="children-wrapper">{children}</div>}
     </div>

@@ -78,11 +78,18 @@ export interface DUser {
 
 // CONVERSATION ==========================================================
 
+export enum DConversationPromptType {
+  googleSheetChat = 'googleSheetChat',
+  googleAppScriptChat = 'googleAppScriptChat',
+  generalAiChat = 'generalAiChat',
+}
+
 export interface DConversation {
   userId: string;
   name: string;
   isSaved: boolean;
   systemPrompt: string;
+  promptType: DConversationPromptType;
   /**
    * between 0 and 2. Higher values like 0.8 will make the output more random,
    * while lower values like 0.2 will make it more focused and deterministic.
@@ -91,7 +98,6 @@ export interface DConversation {
   temperature: number;
   /** the client that created this conversation */
   source: IClientSource;
-  // FUTURE: folderId: string
 }
 
 // MESSAGES ==========================================================

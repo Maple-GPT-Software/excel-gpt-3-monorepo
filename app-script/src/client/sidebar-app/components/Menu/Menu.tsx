@@ -2,43 +2,70 @@ import React, { useEffect, useState } from 'react';
 import './Menu.style.css';
 import { useAuthenticatedContext } from '../../AuthProvider';
 import ConversationList from './ConversationList';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { CreateConversationForm } from './ConversationForm';
+import useSWR from 'swr';
+import SimplifyApi, { DConversation } from '../../api/SimplifyApi';
+import conversationKeyFactory from './conversationQueryKeys';
+import { CHAT_ROUTE } from '../../constants';
+
+type MenuModes = 'DEFAULT' | 'EDIT_CONVERSATION' | 'CREATE_CONVERSATION';
+
+const MENU_MODE_LABELS: { [key: string]: string } = {
+  EDIT_CONVERSATION: 'Edit Conversation',
+  CREATE_CONVERSATION: 'Create Conversation',
+};
 
 function Menu() {
   // IMPORTANT: we can only parse the conversation out of url because we have 1 route
   // if ever that changes we need a global store for the conversation id
   const { conversationId } = useParams();
-  /** id of conversation to highlight or currently being edited */
-  const [selectedConversationId, setSelectedConversationId] =
-    useState(conversationId);
-  const { signOut, userProfile } = useAuthenticatedContext();
+  const navigate = useNavigate();
+  const { signOut, userProfile, accessToken } = useAuthenticatedContext();
+  const { data: conversations } = useSWR<DConversation[]>(
+    accessToken ? conversationKeyFactory.all : null,
+    () => SimplifyApi(accessToken).getConversations()
+  );
   const [showMenu, setShowMenu] = useState(false);
-  const [menuMode, setMenuMode] = useState<
-    'DEFAULT' | 'EDIT_CONVERSATION' | 'CREATE_CONVERSATION'
-  >('DEFAULT');
+  const [menuMode, setMenuMode] = useState<MenuModes>('DEFAULT');
+  const [selectedConversationId, setSelectedConversationId] = useState(
+    conversationId ?? ''
+  );
 
   function enterCreateConversationMode() {
+    console.log('entering create mode');
     setMenuMode('CREATE_CONVERSATION');
   }
 
-  function enterEditConversationMode(id: string) {
-    setSelectedConversationId(id);
+  function enterEditConversationMode(id: string) {}
+
+  function backToDefaultMode() {
+    setMenuMode('DEFAULT');
   }
 
-  function onLeaveEditConversationMode() {
-    if (!conversationId) {
-      return;
-    }
-
+  function updateSelectedId(conversationId: string) {
     setSelectedConversationId(conversationId);
   }
 
-  /** sync selected conversation id with the conversationId in the url params */
-  useEffect(() => {
-    if (conversationId) {
-      setSelectedConversationId(conversationId);
+  function createNewConversationSuccessCb(conversationId: string) {
+    updateSelectedId(conversationId);
+    setMenuMode('DEFAULT');
+    toggleShowMenuHandler();
+  }
+
+  function toggleShowMenuHandler() {
+    if (!showMenu) {
+      setShowMenu(true);
+      return;
     }
-  }, [conversationId]);
+
+    /** update conersationId param */
+    if (conversationId !== selectedConversationId) {
+      navigate(`${CHAT_ROUTE}/${selectedConversationId}`);
+    }
+
+    setShowMenu(false);
+  }
 
   const trialExpiration = getSubscriptionDaysRemaining(
     userProfile.stripeCurrentPeriodEnd
@@ -51,11 +78,12 @@ function Menu() {
         {menuMode === 'DEFAULT' && (
           <div
             className="hamburger-menu"
-            aria-label={showMenu ? 'open menu' : 'close menu'}
+            aria-label={showMenu ? 'close menu' : 'open menu'}
           >
             <input
               type="checkbox"
-              onClick={() => setShowMenu((prev) => !prev)}
+              checked={showMenu}
+              onClick={toggleShowMenuHandler}
             />
             <span></span>
             <span></span>
@@ -65,14 +93,41 @@ function Menu() {
       </nav>
       <div className={`menu-wrapper ${showMenu ? 'show' : ''}`}>
         <div className="menu-main">
-          {menuMode === 'DEFAULT' && (
-            <ConversationList selectedConversationId={selectedConversationId} />
+          {menuMode !== 'DEFAULT' && (
+            <div style={{ marginBottom: '24px' }}>
+              <button
+                className="button button-outline"
+                style={{ padding: '6px' }}
+                onClick={() => setMenuMode('DEFAULT')}
+              >
+                back
+              </button>
+              <p
+                style={{
+                  color: 'white',
+                  marginLeft: '12px',
+                  display: 'inline',
+                }}
+              >
+                {MENU_MODE_LABELS[menuMode]}
+              </p>
+            </div>
           )}
-          {menuMode === 'CREATE_CONVERSATION' ||
-            (menuMode === 'EDIT_CONVERSATION' && (
-              // TODO: when creating/editing pass in mode
-              <div> Edit Conversation View </div>
-            ))}
+          {menuMode === 'DEFAULT' && (
+            <ConversationList
+              accessToken={accessToken}
+              onCreateConversationClick={enterCreateConversationMode}
+              selectedConversationId={selectedConversationId}
+              conversations={conversations || []}
+              updateSelectedId={updateSelectedId}
+            />
+          )}
+          {menuMode === 'CREATE_CONVERSATION' && (
+            <CreateConversationForm
+              accessToken={accessToken}
+              createNewConversationSuccessCb={createNewConversationSuccessCb}
+            />
+          )}
         </div>
 
         {menuMode === 'DEFAULT' && (

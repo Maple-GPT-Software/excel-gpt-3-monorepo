@@ -106,32 +106,15 @@ function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   useEffect(() => {
-    window.getAuth().onIdTokenChanged((user) => {
-      // the case where the user has logged out is handled by onAuthStateChanged listener
-      // we get this event when the user first logs in and when firebase periodically refreshes the user's token
-      if (user) {
-        user
-          .getIdToken()
-          .then((token) => {
-            setAccessToken(token);
-          })
-          .catch((e) => {
-            // firebase API call fails
-            signOut();
-          })
-          .finally(() => {
-            setWaitingForFirebase(false);
-          });
-      }
-    });
-  });
-
-  useEffect(() => {
     /** update access token when access token refreshes */
     const unsubscribe = window.getAuth().onIdTokenChanged(async (user) => {
       if (user) {
-        const token = await user.getIdToken();
-        setAccessToken(token);
+        try {
+          const token = await user.getIdToken();
+          setAccessToken(token);
+        } catch (error) {
+          signOut();
+        }
       }
     });
 
