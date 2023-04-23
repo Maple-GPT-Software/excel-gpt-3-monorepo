@@ -33,19 +33,44 @@ const SYSTEM_PROMPT_OPTIONS: {
   },
 ];
 
-interface CreateConversationProps {
-  /** saved settings when editing an existing conversation */
-  conversationSettings: DConversation;
+interface EditConversationProps {
+  backToMenuDefaultMode: () => void;
+  conversation: DConversation;
+  accessToken: string;
 }
 
-export function EditConversationForm({
-  conversationSettings,
-}: CreateConversationProps) {
+function EditConversationForm({
+  backToMenuDefaultMode,
+  conversation,
+  accessToken,
+}: EditConversationProps) {
+  const { trigger, isMutating } = useSWRMutation(
+    conversationKeyFactory.all,
+    (
+      key,
+      {
+        arg,
+      }: {
+        arg: {
+          accessToken: string;
+          updatedSettings: Omit<ConversationSettings, 'promptType'>;
+        };
+      }
+    ) => SimplifyApi(arg.accessToken).editConversation(arg.updatedSettings),
+    {
+      onSuccess: (newConversation) => {
+        backToMenuDefaultMode();
+      },
+    }
+  );
+
   const [settings, setSettings] = useState<ConversationSettings>(() => {
+    const { name, promptType, temperature } = conversation;
+
     return {
-      name: conversationSettings.name,
-      promptType: conversationSettings.promptType,
-      temperature: conversationSettings.temperature,
+      name,
+      promptType,
+      temperature,
     };
   });
 
@@ -53,15 +78,22 @@ export function EditConversationForm({
     setSettings((prevSettings) => ({ ...prevSettings, [prop]: value }));
   }
 
-  // return (
-  //   <CenteredLoadingEllipsis darkMode={true}>
-  //     <p style={{ color: 'white' }}> creating new converation</p>
-  //   </CenteredLoadingEllipsis>
-  // );
+  // function onSubmitHandler() {
+  //   trigger({ accessToken, updatedSettings: {name : name, temperature: test} });
+  // }
+
+  if (isMutating) {
+    return (
+      <CenteredLoadingEllipsis darkMode={true}>
+        <p style={{ color: 'white' }}> creating new converation</p>
+      </CenteredLoadingEllipsis>
+    );
+  }
 
   return (
-    <form action="">
+    <form onSubmit={onSubmitHandler}>
       <ConversationFormFields
+        isEditing={true}
         onChangeByProp={onChangeByProp}
         settings={settings}
       />
@@ -70,13 +102,34 @@ export function EditConversationForm({
         className="button button-outline"
         type="submit"
       >
-        CREATE NEW CHAT
+        SAVE CONVERSATION SETTINGS
       </button>
     </form>
   );
 }
 
-export function EditConversationFormWrapper() {}
+type EditConversationFormWrapper = {
+  backToMenuDefaultMode: () => void;
+  conversationId: string | undefined;
+  conversations: DConversation[] | undefined;
+  accessToken: string;
+};
+
+export function EditConversationFormWrapper({
+  conversationId,
+  conversations,
+  ...props
+}: EditConversationFormWrapper) {
+  const targetConversation = conversations?.find(
+    (conversation) => conversation.id === conversationId
+  );
+
+  if (!targetConversation) {
+    return <p>Unable to find the conversation you want to edit </p>;
+  }
+
+  return <EditConversationForm {...props} conversation={targetConversation} />;
+}
 
 export function CreateConversationForm({
   accessToken,
@@ -144,9 +197,11 @@ export function CreateConversationForm({
 function ConversationFormFields({
   settings,
   onChangeByProp,
+  isEditing = false,
 }: {
   settings: ConversationSettings;
   onChangeByProp: (prop: keyof ConversationSettings, value: any) => void;
+  isEditing?: boolean;
 }) {
   const { name, promptType, temperature } = settings;
 
@@ -167,6 +222,7 @@ function ConversationFormFields({
       <div className="conversation-form-field-wrapper">
         <label htmlFor="promptType">Assistant Type</label>
         <select
+          disabled={isEditing}
           className="field"
           id="promptType"
           value={promptType}
@@ -184,13 +240,12 @@ function ConversationFormFields({
         <p style={{ marginBottom: '6px' }}>
           Determines the randomness and creativity of generated answers. A value
           closer to 1 leads to more unpredictable and diverse outputs, while a
-          value closer to 0 temperature leads to more predictable answers. If
-          unsure we recommend using the default value!
+          value closer to 0 temperature leads to more predictable answers. We
+          provide a default value if you are unsure!
           <a
             href="https://algowriting.medium.com/gpt-3-temperature-setting-101-41200ff0d0be"
             target="_blank"
           >
-            {' '}
             Suggested reading
           </a>
         </p>

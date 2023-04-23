@@ -3,7 +3,10 @@ import './Menu.style.css';
 import { useAuthenticatedContext } from '../../AuthProvider';
 import ConversationList from './ConversationList';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CreateConversationForm } from './ConversationForm';
+import {
+  CreateConversationForm,
+  EditConversationFormWrapper,
+} from './ConversationForm';
 import useSWR from 'swr';
 import SimplifyApi, { DConversation } from '../../api/SimplifyApi';
 import conversationKeyFactory from './conversationQueryKeys';
@@ -33,11 +36,12 @@ function Menu() {
   );
 
   function enterCreateConversationMode() {
-    console.log('entering create mode');
     setMenuMode('CREATE_CONVERSATION');
   }
 
-  function enterEditConversationMode(id: string) {}
+  function enterEditConversationMode() {
+    setMenuMode('EDIT_CONVERSATION');
+  }
 
   function backToDefaultMode() {
     setMenuMode('DEFAULT');
@@ -50,7 +54,8 @@ function Menu() {
   function createNewConversationSuccessCb(conversationId: string) {
     updateSelectedId(conversationId);
     setMenuMode('DEFAULT');
-    toggleShowMenuHandler();
+    navigate(`${CHAT_ROUTE}/${conversationId}`);
+    setShowMenu(false);
   }
 
   function toggleShowMenuHandler() {
@@ -117,6 +122,7 @@ function Menu() {
             <ConversationList
               accessToken={accessToken}
               onCreateConversationClick={enterCreateConversationMode}
+              enterEditConversationMode={enterEditConversationMode}
               selectedConversationId={selectedConversationId}
               conversations={conversations || []}
               updateSelectedId={updateSelectedId}
@@ -126,6 +132,14 @@ function Menu() {
             <CreateConversationForm
               accessToken={accessToken}
               createNewConversationSuccessCb={createNewConversationSuccessCb}
+            />
+          )}
+          {menuMode === 'EDIT_CONVERSATION' && (
+            <EditConversationFormWrapper
+              conversations={conversations}
+              conversationId={selectedConversationId}
+              backToMenuDefaultMode={backToDefaultMode}
+              accessToken={accessToken}
             />
           )}
         </div>

@@ -13,12 +13,14 @@ function ConversationList({
   accessToken,
   selectedConversationId,
   onCreateConversationClick,
+  enterEditConversationMode,
   conversations,
   updateSelectedId,
 }: {
   accessToken: string;
   selectedConversationId: string | undefined;
   onCreateConversationClick: () => void;
+  enterEditConversationMode: () => void;
   conversations: DConversation[];
   updateSelectedId: (k: string) => void;
 }) {
@@ -27,6 +29,7 @@ function ConversationList({
 
   const { mutate } = useSWRConfig();
 
+  // TODO: case where user deletes only conversation, create new by default
   function deleteConversationHandler(conversationId: string) {
     mutate(conversationKeyFactory.all, () =>
       SimplifyApi(accessToken)
@@ -71,7 +74,10 @@ function ConversationList({
               <div ref={(ref) => {}} className="conversation-item-actions">
                 {isSelected && !isDeleting && (
                   <>
-                    <button title="edit conversation">
+                    <button
+                      title="edit conversation"
+                      onClick={enterEditConversationMode}
+                    >
                       <Icon
                         pathName="PENCIL"
                         strokeColor="white"

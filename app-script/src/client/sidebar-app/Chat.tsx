@@ -176,7 +176,7 @@ function Chat() {
           </CenteredLoadingEllipsis>
         )}
         {!chatState.messages.length && !loadingMessages && <ExamplePrompts />}
-        {chatState.messages.length &&
+        {!!chatState.messages.length &&
           !loadingMessages &&
           chatState.messages.map((message, index) => {
             if (message.author === 'user') {

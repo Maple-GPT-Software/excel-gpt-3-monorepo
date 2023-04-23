@@ -71,7 +71,6 @@ const UserPrompt = (props: ChatInputProps) => {
 
     dispatch({
       type: ChatReducerActionTypes.ADD_USER_PROMPT,
-      // TODO: format data table and formula
       payload: {
         id: Math.random().toString(),
         content: clientUserPrompt,
@@ -79,8 +78,7 @@ const UserPrompt = (props: ChatInputProps) => {
       },
     });
 
-    // scroll to bottom of chat container after user's prompt is added
-    // wrapped in setTimeout so that immer dispatch updates chat first
+    // scroll to bottom after immer action is dispatched
     setTimeout(() => {
       scrollToBottomOfChat();
     });

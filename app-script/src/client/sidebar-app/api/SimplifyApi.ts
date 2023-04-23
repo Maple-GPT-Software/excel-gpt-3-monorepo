@@ -169,10 +169,21 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     return res.json();
   }
 
+  async editConversation({
+    name,
+    temperature,
+  }: Omit<NewConversation, 'promptType'>): Promise<DConversation> {
+    const res = await this.post(`/${CONVERSATION_BASE}`, {
+      name,
+      temperature,
+    });
+
+    return res.json();
+  }
+
   async deleteConversation(id: string): Promise<DConversation> {
     const res = await this.delete(`/${CONVERSATION_BASE}/${id}`);
 
     return res.json();
   }
-  // TODO: EDIT CONVERSATION
 }
