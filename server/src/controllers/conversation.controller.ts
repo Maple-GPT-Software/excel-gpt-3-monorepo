@@ -12,8 +12,7 @@ export const getConversations = catchAsync(async (req: Request, res: Response) =
   const { uid: userId } = req.decodedFirebaseToken;
 
   try {
-    // TOOD: sort conversation by updatedAt
-    const conversations = await Conversation.find({ userId });
+    const conversations = await Conversation.find({ userId }).sort({ updatedAt: -1 });
     res.status(httpStatus.OK).send(conversations);
   } catch (error) {
     throw new ApiError(
@@ -83,11 +82,14 @@ export const deleteConversation = catchAsync(async (req: Request, res: Response)
 });
 
 export const updateConversation = catchAsync(async (req: Request, res: Response) => {
-  const { isSaved, name }: { isSaved: boolean | undefined; name: string | undefined } = req.body;
+  const {
+    isSaved,
+    name,
+    temperature,
+  }: { isSaved: boolean | undefined; name: string | undefined; temperature: number | undefined } = req.body;
   const { id: conversationId } = req.params;
   try {
     const conversationDoc = (await Conversation.findById(conversationId)) as DConversationDocument;
-
     if (isSaved !== undefined) {
       conversationDoc.isSaved = isSaved;
     }
@@ -96,10 +98,15 @@ export const updateConversation = catchAsync(async (req: Request, res: Response)
       conversationDoc.name = name;
     }
 
+    if (temperature !== undefined) {
+      conversationDoc.temperature = temperature;
+    }
+
     const updatedConversationDoc = await conversationDoc.save();
 
     res.status(httpStatus.OK).send(updatedConversationDoc);
   } catch (error) {
+    // TODO: Axiom log errors for debugging
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
       'conversation.controller > #updateConversation: error while updating conversation'

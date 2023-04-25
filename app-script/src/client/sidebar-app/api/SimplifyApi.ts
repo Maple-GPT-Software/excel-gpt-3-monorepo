@@ -169,14 +169,18 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     return res.json();
   }
 
-  async editConversation({
-    name,
-    temperature,
-  }: Omit<NewConversation, 'promptType'>): Promise<DConversation> {
-    const res = await this.post(`/${CONVERSATION_BASE}`, {
+  async editConversation(
+    id: string,
+    { name, temperature }: Omit<NewConversation, 'promptType'>
+  ): Promise<DConversation> {
+    const res = await this.patch(`/${CONVERSATION_BASE}/${id}`, {
       name,
       temperature,
     });
+
+    if (res.ok === false) {
+      throw new Error('Error while updating conversation');
+    }
 
     return res.json();
   }

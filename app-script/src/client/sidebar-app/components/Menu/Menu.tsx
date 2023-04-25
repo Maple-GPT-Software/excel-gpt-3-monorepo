@@ -130,6 +130,7 @@ function Menu() {
           )}
           {menuMode === 'CREATE_CONVERSATION' && (
             <CreateConversationForm
+              conversations={conversations}
               accessToken={accessToken}
               createNewConversationSuccessCb={createNewConversationSuccessCb}
             />

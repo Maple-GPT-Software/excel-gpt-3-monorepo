@@ -18,6 +18,7 @@ export const newConversation = {
 export const editConversation = {
   body: Joi.object().keys({
     isSaved: Joi.boolean().optional(),
+    temperature: Joi.number().min(0).max(2).optional(),
     name: Joi.string().optional(),
   }),
 };

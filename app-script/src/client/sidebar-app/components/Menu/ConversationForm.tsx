@@ -37,30 +37,49 @@ interface EditConversationProps {
   backToMenuDefaultMode: () => void;
   conversation: DConversation;
   accessToken: string;
+  conversations: DConversation[] | undefined;
+}
+
+function editConversationFetcher(
+  key: readonly ['conversations'],
+  {
+    arg,
+  }: {
+    arg: {
+      accessToken: string;
+      id: string;
+      updatedSettings: Omit<ConversationSettings, 'promptType'>;
+    };
+  }
+) {
+  return SimplifyApi(arg.accessToken).editConversation(
+    arg.id,
+    arg.updatedSettings
+  );
 }
 
 function EditConversationForm({
   backToMenuDefaultMode,
   conversation,
+  conversations,
   accessToken,
 }: EditConversationProps) {
-  const { trigger, isMutating } = useSWRMutation(
+  const { trigger, isMutating, error } = useSWRMutation(
     conversationKeyFactory.all,
-    (
-      key,
-      {
-        arg,
-      }: {
-        arg: {
-          accessToken: string;
-          updatedSettings: Omit<ConversationSettings, 'promptType'>;
-        };
-      }
-    ) => SimplifyApi(arg.accessToken).editConversation(arg.updatedSettings),
+    editConversationFetcher,
     {
-      onSuccess: (newConversation) => {
+      onSuccess: () => {
         backToMenuDefaultMode();
       },
+      populateCache: (updatedConversation) => {
+        return conversations?.map((conversation) => {
+          if (conversation.id === updatedConversation.id) {
+            return updatedConversation;
+          }
+          return conversation;
+        });
+      },
+      revalidate: false,
     }
   );
 
@@ -78,9 +97,13 @@ function EditConversationForm({
     setSettings((prevSettings) => ({ ...prevSettings, [prop]: value }));
   }
 
-  // function onSubmitHandler() {
-  //   trigger({ accessToken, updatedSettings: {name : name, temperature: test} });
-  // }
+  function onSubmitHandler() {
+    const updatedSettings = {
+      name: settings.name,
+      temperature: settings.temperature,
+    };
+    trigger({ accessToken, id: conversation.id, updatedSettings });
+  }
 
   if (isMutating) {
     return (
@@ -102,8 +125,13 @@ function EditConversationForm({
         className="button button-outline"
         type="submit"
       >
-        SAVE CONVERSATION SETTINGS
+        UPDATE CONVERSATION SETTINGS
       </button>
+      {error && (
+        <p style={{ marginTop: '6px', fontSize: '12px', color: '#dc2626' }}>
+          {error.message}. Please try again.
+        </p>
+      )}
     </form>
   );
 }
@@ -128,15 +156,23 @@ export function EditConversationFormWrapper({
     return <p>Unable to find the conversation you want to edit </p>;
   }
 
-  return <EditConversationForm {...props} conversation={targetConversation} />;
+  return (
+    <EditConversationForm
+      {...props}
+      conversations={conversations}
+      conversation={targetConversation}
+    />
+  );
 }
 
 export function CreateConversationForm({
   accessToken,
   createNewConversationSuccessCb,
+  conversations,
 }: {
   accessToken: string;
   createNewConversationSuccessCb: (id: string) => void;
+  conversations: DConversation[] | undefined;
 }) {
   const { trigger, isMutating } = useSWRMutation(
     conversationKeyFactory.all,
@@ -154,7 +190,7 @@ export function CreateConversationForm({
   const [settings, setSettings] = useState<ConversationSettings>(() => {
     return {
       name: 'new conversation',
-      promptType: DConversationPromptType.googleAppScriptChat,
+      promptType: DConversationPromptType.googleSheetChat,
       temperature: 0.4,
     };
   });
@@ -235,17 +271,18 @@ function ConversationFormFields({
       </div>
       <div className="conversation-form-field-wrapper">
         <label htmlFor="temperature">
-          Temperature <span>&#40;{settings.temperature}&#41;</span>
+          Temperature -{' '}
+          <span>
+            {(Math.round(settings.temperature * 100) / 100).toFixed(2)}
+          </span>
         </label>
         <p style={{ marginBottom: '6px' }}>
-          Determines the randomness and creativity of generated answers. A value
-          closer to 1 leads to more unpredictable and diverse outputs, while a
-          value closer to 0 temperature leads to more predictable answers. We
-          provide a default value if you are unsure!
+          We suggest using the default value if you are sure!
           <a
             href="https://algowriting.medium.com/gpt-3-temperature-setting-101-41200ff0d0be"
             target="_blank"
           >
+            {' '}
             Suggested reading
           </a>
         </p>

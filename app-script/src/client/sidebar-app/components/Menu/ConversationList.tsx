@@ -35,6 +35,7 @@ function ConversationList({
       SimplifyApi(accessToken)
         .deleteConversation(conversationId)
         .then((data) => {
+          // TODO: useSWRMutation
           if (conversations.length > 1) {
             updateSelectedId(conversations[0].id);
             setIsDeleting(false);
