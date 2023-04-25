@@ -3,7 +3,17 @@
   padding: 0 12px;
   background-color: var(--primary-dark);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-conversation-name {
+  max-width: 150px;
+  font-size: 14px;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .menu-wrapper {

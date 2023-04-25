@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect } from 'react';
+import React, { useRef, useCallback, useEffect, useMemo } from 'react';
 import { useImmerReducer } from 'use-immer';
 import { CompletionRating, GPTCompletion, UserMessageType } from './types';
 import UserPrompt from './components/UserPrompt';
@@ -10,9 +10,10 @@ import useSWR from 'swr';
 import './Chat.style.css';
 import { useParams } from 'react-router-dom';
 import messageKeyFactory from './messageQueryFactory';
-import SimplifyApi from './api/SimplifyApi';
+import SimplifyApi, { DConversation } from './api/SimplifyApi';
 import { useAuthenticatedContext } from './AuthProvider';
 import { CenteredLoadingEllipsis } from './components/LoadingEllipsis';
+import conversationKeyFactory from './components/Menu/conversationQueryKeys';
 
 export interface ChatState {
   /** the state of the application. Fetching when we're waiting for the AI to answer */
@@ -207,4 +208,35 @@ function Chat() {
   );
 }
 
-export default Chat;
+function ChatWrapper() {
+  const { accessToken } = useAuthenticatedContext();
+  const { conversationId } = useParams();
+  const { data: conversations } = useSWR<DConversation[]>(
+    accessToken ? conversationKeyFactory.all : null
+  );
+
+  const doesConversationExist = useMemo(() => {
+    if (!conversationId || conversations?.length === 0) {
+      return false;
+    }
+
+    return conversations?.find(
+      (conversation) => conversation.id === conversationId
+    );
+  }, [conversationId, conversations]);
+
+  if (!doesConversationExist || conversations?.length === 0) {
+    return (
+      <div className="empty-conversations-message-fallback">
+        <p>
+          You do not have any conversations. Create a new conversation in the
+          menu!
+        </p>
+      </div>
+    );
+  }
+
+  return <Chat />;
+}
+
+export default ChatWrapper;

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import conversationKeyFactory from './components/Menu/conversationQueryKeys';
 import useSWR from 'swr';
-import SimplifyApi from './api/SimplifyApi';
+import SimplifyApi, { DConversationPromptType } from './api/SimplifyApi';
 import { useAuthenticatedContext } from './AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { CHAT_ROUTE } from './constants';
@@ -25,8 +25,18 @@ function ConversationCheck() {
     }
 
     if (conversations.length === 0) {
-      // TODO: create first conversatio and re-direct to CHAT_ROUTE
-      console.log('no conversations');
+      SimplifyApi(accessToken)
+        .createNewConversation({
+          name: 'new conversation',
+          promptType: DConversationPromptType.googleAppScriptChat,
+          temperature: 0.4,
+        })
+        .then((conversation) => {
+          mutate();
+          navigate(`${CHAT_ROUTE}/${conversation.id}`, {
+            replace: true,
+          });
+        });
     } else {
       navigate(`${CHAT_ROUTE}/${conversations[0].id}`, {
         replace: true,
@@ -36,7 +46,7 @@ function ConversationCheck() {
 
   return (
     <CenteredLoadingEllipsis>
-      <p>loading your conversations </p>
+      <p> loading your conversations </p>
     </CenteredLoadingEllipsis>
   );
 }

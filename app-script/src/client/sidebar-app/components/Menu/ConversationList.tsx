@@ -29,21 +29,21 @@ function ConversationList({
 
   const { mutate } = useSWRConfig();
 
-  // TODO: case where user deletes only conversation, create new by default
-  function deleteConversationHandler(conversationId: string) {
-    mutate(conversationKeyFactory.all, () =>
-      SimplifyApi(accessToken)
-        .deleteConversation(conversationId)
-        .then((data) => {
-          // TODO: useSWRMutation
-          if (conversations.length > 1) {
-            updateSelectedId(conversations[0].id);
-            setIsDeleting(false);
-          }
-
-          return data;
-        })
+  // TODO: deleting conversations bug
+  async function deleteConversationHandler(conversationId: string) {
+    mutate(
+      conversationKeyFactory.all,
+      () => SimplifyApi(accessToken).deleteConversation(conversationId),
+      {
+        populateCache: (deletedConversation: DConversation) => {
+          return conversations.filter(
+            (conversation) => conversation.id === deletedConversation.id
+          );
+        },
+      }
     );
+
+    setIsDeleting(false);
   }
 
   useOnClickOutside(conversationListRef, () => {
@@ -61,7 +61,12 @@ function ConversationList({
         + New Conversation
       </button>
       <div className="divisor"></div>
-      {conversations?.length &&
+      {!conversations ||
+        (conversations?.length == 0 && (
+          <p style={{ color: 'white' }}> Create a new conversation! </p>
+        ))}
+      {conversations &&
+        conversations.length !== 0 &&
         conversations.map((conversation) => {
           const isSelected = selectedConversationId === conversation.id;
 

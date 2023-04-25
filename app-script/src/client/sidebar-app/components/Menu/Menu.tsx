@@ -76,6 +76,31 @@ function Menu() {
     userProfile.stripeCurrentPeriodEnd
   );
 
+  useEffect(() => {
+    if (!conversationId || !conversations || conversations.length === 0) {
+      return;
+    }
+
+    const isConversationIdInList = !!conversations.find(
+      (conversation) => conversation.id === conversationId
+    );
+
+    if (!isConversationIdInList) {
+      setSelectedConversationId(conversations[0].id);
+      navigate(`${CHAT_ROUTE}/${conversations[0].id}`);
+    }
+  }, [conversationId, conversations]);
+
+  const conversation = React.useMemo(() => {
+    if (!conversationId || !conversations || conversations.length === 0) {
+      return undefined;
+    }
+
+    return conversations.find(
+      (conversation) => conversation.id === conversationId
+    );
+  }, [conversationId, conversations, selectedConversationId]);
+
   return (
     <>
       {/* TODO: don't show when editing  */}
@@ -94,6 +119,9 @@ function Menu() {
             <span></span>
             <span></span>
           </div>
+        )}
+        {conversation && (
+          <p className="nav-conversation-name">{conversation.name}</p>
         )}
       </nav>
       <div className={`menu-wrapper ${showMenu ? 'show' : ''}`}>
