@@ -24,6 +24,7 @@ import {
 } from '../constants';
 
 import './UserPrompt.style.css';
+import { useParams } from 'react-router-dom';
 
 interface ChatInputProps {
   shouldDisableTextarea: boolean;
@@ -32,6 +33,7 @@ interface ChatInputProps {
 }
 
 const UserPrompt = (props: ChatInputProps) => {
+  const { conversationId } = useParams();
   const { accessToken } = useAuthContext();
   const { shouldDisableTextarea, dispatch, scrollToBottomOfChat } = props;
 
@@ -60,7 +62,7 @@ const UserPrompt = (props: ChatInputProps) => {
   async function handleSubmit() {
     /** 5 is a minimum enforced by backend */
     // if (!input || inputExceedsMaximum || totalInputCharacters < 5) return;
-    if (!input || inputExceedsMaximum) return;
+    if (!input || inputExceedsMaximum || !conversationId) return;
 
     const clientUserPrompt = formatUserInputs(input, dataTable, formula);
 
@@ -87,6 +89,7 @@ const UserPrompt = (props: ChatInputProps) => {
       // replace range with USER_RANGE so we can easily figure out if the user
       // added a data table via the prompt enhacements feature
       const completion = await SimplifyApi(accessToken).getCompletion(
+        conversationId,
         clientUserPrompt.replaceAll('%', '')
       );
 

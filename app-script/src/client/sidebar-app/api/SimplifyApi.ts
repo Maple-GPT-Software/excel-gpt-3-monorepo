@@ -89,10 +89,12 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     return res.json();
   }
 
-  // TODO: conversation ID
-  async getCompletion(prompt: string): Promise<GPTCompletion> {
+  async getCompletion(
+    conversationId: string,
+    prompt: string
+  ): Promise<GPTCompletion> {
     const queryParams = new URLSearchParams({
-      conversationId: '643e0517ac1a954843283dfc',
+      conversationId,
     });
     const response = await this.post(
       `/${MESSAGE_BASE}?${queryParams.toString()}`,

@@ -145,7 +145,6 @@ function Chat() {
     }
   );
 
-  // TODO: error state???
   const { isLoading: loadingMessages } = useSWR(
     conversationId ? messageKeyFactory.messagesById(conversationId) : null,
     ([, conversationId]) =>

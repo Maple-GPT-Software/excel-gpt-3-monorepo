@@ -37,7 +37,7 @@ function ConversationList({
       {
         populateCache: (deletedConversation: DConversation) => {
           return conversations.filter(
-            (conversation) => conversation.id === deletedConversation.id
+            (conversation) => conversation.id !== deletedConversation.id
           );
         },
       }

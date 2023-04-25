@@ -31,9 +31,6 @@ function Menu() {
   );
   const [showMenu, setShowMenu] = useState(false);
   const [menuMode, setMenuMode] = useState<MenuModes>('DEFAULT');
-  const [selectedConversationId, setSelectedConversationId] = useState(
-    conversationId ?? ''
-  );
 
   function enterCreateConversationMode() {
     setMenuMode('CREATE_CONVERSATION');
@@ -48,7 +45,7 @@ function Menu() {
   }
 
   function updateSelectedId(conversationId: string) {
-    setSelectedConversationId(conversationId);
+    navigate(`${CHAT_ROUTE}/${conversationId}`);
   }
 
   function createNewConversationSuccessCb(conversationId: string) {
@@ -64,11 +61,6 @@ function Menu() {
       return;
     }
 
-    /** update conersationId param */
-    if (conversationId !== selectedConversationId) {
-      navigate(`${CHAT_ROUTE}/${selectedConversationId}`);
-    }
-
     setShowMenu(false);
   }
 
@@ -81,12 +73,11 @@ function Menu() {
       return;
     }
 
-    const isConversationIdInList = !!conversations.find(
+    const isConversationValid = !!conversations.find(
       (conversation) => conversation.id === conversationId
     );
 
-    if (!isConversationIdInList) {
-      setSelectedConversationId(conversations[0].id);
+    if (!isConversationValid) {
       navigate(`${CHAT_ROUTE}/${conversations[0].id}`);
     }
   }, [conversationId, conversations]);
@@ -99,7 +90,7 @@ function Menu() {
     return conversations.find(
       (conversation) => conversation.id === conversationId
     );
-  }, [conversationId, conversations, selectedConversationId]);
+  }, [conversationId, conversations]);
 
   return (
     <>
@@ -151,7 +142,7 @@ function Menu() {
               accessToken={accessToken}
               onCreateConversationClick={enterCreateConversationMode}
               enterEditConversationMode={enterEditConversationMode}
-              selectedConversationId={selectedConversationId}
+              selectedConversationId={conversationId}
               conversations={conversations || []}
               updateSelectedId={updateSelectedId}
             />
@@ -166,7 +157,7 @@ function Menu() {
           {menuMode === 'EDIT_CONVERSATION' && (
             <EditConversationFormWrapper
               conversations={conversations}
-              conversationId={selectedConversationId}
+              conversationId={conversationId}
               backToMenuDefaultMode={backToDefaultMode}
               accessToken={accessToken}
             />

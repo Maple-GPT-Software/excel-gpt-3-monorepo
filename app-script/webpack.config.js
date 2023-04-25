@@ -235,7 +235,7 @@ const clientConfigs = clientEntrypoints.map((clientEntrypoint) => {
   const isDevClientWrapper = false;
   return {
     ...clientConfig({ isDevClientWrapper }),
-    devtool: isProd ? undefined : 'inline-source-map',
+    devtool: isProd ? undefined : 'eval-cheap-module-source-map',
     name: clientEntrypoint.name,
     entry: clientEntrypoint.entry,
     target: 'web',
@@ -263,7 +263,6 @@ const clientConfigs = clientEntrypoints.map((clientEntrypoint) => {
 // webpack settings for devServer https://webpack.js.org/configuration/dev-server/
 const devServer = {
   hot: true,
-  liveReload: true,
   port: PORT,
   server: 'https',
 };
