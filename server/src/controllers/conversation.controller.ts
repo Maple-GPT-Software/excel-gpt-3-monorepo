@@ -56,7 +56,7 @@ export const createConversation = catchAsync(async (req: Request, res: Response)
   try {
     const conversation = await Conversation.create({
       userId,
-      isSaved: false,
+      isBookmarked: false,
       name,
       systemPrompt: SYSTEM_PROMPT_MAP[promptType],
       promptType,
@@ -83,15 +83,16 @@ export const deleteConversation = catchAsync(async (req: Request, res: Response)
 
 export const updateConversation = catchAsync(async (req: Request, res: Response) => {
   const {
-    isSaved,
+    isBookmarked,
     name,
     temperature,
-  }: { isSaved: boolean | undefined; name: string | undefined; temperature: number | undefined } = req.body;
+  }: { isBookmarked: boolean | undefined; name: string | undefined; temperature: number | undefined } = req.body;
   const { id: conversationId } = req.params;
   try {
     const conversationDoc = (await Conversation.findById(conversationId)) as DConversationDocument;
-    if (isSaved !== undefined) {
-      conversationDoc.isSaved = isSaved;
+
+    if (isBookmarked !== undefined) {
+      conversationDoc.isBookmarked = isBookmarked;
     }
 
     if (name !== undefined) {

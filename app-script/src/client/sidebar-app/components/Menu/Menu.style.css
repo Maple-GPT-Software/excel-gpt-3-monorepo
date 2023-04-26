@@ -16,6 +16,18 @@
   text-overflow: ellipsis;
 }
 
+.nav-conversation-save-button {
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  display: inline-flex;
+  margin-left: 6px;
+}
+
+.nav-conversation-save-button .icon {
+  padding: 0;
+}
+
 .menu-wrapper {
   padding: 12px;
   padding-top: 45px;

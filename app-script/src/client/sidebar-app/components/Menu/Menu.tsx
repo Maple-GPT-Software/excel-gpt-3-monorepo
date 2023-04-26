@@ -11,6 +11,7 @@ import useSWR from 'swr';
 import SimplifyApi, { DConversation } from '../../api/SimplifyApi';
 import conversationKeyFactory from './conversationQueryKeys';
 import { CHAT_ROUTE } from '../../constants';
+import Icon from '../Icon';
 
 type MenuModes = 'DEFAULT' | 'EDIT_CONVERSATION' | 'CREATE_CONVERSATION';
 
@@ -25,7 +26,7 @@ function Menu() {
   const { conversationId } = useParams();
   const navigate = useNavigate();
   const { signOut, userProfile, accessToken } = useAuthenticatedContext();
-  const { data: conversations } = useSWR<DConversation[]>(
+  const { data: conversations, mutate } = useSWR<DConversation[]>(
     accessToken ? conversationKeyFactory.all : null,
     () => SimplifyApi(accessToken).getConversations()
   );
@@ -62,6 +63,31 @@ function Menu() {
     }
 
     setShowMenu(false);
+  }
+
+  async function toggleConversationSavedHandler(
+    conversation: DConversation | undefined
+  ) {
+    if (!conversations || !conversation) {
+      return;
+    }
+
+    const updatedConversation = await SimplifyApi(accessToken).editConversation(
+      conversation.id,
+      { isBookmarked: !conversation.isBookmarked }
+    );
+
+    mutate(
+      conversations.map((conversation) => {
+        if (conversation.id === updatedConversation.id) {
+          return updatedConversation;
+        }
+        return conversation;
+      }),
+      {
+        revalidate: false,
+      }
+    );
   }
 
   const trialExpiration = getSubscriptionDaysRemaining(
@@ -112,7 +138,26 @@ function Menu() {
           </div>
         )}
         {conversation && (
-          <p className="nav-conversation-name">{conversation.name}</p>
+          <>
+            <p className="nav-conversation-name">{conversation.name}</p>
+            <button
+              aria-label={
+                conversation.isBookmarked
+                  ? 'unbookmark conversation'
+                  : 'bookmark conversation'
+              }
+              className="nav-conversation-save-button"
+              onClick={() => toggleConversationSavedHandler(conversation)}
+            >
+              <Icon
+                strokeColor="white"
+                width={16}
+                height={16}
+                pathName="BOOKMARK"
+                styles={conversation.isBookmarked ? { fill: 'white' } : {}}
+              />
+            </button>
+          </>
         )}
       </nav>
       <div className={`menu-wrapper ${showMenu ? 'show' : ''}`}>
@@ -145,6 +190,7 @@ function Menu() {
               selectedConversationId={conversationId}
               conversations={conversations || []}
               updateSelectedId={updateSelectedId}
+              toggleConversationSavedHandler={toggleConversationSavedHandler}
             />
           )}
           {menuMode === 'CREATE_CONVERSATION' && (

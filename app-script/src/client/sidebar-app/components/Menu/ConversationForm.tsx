@@ -277,7 +277,7 @@ function ConversationFormFields({
           </span>
         </label>
         <p style={{ marginBottom: '6px' }}>
-          We suggest using the default value if you are sure!
+          We suggest using the default value if you are not sure!
           <a
             href="https://algowriting.medium.com/gpt-3-temperature-setting-101-41200ff0d0be"
             target="_blank"

@@ -30,7 +30,7 @@ export enum DConversationPromptType {
 export interface DConversation {
   id: string;
   userId: string;
-  isSaved: boolean;
+  isBookmarked: boolean;
   name: string;
   temperature: number;
   promptType: DConversationPromptType;
@@ -160,12 +160,14 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     name,
     temperature,
     promptType,
-  }: NewConversation): Promise<DConversation> {
+    isBookmarked = false,
+  }: Partial<DConversation>): Promise<DConversation> {
     const res = await this.post(`/${CONVERSATION_BASE}`, {
       name,
       temperature,
       promptType,
       source: SOURCE,
+      isBookmarked,
     });
 
     return res.json();
@@ -173,11 +175,12 @@ class SimplifyApiClient extends AuthenticatedRequestor {
 
   async editConversation(
     id: string,
-    { name, temperature }: Omit<NewConversation, 'promptType'>
+    { name, temperature, isBookmarked }: Partial<DConversation>
   ): Promise<DConversation> {
     const res = await this.patch(`/${CONVERSATION_BASE}/${id}`, {
       name,
       temperature,
+      isBookmarked,
     });
 
     if (res.ok === false) {

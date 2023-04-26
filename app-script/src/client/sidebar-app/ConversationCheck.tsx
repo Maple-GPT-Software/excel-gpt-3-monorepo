@@ -30,6 +30,8 @@ function ConversationCheck() {
           name: 'new conversation',
           promptType: DConversationPromptType.googleAppScriptChat,
           temperature: 0.4,
+          // so user doesn't see empty saved conversaiton list
+          isBookmarked: true,
         })
         .then((conversation) => {
           mutate();

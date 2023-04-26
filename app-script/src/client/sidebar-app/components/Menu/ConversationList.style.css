@@ -38,9 +38,9 @@
 }
 
 .conversation-item p {
-  max-width: 175px;
+  max-width: 140px;
   white-space: nowrap;
-  overflow: scroll;
+  overflow: hidden;
 }
 
 .conversation-item button {

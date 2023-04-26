@@ -12,12 +12,13 @@ export const newConversation = {
     source: Joi.string()
       .valid(...Object.values(IClientSource))
       .required(),
+    isBookmarked: Joi.boolean().optional(),
   }),
 };
 
 export const editConversation = {
   body: Joi.object().keys({
-    isSaved: Joi.boolean().optional(),
+    isBookmarked: Joi.boolean().optional(),
     temperature: Joi.number().min(0).max(2).optional(),
     name: Joi.string().optional(),
   }),

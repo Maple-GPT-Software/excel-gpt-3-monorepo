@@ -24,7 +24,7 @@ const conversationSchema = new Schema<DConversation>(
       type: String,
       required: true,
     },
-    isSaved: {
+    isBookmarked: {
       type: Boolean,
       required: false,
       default: false,
