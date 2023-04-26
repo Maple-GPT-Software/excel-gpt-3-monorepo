@@ -24,6 +24,7 @@ import {
 } from '../constants';
 
 import './UserPrompt.style.css';
+import { useParams } from 'react-router-dom';
 
 interface ChatInputProps {
   shouldDisableTextarea: boolean;
@@ -32,6 +33,7 @@ interface ChatInputProps {
 }
 
 const UserPrompt = (props: ChatInputProps) => {
+  const { conversationId } = useParams();
   const { accessToken } = useAuthContext();
   const { shouldDisableTextarea, dispatch, scrollToBottomOfChat } = props;
 
@@ -60,7 +62,7 @@ const UserPrompt = (props: ChatInputProps) => {
   async function handleSubmit() {
     /** 5 is a minimum enforced by backend */
     // if (!input || inputExceedsMaximum || totalInputCharacters < 5) return;
-    if (!input || inputExceedsMaximum) return;
+    if (!input || inputExceedsMaximum || !conversationId) return;
 
     const clientUserPrompt = formatUserInputs(input, dataTable, formula);
 
@@ -71,7 +73,6 @@ const UserPrompt = (props: ChatInputProps) => {
 
     dispatch({
       type: ChatReducerActionTypes.ADD_USER_PROMPT,
-      // TODO: format data table and formula
       payload: {
         id: Math.random().toString(),
         content: clientUserPrompt,
@@ -79,8 +80,7 @@ const UserPrompt = (props: ChatInputProps) => {
       },
     });
 
-    // scroll to bottom of chat container after user's prompt is added
-    // wrapped in setTimeout so that immer dispatch updates chat first
+    // scroll to bottom after immer action is dispatched
     setTimeout(() => {
       scrollToBottomOfChat();
     });
@@ -89,6 +89,7 @@ const UserPrompt = (props: ChatInputProps) => {
       // replace range with USER_RANGE so we can easily figure out if the user
       // added a data table via the prompt enhacements feature
       const completion = await SimplifyApi(accessToken).getCompletion(
+        conversationId,
         clientUserPrompt.replaceAll('%', '')
       );
 
@@ -159,6 +160,16 @@ const UserPrompt = (props: ChatInputProps) => {
     setFormula('');
   }
 
+  let counterBgColor = '#22c55e';
+
+  if (totalInputCharacters > 300) {
+    counterBgColor = '#f59e0b';
+  }
+
+  if (inputExceedsMaximum) {
+    counterBgColor = '#ef4444';
+  }
+
   return (
     <div className="prompt-wrapper">
       <div className="text-area-wrapper" style={{ position: 'relative' }}>
@@ -186,7 +197,7 @@ const UserPrompt = (props: ChatInputProps) => {
         <p
           className="character-count"
           style={{
-            backgroundColor: inputExceedsMaximum ? '#ef4444' : '#22c55e',
+            backgroundColor: counterBgColor,
           }}
         >{`${totalInputCharacters}/400`}</p>
         {/* MENU FOR TO SELECT INSERT FORMULA OR RANGE */}

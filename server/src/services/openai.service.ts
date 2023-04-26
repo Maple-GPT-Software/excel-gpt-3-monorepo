@@ -4,7 +4,6 @@ import httpStatus from 'http-status';
 import { DConversationObject } from '../models/conversation.model';
 import openai, { basePromptConfig } from '../config/openai';
 import { Message } from '../models/message.model';
-import { SYSTEM_PROMPT_MAP } from '../constants';
 import ApiError from '../utils/ApiError';
 import logger from '../config/logger';
 

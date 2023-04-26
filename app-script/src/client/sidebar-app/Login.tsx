@@ -16,7 +16,7 @@ function Login() {
         <div className="auth-main">
           <button
             onClick={() => {
-              navigate(CHAT_ROUTE);
+              navigate(1);
             }}
             className="button auth-button"
             type="button"

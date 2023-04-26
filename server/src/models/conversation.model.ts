@@ -1,6 +1,6 @@
 import { Schema, model, ObjectId, Types, Document } from 'mongoose';
 
-import { DConversation, IClientSource } from '../types';
+import { DConversation, DConversationPromptType, IClientSource } from '../types';
 
 export type DConversationObject = DConversation & {
   _id: Types.ObjectId;
@@ -24,13 +24,18 @@ const conversationSchema = new Schema<DConversation>(
       type: String,
       required: true,
     },
-    isSaved: {
+    isBookmarked: {
       type: Boolean,
       required: false,
       default: false,
     },
     systemPrompt: {
       type: String,
+      required: true,
+    },
+    promptType: {
+      type: String,
+      enum: Object.values(DConversationPromptType),
       required: true,
     },
     temperature: {

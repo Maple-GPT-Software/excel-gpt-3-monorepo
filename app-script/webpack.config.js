@@ -110,8 +110,8 @@ const clientConfig = ({ isDevClientWrapper }) => ({
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
-      react: '@preact/compat',
-      'react-dom': '@preact/compat',
+      react: 'preact/compat',
+      'react-dom': 'preact/compat',
       '@prefresh/core': path.resolve(
         __dirname,
         'node_modules',
@@ -171,7 +171,6 @@ const clientConfig = ({ isDevClientWrapper }) => ({
       },
     ],
   },
-  // devtool : isProd ? 'source-map' : 'cheap-module-source-map'
 });
 
 // DynamicCdnWebpackPlugin settings
@@ -236,6 +235,7 @@ const clientConfigs = clientEntrypoints.map((clientEntrypoint) => {
   const isDevClientWrapper = false;
   return {
     ...clientConfig({ isDevClientWrapper }),
+    // devtool: isProd ? undefined : 'eval-cheap-module-source-map',
     name: clientEntrypoint.name,
     entry: clientEntrypoint.entry,
     target: 'web',
@@ -263,7 +263,6 @@ const clientConfigs = clientEntrypoints.map((clientEntrypoint) => {
 // webpack settings for devServer https://webpack.js.org/configuration/dev-server/
 const devServer = {
   hot: true,
-  liveReload: false,
   port: PORT,
   server: 'https',
 };

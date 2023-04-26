@@ -1,0 +1,30 @@
+.conversation-form-field-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.conversation-form-field-wrapper label {
+  color: white;
+  margin-bottom: 12px;
+}
+
+.conversation-form-field-wrapper p {
+  line-height: 16px;
+  font-size: 14px;
+  color: white;
+}
+
+.conversation-form-field-wrapper p a {
+  color: white;
+}
+
+.field {
+  padding: 6px 12px;
+  color: white;
+  font-size: 14px;
+  font-family: 'Montserrat', sans-serif;
+  background-color: transparent;
+  border-radius: 6px;
+  border: solid thin #9ca3af;
+}

@@ -1,15 +1,19 @@
-// NPM
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useEffect, useMemo } from 'react';
 import { useImmerReducer } from 'use-immer';
-// TYPES
 import { CompletionRating, GPTCompletion, UserMessageType } from './types';
-// COMPONENTS
 import UserPrompt from './components/UserPrompt';
 import UserMessage from './components/UserMessage';
 import BotMessage from './components/BotMessage';
 import ExamplePrompts from './components/ExamplePrompts';
+import useSWR from 'swr';
 
 import './Chat.style.css';
+import { useParams } from 'react-router-dom';
+import messageKeyFactory from './messageQueryFactory';
+import SimplifyApi, { DConversation } from './api/SimplifyApi';
+import { useAuthenticatedContext } from './AuthProvider';
+import { CenteredLoadingEllipsis } from './components/LoadingEllipsis';
+import conversationKeyFactory from './components/Menu/conversationQueryKeys';
 
 export interface ChatState {
   /** the state of the application. Fetching when we're waiting for the AI to answer */
@@ -18,6 +22,7 @@ export interface ChatState {
 }
 
 export enum ChatReducerActionTypes {
+  ADD_FETCHED_MESSAGES = 'ADD_FETCHED_MESSAGES',
   ADD_USER_PROMPT = 'ADD_USER_PROMPT',
   ADD_GPT_COMPLETION_SUCCESS = 'ADD_GPT_COMPLETION_SUCCESS',
   ADD_GPT_COMPLETION_FAIL = 'ADD_GPT_COMPLETION_FAIL',
@@ -48,10 +53,18 @@ export type ChatActions =
     }
   | {
       type: ChatReducerActionTypes.CLEAR_MESSAGES;
+    }
+  | {
+      type: ChatReducerActionTypes.ADD_FETCHED_MESSAGES;
+      payload: (GPTCompletion | UserMessageType)[];
     };
 
 const chatReducer = (draft: ChatState, action: ChatActions) => {
   switch (action.type) {
+    case ChatReducerActionTypes.ADD_FETCHED_MESSAGES:
+      draft.status = 'SUCCESS';
+      draft.messages = action.payload;
+      break;
     case ChatReducerActionTypes.ADD_USER_PROMPT:
       draft.status = 'FETCHING';
       draft.messages.push(action.payload);
@@ -119,13 +132,33 @@ const chatReducer = (draft: ChatState, action: ChatActions) => {
 };
 
 function Chat() {
+  const { accessToken } = useAuthenticatedContext();
+  const { conversationId } = useParams();
+
   const promptWrapperRef = useRef<HTMLDivElement>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
   const [chatState, dispatch] = useImmerReducer<ChatState, ChatActions>(
     chatReducer,
     {
-      status: 'SUCCESS',
+      status: 'FETCHING',
       messages: [],
+    }
+  );
+
+  const { isLoading: loadingMessages } = useSWR(
+    conversationId ? messageKeyFactory.messagesById(conversationId) : null,
+    ([, conversationId]) =>
+      SimplifyApi(accessToken).getConversationMessages(conversationId),
+    {
+      onSuccess: (data) => {
+        dispatch({
+          type: ChatReducerActionTypes.ADD_FETCHED_MESSAGES,
+          payload: data as any,
+        });
+        setTimeout(() => {
+          handleScrollToChatBottom();
+        }, 0);
+      },
     }
   );
 
@@ -133,11 +166,18 @@ function Chat() {
     chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
+  // TODO: CreateNewChat dummy component that just makes a request to start a new conversation
   return (
     <div className="chat-wrapper">
       <section className="messages-wrapper">
-        {!chatState.messages.length && <ExamplePrompts />}
+        {loadingMessages && (
+          <CenteredLoadingEllipsis>
+            <p> loading messsages </p>
+          </CenteredLoadingEllipsis>
+        )}
+        {!chatState.messages.length && !loadingMessages && <ExamplePrompts />}
         {!!chatState.messages.length &&
+          !loadingMessages &&
           chatState.messages.map((message, index) => {
             if (message.author === 'user') {
               return (
@@ -167,4 +207,35 @@ function Chat() {
   );
 }
 
-export default Chat;
+function ChatWrapper() {
+  const { accessToken } = useAuthenticatedContext();
+  const { conversationId } = useParams();
+  const { data: conversations } = useSWR<DConversation[]>(
+    accessToken ? conversationKeyFactory.all : null
+  );
+
+  const doesConversationExist = useMemo(() => {
+    if (!conversationId || conversations?.length === 0) {
+      return false;
+    }
+
+    return conversations?.find(
+      (conversation) => conversation.id === conversationId
+    );
+  }, [conversationId, conversations]);
+
+  if (!doesConversationExist || conversations?.length === 0) {
+    return (
+      <div className="empty-conversations-message-fallback">
+        <p>
+          You do not have any conversations. Create a new conversation in the
+          menu!
+        </p>
+      </div>
+    );
+  }
+
+  return <Chat />;
+}
+
+export default ChatWrapper;

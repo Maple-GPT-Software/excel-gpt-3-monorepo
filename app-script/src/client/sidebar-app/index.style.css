@@ -5,8 +5,8 @@
 
 /* VARIABLES */
 :root {
-  --primary-extra-light1: #D7E8D8;
-  --primary-extra-light2: #AfD2B1;
+  --primary-extra-light1: #d7e8d8;
+  --primary-extra-light2: #afd2b1;
 
   --primary-light: #66bb6a;
   --primary-main: #388e3c;
@@ -144,24 +144,32 @@ table {
   border-spacing: 0;
 }
 
-html, body, #index {
+html,
+body,
+#index {
   width: 100vw;
   height: 100vh;
 }
-
 
 /* ============== BUTTON ============== */
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  padding: 0 15px;
-  font-size: 15px;
+  border-radius: 6px;
+  padding: 12px;
   line-height: 1;
-  font-weight: 500;
-  height: 35px;
   border: none;
+}
+
+.button-outline {
+  background-color: transparent;
+  border: solid thin #d1d5db;
+  color: white;
+}
+
+.button-outline:hover {
+  background-color: #475569;
 }
 
 .button:hover {

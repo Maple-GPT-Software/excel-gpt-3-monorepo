@@ -2,6 +2,8 @@ import settings from '../settings';
 import { CompletionRating, GPTCompletion } from '../types';
 import { AuthenticatedRequestor } from './requestors';
 
+const SOURCE = 'APPSCRIPT';
+
 export const enum SubscriptionStatuses {
   ACTIVE = 'active',
   TRIALING = 'trialing',
@@ -17,7 +19,53 @@ export interface SimplifyUserProfile {
   userId: string;
 }
 
+/** =============== CONVERSATION TYPES */
+
+export enum DConversationPromptType {
+  googleSheetChat = 'googleSheetChat',
+  googleAppScriptChat = 'googleAppScriptChat',
+  generalAiChat = 'generalAiChat',
+}
+
+export interface DConversation {
+  id: string;
+  userId: string;
+  isBookmarked: boolean;
+  name: string;
+  temperature: number;
+  promptType: DConversationPromptType;
+}
+
+export interface NewConversation {
+  name: string;
+  promptType: DConversationPromptType;
+  temperature: number;
+}
+
+/** =============== MESSAGE TYPES */
+
+export enum DMessageAuthor {
+  USER = 'user',
+  ASSISTANT = 'assistant',
+}
+
+export interface DMessageBase {
+  author: DMessageAuthor;
+  content: string;
+  id: string;
+}
+
+export type DUserMessage = DMessageBase & {
+  author: DMessageAuthor.USER;
+};
+
+export type DAssistantMessage = DMessageBase & {
+  author: DMessageAuthor.ASSISTANT;
+  rating: 'LIKE' | 'DISLIKE' | '';
+};
+
 const MESSAGE_BASE = 'message';
+const CONVERSATION_BASE = 'conversation';
 
 export default function SimplifyApi(accessToken: string): SimplifyApiClient {
   if (!accessToken) {
@@ -41,16 +89,18 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     return res.json();
   }
 
-  // TOOD: conversation ID
-  async getCompletion(prompt: string): Promise<GPTCompletion> {
+  async getCompletion(
+    conversationId: string,
+    prompt: string
+  ): Promise<GPTCompletion> {
     const queryParams = new URLSearchParams({
-      conversationId: '643e0517ac1a954843283dfc',
+      conversationId,
     });
     const response = await this.post(
       `/${MESSAGE_BASE}?${queryParams.toString()}`,
       {
         prompt,
-        source: 'APPSCRIPT',
+        source: SOURCE,
       }
     );
 
@@ -82,5 +132,67 @@ class SimplifyApiClient extends AuthenticatedRequestor {
     }
 
     return;
+  }
+
+  async getConversations(): Promise<DConversation[]> {
+    const res = await this.get(`/${CONVERSATION_BASE}`);
+
+    return res.json();
+  }
+
+  async getConversationMessages(
+    id: string
+  ): Promise<(DAssistantMessage | DUserMessage)[]> {
+    const res = await this.get(`/${CONVERSATION_BASE}/messages/${id}`);
+    const messages = (await res.json()) as (DAssistantMessage | DUserMessage)[];
+
+    if (messages.length === 0) {
+      return [];
+    }
+
+    return messages.map((el) => ({
+      ...el,
+      content: decodeURIComponent(el.content).replaceAll('`', ''),
+    }));
+  }
+
+  async createNewConversation({
+    name,
+    temperature,
+    promptType,
+    isBookmarked = false,
+  }: Partial<DConversation>): Promise<DConversation> {
+    const res = await this.post(`/${CONVERSATION_BASE}`, {
+      name,
+      temperature,
+      promptType,
+      source: SOURCE,
+      isBookmarked,
+    });
+
+    return res.json();
+  }
+
+  async editConversation(
+    id: string,
+    { name, temperature, isBookmarked }: Partial<DConversation>
+  ): Promise<DConversation> {
+    const res = await this.patch(`/${CONVERSATION_BASE}/${id}`, {
+      name,
+      temperature,
+      isBookmarked,
+    });
+
+    if (res.ok === false) {
+      throw new Error('Error while updating conversation');
+    }
+
+    return res.json();
+  }
+
+  async deleteConversation(id: string): Promise<DConversation> {
+    const res = await this.delete(`/${CONVERSATION_BASE}/${id}`);
+
+    return res.json();
   }
 }

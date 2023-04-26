@@ -9,7 +9,7 @@ export const createMessage = catchAsync(async (req: Request, res: Response) => {
   const { prompt, source } = req.body;
   const { conversationId } = req.query;
   const userId = req.decodedFirebaseToken.uid;
-  const { user, conversation } = req;
+  const { conversation } = req;
 
   const message = await messageService.createUserMessage({
     userId,

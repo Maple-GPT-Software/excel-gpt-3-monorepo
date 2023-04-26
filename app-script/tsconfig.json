@@ -5,6 +5,11 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["gas-types-detailed"],
     "jsx": "react",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "paths": {
+      "react": ["./node_modules/preact/compact"],
+      "react-dom": ["./node_modules/preact/compact/"]
+    }
   }
 }

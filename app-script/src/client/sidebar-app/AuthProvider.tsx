@@ -1,6 +1,6 @@
 import React, {
-  createContext,
   ReactNode,
+  createContext,
   useContext,
   useEffect,
   useState,
@@ -8,9 +8,10 @@ import React, {
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import Login from './Login';
 import Refresh from './Refresh';
-import { CHAT_ROUTE } from './constants';
+import { CHAT_ROUTE, CONVERSATION_CHECK_ROUTE } from './constants';
 import AuthenticatedLayout from './components/AuthenticatedLayout';
 import SimplifyApi, { SimplifyUserProfile } from './api/SimplifyApi';
+import ConversationCheck from './ConversationCheck';
 
 /**
  * WARNING! When making changes to this component you have to restart the dev server :(
@@ -18,15 +19,14 @@ import SimplifyApi, { SimplifyUserProfile } from './api/SimplifyApi';
  * However component that are children of <Routes /> are not affected by the refresh loop
  */
 
-const AuthContext = createContext<
-  | {
-      userProfile: SimplifyUserProfile | undefined;
-      accessToken: string;
-      loginWithGoogle: () => void;
-      signOut: () => void;
-    }
-  | undefined
->(undefined);
+interface AuthContextType {
+  userProfile?: SimplifyUserProfile;
+  accessToken: string;
+  loginWithGoogle: () => void;
+  signOut: () => void;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
@@ -36,6 +36,17 @@ export const useAuthContext = () => {
   }
 
   return context;
+};
+
+/** Auth context with userProfile and other optional properties defined. Safe to use this hook within a child of authenticated layout */
+export const useAuthenticatedContext = () => {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw Error('must be wrapped in AuthContext.Provider');
+  }
+
+  return context as Required<AuthContextType>;
 };
 
 interface AuthProviderProps {
@@ -68,8 +79,7 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     // https://medium.com/geekculture/firebase-auth-with-react-and-typescript-abeebcd7940a
-    // TODO: unsubscribe from onAuthStateChanged
-    window.getAuth().onAuthStateChanged(async (user) => {
+    const unsubscribe = window.getAuth().onAuthStateChanged(async (user) => {
       if (user) {
         const accessToken = await user.getIdToken();
 
@@ -77,7 +87,7 @@ function AuthProvider({ children }: AuthProviderProps) {
           const profile = await SimplifyApi(accessToken).getUserProfile();
           setWaitingForFirebase(false);
           setUserProfile(profile);
-          navgiate(CHAT_ROUTE);
+          navgiate(CONVERSATION_CHECK_ROUTE);
         } catch (error: any) {
           const { message } = error;
           console.log(message);
@@ -89,42 +99,27 @@ function AuthProvider({ children }: AuthProviderProps) {
         navgiate('/');
       }
     });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
-    window.getAuth().onIdTokenChanged((user) => {
-      // the case where the user has logged out is handled by onAuthStateChanged listener
-      // we get this event when the user first logs in and when firebase periodically refreshes the user's token
+    /** update access token when access token refreshes */
+    const unsubscribe = window.getAuth().onIdTokenChanged(async (user) => {
       if (user) {
-        user
-          .getIdToken()
-          .then((token) => {
-            setAccessToken(token);
-          })
-          .catch((e) => {
-            // firebase API call fails
-            signOut();
-          })
-          .finally(() => {
-            setWaitingForFirebase(false);
-          });
+        try {
+          const token = await user.getIdToken();
+          setAccessToken(token);
+        } catch (error) {
+          signOut();
+        }
       }
     });
-  });
-
-  /** Refresh access token every 50 minutes */
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      const user = window.getAuth().currentUser;
-
-      if (user) {
-        const token = await user.getIdToken();
-        setAccessToken(token);
-      }
-    }, 50 * 60 * 1000);
 
     return () => {
-      clearInterval(interval);
+      unsubscribe();
     };
   }, []);
 
@@ -141,7 +136,14 @@ function AuthProvider({ children }: AuthProviderProps) {
       {waitingForFirebase && <Refresh />}
       <Routes>
         <Route index element={<Login />} />
-        <Route path={CHAT_ROUTE} element={<AuthenticatedLayout />} />
+        <Route
+          path={CONVERSATION_CHECK_ROUTE}
+          element={<ConversationCheck />}
+        />
+        <Route
+          path={`${CHAT_ROUTE}/:conversationId`}
+          element={<AuthenticatedLayout />}
+        />
       </Routes>
     </AuthContext.Provider>
   );
