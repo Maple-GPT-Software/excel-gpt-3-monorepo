@@ -69,6 +69,7 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   function loginWithGoogle() {
     setWaitingForFirebase(true);
+    // TODO: error message
     window.googleAuthPopUp();
   }
 

@@ -87,7 +87,7 @@ export enum DConversationPromptType {
 export interface DConversation {
   userId: string;
   name: string;
-  isSaved: boolean;
+  isBookmarked: boolean;
   systemPrompt: string;
   promptType: DConversationPromptType;
   /**
