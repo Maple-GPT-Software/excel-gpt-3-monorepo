@@ -69,13 +69,21 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   function loginWithGoogle() {
     setWaitingForFirebase(true);
-    // TODO: error message
-    window.googleAuthPopUp();
+    setAuthErrorMessage('');
+    window.googleAuthPopUp().catch(() => {
+      setWaitingForFirebase(false);
+    });
   }
 
   function signOut() {
     const auth = window.getAuth();
     auth.signOut();
+  }
+
+  function resetAuthStates() {
+    setWaitingForFirebase(false);
+    setUserProfile(undefined);
+    setAccessToken('');
   }
 
   useEffect(() => {
@@ -91,12 +99,13 @@ function AuthProvider({ children }: AuthProviderProps) {
           navgiate(CONVERSATION_CHECK_ROUTE);
         } catch (error: any) {
           const { message } = error;
-          console.log(message);
+          // clear firebase user object in indexDB
+          signOut();
+          setAuthErrorMessage(message);
+          resetAuthStates();
         }
       } else {
-        setWaitingForFirebase(false);
-        setUserProfile(undefined);
-        setAccessToken('');
+        resetAuthStates();
         navgiate('/');
       }
     });
@@ -136,7 +145,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       {/* when modal popups we have to wait for user to confirm their login w firebase */}
       {waitingForFirebase && <Refresh />}
       <Routes>
-        <Route index element={<Login />} />
+        <Route index element={<Login authErrorMessage={authErrorMessage} />} />
         <Route
           path={CONVERSATION_CHECK_ROUTE}
           element={<ConversationCheck />}

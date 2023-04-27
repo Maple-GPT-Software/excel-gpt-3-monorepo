@@ -6,7 +6,7 @@ import { CHAT_ROUTE } from './constants';
 
 import './Login.style.css';
 
-function Login() {
+function Login({ authErrorMessage }: { authErrorMessage: string }) {
   const { loginWithGoogle, userProfile } = useAuthContext();
   const navigate = useNavigate();
 
@@ -40,6 +40,11 @@ function Login() {
           <GoogleIcon />
           <p>Sign in with Google</p>
         </button>
+        {!!authErrorMessage && (
+          <p style={{ color: 'red', marginBottom: '12px' }}>
+            {authErrorMessage}
+          </p>
+        )}
         <p className="auth-link">
           {/* TODO: our domain */}
           No account?{' '}

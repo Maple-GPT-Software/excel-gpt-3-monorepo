@@ -72,30 +72,31 @@ function ConversationList({
 
   return (
     <div className="conversation-list" ref={conversationListRef}>
-      <button
-        className="new-conversation-button"
-        onClick={onCreateConversationClick}
-      >
-        + New Conversation
-      </button>
-      <div className="divisor"></div>
-
-      <div style={{ marginBottom: '12px' }}>
-        <label htmlFor="viewSavedOnly">
-          <input
-            onClick={() => setViewSaved((prev) => !prev)}
-            checked={viewSaved}
-            type="checkbox"
-            id="viewSavedOnly"
-          />
-          <p style={{ marginLeft: '6px', display: 'inline', color: 'white' }}>
-            Only show bookmarked
-          </p>
-        </label>
+      <div className="conversation-list-actions">
+        <button
+          className="new-conversation-button"
+          onClick={onCreateConversationClick}
+        >
+          + New Conversation
+        </button>
+        <div style={{ margin: '6px 0' }}>
+          <label htmlFor="viewSavedOnly">
+            <input
+              onClick={() => setViewSaved((prev) => !prev)}
+              checked={viewSaved}
+              type="checkbox"
+              id="viewSavedOnly"
+            />
+            <p style={{ marginLeft: '6px', display: 'inline', color: 'white' }}>
+              Only show bookmarked
+            </p>
+          </label>
+        </div>
+        <div className="divisor"></div>
       </div>
 
-      {!conversations ||
-        (conversations?.length == 0 && (
+      <div className="conversation-list-items">
+        {(!filteredConversations || filteredConversations.length === 0) && (
           <p style={{ color: 'white', marginTop: '24px' }}>
             <Icon
               strokeColor="white"
@@ -108,24 +109,25 @@ function ConversationList({
               ? 'No saved conversations.'
               : 'Create a new conversation!'}
           </p>
-        ))}
+        )}
 
-      {renderConversationList &&
-        filteredConversations.map((conversation) => {
-          return (
-            <ConversationListItem
-              key={conversation.id}
-              isDeleting={isDeleting}
-              conversation={conversation}
-              selectedConversationId={selectedConversationId}
-              enterEditConversationMode={enterEditConversationMode}
-              updateSelectedId={updateSelectedId}
-              deleteConversationHandler={deleteConversationHandler}
-              setIsDeleting={setIsDeleting}
-              toggleConversationSavedHandler={toggleConversationSavedHandler}
-            />
-          );
-        })}
+        {renderConversationList &&
+          filteredConversations.map((conversation) => {
+            return (
+              <ConversationListItem
+                key={conversation.id}
+                isDeleting={isDeleting}
+                conversation={conversation}
+                selectedConversationId={selectedConversationId}
+                enterEditConversationMode={enterEditConversationMode}
+                updateSelectedId={updateSelectedId}
+                deleteConversationHandler={deleteConversationHandler}
+                setIsDeleting={setIsDeleting}
+                toggleConversationSavedHandler={toggleConversationSavedHandler}
+              />
+            );
+          })}
+      </div>
     </div>
   );
 }
@@ -202,8 +204,8 @@ function ConversationListItem({
               <Icon
                 pathName="PENCIL"
                 strokeColor="white"
-                width={18}
-                height={18}
+                width={16}
+                height={16}
                 styles={{ padding: 0 }}
               />
             </button>
@@ -214,8 +216,8 @@ function ConversationListItem({
               <Icon
                 pathName="CLOSE"
                 strokeColor="white"
-                width={20}
-                height={20}
+                width={16}
+                height={16}
                 styles={{ padding: 0 }}
               />
             </button>

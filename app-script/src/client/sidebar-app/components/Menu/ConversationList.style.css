@@ -1,3 +1,16 @@
+.conversation-list {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.conversation-list-items {
+  max-height: 300px;
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
 .new-conversation-button {
   padding: 12px;
   width: 100%;
@@ -30,7 +43,7 @@
 }
 
 .conversation-item.selected {
-  background-color: #52525b;
+  background-color: rgba(52, 53, 65, 0.9);
 }
 
 .conversation-item:hover {
