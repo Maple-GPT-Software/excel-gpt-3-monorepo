@@ -1,10 +1,7 @@
 import { AuthenticatedRequestor } from './AuthenticatedRequestor';
-
 import AuthService from '@/models/AuthService';
-
-import { PriceIds } from '@/types/appTypes';
+import { PriceIds } from '@/types/simplifyApi';
 import type { SimplifyUser } from '@/types/simplifyApi';
-
 import settings from '@/settings';
 
 const SERVER_AUTH_BASE = '/auth';
@@ -59,7 +56,6 @@ class SimplifyApiClient {
 
   async createCheckoutSession(data: {
     priceId: PriceIds;
-    openaiApiKey: string;
     successUrl: string;
     cancelUrl: string;
   }) {
@@ -71,30 +67,6 @@ class SimplifyApiClient {
       });
 
       return response.data;
-    } catch (error: any) {
-      // stripe sends 307 for re-direct
-      if (error?.response?.status === 307) {
-        return window.open(error.response.data.url, '_self');
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  async lifetimeAccessCheckout(data: {
-    openaiApiKey: string;
-    successUrl: string;
-    cancelUrl: string;
-  }) {
-    // eslint-disable-next-line no-useless-catch
-    try {
-      await this.requestor.post<any>({
-        url: `${SERVER_PAYMENT_BASE}/lifetime-checkout`,
-        data: {
-          ...data,
-          priceId: PriceIds.LIFETIME_CHAT_ACCESS,
-        },
-      });
     } catch (error: any) {
       // stripe sends 307 for re-direct
       if (error?.response?.status === 307) {

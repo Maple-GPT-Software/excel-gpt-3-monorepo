@@ -5,23 +5,22 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-
 import SimplifyApi from '@/api/SimplifyApi';
-
 import { useAuthContext } from '@/contexts/AuthProvider';
-
 import { AppSearchParams } from '@/hooks/useNavigateWithParams';
-
 import { Button } from '@/components/ui/Button';
 import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
 import { Input } from '@/components/ui/Input';
 import MDIIcon from '@/components/ui/MDIIcon';
-
+import { SubscriptionURLParams } from '@/types/appTypes';
+import { PriceIds } from '@/types/simplifyApi';
 import {
   DASHBOARD_ROUTE,
   PRIVATE_POLICIES,
+  SIGN_UP_ROUTE,
   TERMS_AND_CONDITIONS,
 } from '@/constants';
+import settings from '@/settings';
 
 interface RegistrationFormType {
   fullName: string;
@@ -47,6 +46,8 @@ function RegistrationForm() {
 
   async function onSubmit(data: RegistrationFormType) {
     const { fullName, hasCheckedTerms } = data;
+    const subscriptionType = searchParams?.get(AppSearchParams.SUBSCRIPTION);
+
     try {
       const simplifyUser = await SimplifyApi().createUser(
         fullName,
@@ -54,12 +55,26 @@ function RegistrationForm() {
         searchParams?.get(AppSearchParams.REFERRER) ?? ''
       );
 
-      await SimplifyApi().createFreeSubscription();
+      if (
+        subscriptionType &&
+        subscriptionType === SubscriptionURLParams.PREMIUM
+      ) {
+        await SimplifyApi().createCheckoutSession({
+          priceId: PriceIds.STANDALONE_MONTHLY,
+          successUrl: `${settings.webappBaseUrl}/${DASHBOARD_ROUTE}`,
+          // TODO: signup abandoned fallback route that signs user up for createFreeSubscription
+          cancelUrl: `${settings.webappBaseUrl}/${SIGN_UP_ROUTE}`,
+        });
+      } else {
+        await SimplifyApi().createFreeSubscription();
+      }
 
       // set user so that they are able to acces /app/* without redirect to /auth/refresh
       setSimplifyUser(simplifyUser);
       router.replace(DASHBOARD_ROUTE);
-    } catch (error) {}
+    } catch (error) {
+      error;
+    }
   }
 
   if (isSubmitting || isSubmitted) {
