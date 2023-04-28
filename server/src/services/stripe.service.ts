@@ -15,6 +15,10 @@ interface SessionBase {
   quantity?: number;
 }
 
+export const createCustomerAccount = async (email: string) => {
+  return stripe.customers.create({ email });
+};
+
 /**
  * This method is uses stripe's API to create:
  *  1) a customer profile w user's email
@@ -22,12 +26,10 @@ interface SessionBase {
  * We don't need to save the stripe properties in our DB at this point because we use Stripe's
  * webhook to subscribe to certain events. see `app.ts`
  */
-export const createCustomerWithFreeTrial = async (email: string) => {
+export const createCustomerWithFreeTrial = async (stripeCustomerId: string) => {
   try {
-    const customer = await stripe.customers.create({ email });
-
     stripe.subscriptions.create({
-      customer: customer.id,
+      customer: stripeCustomerId,
       items: [{ price: settings.stripePriceIds.premiumMonthly }],
       trial_period_days: 7,
       cancel_at_period_end: true,
@@ -48,7 +50,6 @@ export const createSubscriptionSession = async (stripeCustomerId: string, option
     const session = await stripe.checkout.sessions.create({
       success_url: successUrl,
       cancel_url: cancelUrl,
-      /** our webhooks depend on stripe customer id */
       customer: stripeCustomerId,
       line_items: [
         {

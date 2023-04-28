@@ -61,7 +61,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
     case StripeWebhooks.CustomerCreated:
       const customer = event.data.object;
       // note: customer.email is string|null but when we create the customer with Stripe
-      // we specify the user's email that should be used to uniquely identify the customer
+      // we specify the email that should be used to uniquely identify the customer
       stripeService.addCustomerId(customer.email as string, customer.id);
       break;
     case StripeWebhooks.SubscriptionCreated:

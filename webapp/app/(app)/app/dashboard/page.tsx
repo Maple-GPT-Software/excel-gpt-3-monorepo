@@ -5,9 +5,7 @@ import OpenApiKeyGuide from './openAiKeyGuide.mdx';
 import Overview from './overview.mdx';
 import PromptGuideContent from './promptGuide.mdx';
 import type { FunctionComponent } from 'react';
-
 import { useAuthContext } from '@/contexts/AuthProvider';
-
 import { Tabs, TabsList } from '@/components/ui/Tabs';
 import { TabsContent, TabsTrigger } from '@/components/ui/Tabs';
 

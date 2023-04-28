@@ -2,13 +2,9 @@ import type { User } from '@firebase/auth-types';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import type { ReactNode } from 'react';
-
 import AuthService from '@/models/AuthService';
-
 import { auth, firebaseSignout } from '@/services/firebase';
-
 import type { SimplifyUser } from '@/types/simplifyApi';
-
 import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
 
 interface AuthContextType {

@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import ModalVideo from 'react-modal-video';
-
 import SectionTitle from '@/components/Common/SectionTitle';
 
 const LandingVideoSection = () => {

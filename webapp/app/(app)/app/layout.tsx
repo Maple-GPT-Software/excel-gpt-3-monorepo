@@ -3,11 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import type { FunctionComponent, ReactNode } from 'react';
-
 import { useAuthContext } from '@/contexts/AuthProvider';
-
 import SideNav from '@/features/SideNav';
-
 import { AUTH_REFRESH_ROUTE, ROUTE_BEFORE_REFRESH } from '@/constants';
 
 interface AppLayoutProps {

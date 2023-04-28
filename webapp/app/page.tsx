@@ -1,6 +1,5 @@
 import PublicFooter from './(public)/PublicFooter';
 import PublicNav from './(public)/PublicNav';
-
 import LandingFeaturesSection from '@/components/Landing/LandingFeaturesSection';
 import LandingLastSection from '@/components/Landing/LandingLastSection';
 import LandingReviewSection from '@/components/Landing/LandingReviewSection';

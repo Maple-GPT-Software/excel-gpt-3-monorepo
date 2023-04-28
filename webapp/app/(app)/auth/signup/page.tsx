@@ -6,15 +6,10 @@ import { AuthErrorCodes } from 'firebase/auth';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
-
 import SimplifyApi from '@/api/SimplifyApi';
-
 import { useAuthContext } from '@/contexts/AuthProvider';
-
 import { useNavigateWithParams } from '@/hooks/useNavigateWithParams';
-
 import { signInWithGoogle } from '@/services/firebase';
-
 import {
   REGISTRATION_ROUTE,
   DASHBOARD_ROUTE,
@@ -40,7 +35,6 @@ const SignupPage = () => {
         /** user does not exist, re-direct to regisration */
         navigateWithParams(REGISTRATION_ROUTE);
       } else {
-        console.error(e);
         setErrorMessage('Unhandled server error.');
       }
     } else if (e instanceof FirebaseError) {
@@ -54,6 +48,7 @@ const SignupPage = () => {
     }
   }
 
+  // TODO: check if user has stripCustomerId
   const signUpPopup = async () => {
     try {
       const { user } = await signInWithGoogle();

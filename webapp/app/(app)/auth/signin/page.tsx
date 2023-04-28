@@ -10,15 +10,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
 // API
 import SimplifyApi from '@/api/SimplifyApi';
-
 // CONTEXTS
 import { useAuthContext } from '@/contexts/AuthProvider';
-
 import { signInWithGoogle } from '@/services/firebase';
-
 import { DASHBOARD_ROUTE, SIGN_UP_ROUTE } from '@/constants';
 
 const SigninPage = () => {
