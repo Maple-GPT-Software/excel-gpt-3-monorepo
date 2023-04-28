@@ -4,7 +4,6 @@ import clsx from 'classnames';
 import { e } from 'easy-tailwind';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-
 import { PRICING_ROUTE, SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
 
 const menuItems: { route: string; label: string }[] = [

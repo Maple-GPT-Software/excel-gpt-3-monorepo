@@ -6,12 +6,9 @@ import { mdiPower } from '@mdi/js';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useMemo } from 'react';
 import colors from 'tailwindcss/colors';
-
 import { useAuthenticatedContext } from '@/contexts/AuthProvider';
-
 import { Button } from '@/components/ui/Button';
 import MDIIcon from '@/components/ui/MDIIcon';
-
 import { BILLING_ROUTE, DASHBOARD_ROUTE } from '@/constants';
 
 interface SideNavItem {

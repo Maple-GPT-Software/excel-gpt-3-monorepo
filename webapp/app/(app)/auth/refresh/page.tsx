@@ -3,13 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import type { FunctionComponent } from 'react';
-
 import SimplifyApi from '@/api/SimplifyApi';
-
 import { useAuthContext } from '@/contexts/AuthProvider';
-
 import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
-
 import {
   DASHBOARD_ROUTE,
   ROUTE_BEFORE_REFRESH,

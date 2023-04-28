@@ -1,18 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-
 import {
   useNavigateWithParams,
   AppSearchParams,
 } from '@/hooks/useNavigateWithParams';
-
 import SectionTitle from '@/components/Common/SectionTitle';
 import OfferList from '@/components/Pricing/OfferList';
 import PricingBox from '@/components/Pricing/PricingBox';
-
 import { SubscriptionURLParams } from '@/types/appTypes';
-
 import { SIGN_UP_ROUTE } from '@/constants';
 
 const Pricing = () => {

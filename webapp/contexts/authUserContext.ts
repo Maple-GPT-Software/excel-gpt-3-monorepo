@@ -1,5 +1,4 @@
 import { createContext } from 'react';
-
 import { User } from '@/utils/types';
 
 interface AuthUserContext {
