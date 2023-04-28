@@ -1,8 +1,8 @@
-const { NODE_ENV } = process.env;
+const env = process.env.NODE_ENV;
 
-export const isProd = NODE_ENV === 'production';
+export const isProd = env === 'production';
 // @ts-expect-error integration is a valid type
-export const isIntegration = NODE_ENV === 'integration';
+export const isIntegration = env === 'integration';
 
 // development defaults
 let SIMPLIFY_BASE_URL = 'http://localhost:3000/api/v1';
@@ -13,7 +13,6 @@ if (isIntegration) {
   WEBAPP_BASE_URL = 'int';
 }
 
-// TODO: switch with real prod URLs
 if (isProd) {
   SIMPLIFY_BASE_URL = 'https://excel-simplify.herokuapp.com/api/v1';
   WEBAPP_BASE_URL = 'https://www.excelsimplify.com';
