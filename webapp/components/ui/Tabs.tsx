@@ -1,8 +1,8 @@
 'use client';
 
 import * as TabsPrimitive from '@radix-ui/react-tabs';
-import { e } from 'easy-tailwind';
 import * as React from 'react';
+import { cn } from '@/utils/cn';
 
 const Tabs = TabsPrimitive.Root;
 
@@ -12,7 +12,7 @@ const TabsList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.List
     ref={ref}
-    className={e(
+    className={cn(
       'mt-8 flex items-center justify-center rounded-md border-b-2 border-green-600 bg-transparent p-1 dark:bg-slate-800',
       className
     )}
@@ -26,7 +26,7 @@ const TabsTrigger = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Trigger
-    className={e(
+    className={cn(
       // For some unknown reason the styling below is not getting applied, will be putting the code into the className of the component when using it instead
       'flex-auto items-center justify-center rounded-[0.185rem] px-3 py-1.5 text-sm font-medium text-slate-700 transition-all disabled:pointer-events-none disabled:opacity-50 dark:text-slate-200 dark:data-[state=active]:border-b-2 dark:data-[state=active]:border-green-600',
       className
@@ -42,7 +42,7 @@ const TabsContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Content
-    className={e(
+    className={cn(
       'mt-2 rounded-md border border-slate-200 p-6 dark:border-slate-700',
       className
     )}

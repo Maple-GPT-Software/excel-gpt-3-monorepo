@@ -1,9 +1,9 @@
 'use client';
 
-import clsx from 'classnames';
-import { e } from 'easy-tailwind';
+import clsx from 'clsx';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { cn } from '@/utils/cn';
 import { PRICING_ROUTE, SIGN_IN_ROUTE, SIGN_UP_ROUTE } from '@/constants';
 
 const menuItems: { route: string; label: string }[] = [
@@ -40,7 +40,6 @@ export default function PublicNav() {
   return (
     <>
       <header
-        // TODO: get rid of classnames
         className={clsx(
           'header top-0 left-0 z-40 flex w-full items-center bg-transparent ',
           {
@@ -60,7 +59,7 @@ export default function PublicNav() {
                   sticky ? 'py-5 lg:py-2' : 'py-8'
                 } `}
               >
-                <span className="text-primary">
+                <span className="font-bold">
                   Excel<span className="text-body-color">Simplify</span>
                 </span>
               </Link>
@@ -112,12 +111,8 @@ export default function PublicNav() {
                 </Link>
                 <Link
                   href={SIGN_UP_ROUTE}
-                  className={e(
-                    'ease-in-up rounded-md bg-green-600 py-3 px-8 text-base  text-white transition duration-300',
-                    {
-                      hover: 'bg-opacity-90 shadow-signUp',
-                      md: ['px-9'],
-                    }
+                  className={cn(
+                    'ease-in-up rounded-md bg-green-600 px-9 py-3 text-base text-white transition  duration-300 hover:bg-opacity-90 hover:shadow-signUp'
                   )}
                 >
                   Sign Up

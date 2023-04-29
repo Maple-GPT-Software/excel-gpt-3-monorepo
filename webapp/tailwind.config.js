@@ -1,5 +1,4 @@
 const colors = require('tailwindcss/colors');
-const { replacer } = require('easy-tailwind');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -11,9 +10,6 @@ module.exports = {
       './features/**/*.{js,ts,jsx,tsx}',
       './mdx-components.tsx',
     ],
-    transform: {
-      DEFAULT: replacer,
-    },
   },
   darkMode: 'class',
   theme: {
