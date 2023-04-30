@@ -78,7 +78,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section id="hero-footer" className=" bg-green-800 py-12 md:py-24">
+      <section id="hero-footer" className="w-full bg-green-800 py-12 md:py-24">
         <div className="container flex max-w-[48rem] flex-col items-center gap-4 bg-green-800 py-8 text-center">
           <h3 className="text-2xl text-white md:text-4xl md:leading-normal">
             Try the simplest Google Sheets Chat GPT integration
