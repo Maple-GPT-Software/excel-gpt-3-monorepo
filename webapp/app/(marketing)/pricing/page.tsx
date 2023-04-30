@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { cn } from '@/utils/cn';
 import { Button, buttonVariants } from '@/components/ui/Button';
 import MDIIcon from '@/components/ui/MDIIcon';
+import { SIGN_UP_ROUTE } from '@/constants';
+import { RegistrationParamKeys } from '@/types/appTypes';
+
 
 const PricePage = () => {
   return (
@@ -13,8 +16,8 @@ const PricePage = () => {
           Simple, transparent pricing
         </h1>
         <p className="text-muted-foreground max-w-[42rem] leading-normal sm:text-xl sm:leading-8">
-          Start a free trial to access ExcelSimplify&apos;s features. No credit
-          card required.
+          Start a free trial to access ExcelSimplify&apos;s features today.
+          <br /> No credit card required.
         </p>
       </div>
       <div className="container flex justify-center">
@@ -30,7 +33,7 @@ const PricePage = () => {
               <MDIIcon path={mdiCurrencyUsd} size={1.5} />0
             </div>
             <Link
-              href="/signup"
+              href={`${SIGN_UP_ROUTE}?${RegistrationParamKeys.SUBSCRIPTION}=${}`}
               className={cn(
                 buttonVariants({ size: 'lg', variant: 'outline' }),
                 'w-full border-solid border-slate-800'
@@ -112,15 +115,14 @@ const PricePage = () => {
           <div className="rounded-lg border border-solid border-cyan-600 p-2 py-12 px-8">
             <h3 className="text-2xl font-medium text-teal-600">Teams</h3>
             <p className="mt-4">
-              For teams that need centralized billing and control. Get
-              ExcelSimplify&apos;s intuitive team management with admin
-              features.
+              For teams that need centralized billing and control. Please
+              contact our sales team to discuss your needs.
             </p>
             <Button
               variant="outline"
-              className={cn('mt-4 w-full hover:bg-cyan-600')}
+              className={cn('mt-4 w-full hover:bg-cyan-600 md:mt-[3.25rem]')}
             >
-              Contact us
+              Contact Sales
             </Button>
           </div>
         </div>

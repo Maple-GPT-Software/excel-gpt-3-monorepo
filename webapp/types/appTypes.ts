@@ -8,3 +8,8 @@ export enum SubscriptionURLParams {
   /** user signing up for lifetime access */
   LIFETIME_CHAT_ACCESS = 'lifetime',
 }
+
+export enum RegistrationParamKeys {
+  SUBSCRIPTION = 'subscription',
+  REFERRER = 'referrer',
+}

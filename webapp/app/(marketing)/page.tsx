@@ -71,7 +71,7 @@ export default function Home() {
               <div className="space-y-2">
                 <h3 className="font-bold">Simplicity</h3>
                 <p className="text-sm">
-                  We make easy to use and intuitive features.
+                  We focus on easy to use and intuitive features.
                 </p>
               </div>
             </div>

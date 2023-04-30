@@ -11,6 +11,14 @@ export interface SimplifyUser {
   stripeStatus: string;
 }
 
+export type User = {
+  uid: string;
+  email: string;
+  name: string;
+  signUpSource: string;
+  referrer: string;
+};
+
 /** IDs for Stripe prices accepted by Simplify API */
 export enum PriceIds {
   STANDALONE_MONTHLY = 'price_1MdLWWGB7M3KTCGBlQufaDuk',

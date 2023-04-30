@@ -7,11 +7,11 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import SimplifyApi from '@/api/SimplifyApi';
 import { useAuthContext } from '@/contexts/AuthProvider';
-import { AppSearchParams } from '@/hooks/useNavigateWithParams';
 import { Button } from '@/components/ui/Button';
 import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
 import { Input } from '@/components/ui/Input';
 import MDIIcon from '@/components/ui/MDIIcon';
+import { RegistrationParamKeys } from '@/types/appTypes';
 import { SubscriptionURLParams } from '@/types/appTypes';
 import { PriceIds } from '@/types/simplifyApi';
 import {
@@ -46,13 +46,15 @@ function RegistrationForm() {
 
   async function onSubmit(data: RegistrationFormType) {
     const { fullName, hasCheckedTerms } = data;
-    const subscriptionType = searchParams?.get(AppSearchParams.SUBSCRIPTION);
+    const subscriptionType = searchParams?.get(
+      RegistrationParamKeys.SUBSCRIPTION
+    );
 
     try {
       const simplifyUser = await SimplifyApi().createUser(
         fullName,
         hasCheckedTerms,
-        searchParams?.get(AppSearchParams.REFERRER) ?? ''
+        searchParams?.get(RegistrationParamKeys.REFERRER) ?? ''
       );
 
       if (
