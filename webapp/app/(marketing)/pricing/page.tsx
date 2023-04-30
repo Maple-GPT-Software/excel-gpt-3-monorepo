@@ -2,11 +2,9 @@ import { mdiCurrencyUsd } from '@mdi/js';
 import { mdiCheck } from '@mdi/js';
 import Link from 'next/link';
 import { cn } from '@/utils/cn';
+import marketingLinksFactory from '@/utils/marketingLinkFactory';
 import { Button, buttonVariants } from '@/components/ui/Button';
 import MDIIcon from '@/components/ui/MDIIcon';
-import { SIGN_UP_ROUTE } from '@/constants';
-import { RegistrationParamKeys } from '@/types/appTypes';
-
 
 const PricePage = () => {
   return (
@@ -33,7 +31,7 @@ const PricePage = () => {
               <MDIIcon path={mdiCurrencyUsd} size={1.5} />0
             </div>
             <Link
-              href={`${SIGN_UP_ROUTE}?${RegistrationParamKeys.SUBSCRIPTION}=${}`}
+              href={marketingLinksFactory.freeTrialSignup}
               className={cn(
                 buttonVariants({ size: 'lg', variant: 'outline' }),
                 'w-full border-solid border-slate-800'
@@ -77,7 +75,7 @@ const PricePage = () => {
               <MDIIcon path={mdiCurrencyUsd} size={1.5} />5
             </div>
             <Link
-              href="/signup"
+              href={marketingLinksFactory.premiumSignup}
               className={cn(
                 buttonVariants({ size: 'lg', variant: 'default' }),
                 'w-full border-solid border-slate-800'

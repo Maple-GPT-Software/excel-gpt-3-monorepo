@@ -3,9 +3,9 @@ import { mdiStarOutline } from '@mdi/js';
 import { mdiRobotHappyOutline } from '@mdi/js';
 import Link from 'next/link';
 import { cn } from '@/utils/cn';
+import marketingLinksFactory from '@/utils/marketingLinkFactory';
 import { buttonVariants } from '@/components/ui/Button';
 import MDIIcon from '@/components/ui/MDIIcon';
-import { SIGN_UP_ROUTE } from '@/constants';
 
 export default function Home() {
   return (
@@ -21,7 +21,7 @@ export default function Home() {
           </p>
           <div className="space-x-4">
             <Link
-              href={SIGN_UP_ROUTE}
+              href={marketingLinksFactory.freeTrialSignup}
               className={cn(buttonVariants({ size: 'lg' }))}
             >
               Get Started
@@ -85,7 +85,7 @@ export default function Home() {
           </h3>
           <div className="mt-8 space-x-4">
             <Link
-              href={SIGN_UP_ROUTE}
+              href={marketingLinksFactory.freeTrialSignup}
               className={cn(
                 buttonVariants({ size: 'lg', variant: 'outline' }),
                 'bg-white text-slate-800'

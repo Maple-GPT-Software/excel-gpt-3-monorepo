@@ -12,7 +12,7 @@ import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
 import { Input } from '@/components/ui/Input';
 import MDIIcon from '@/components/ui/MDIIcon';
 import { RegistrationParamKeys } from '@/types/appTypes';
-import { SubscriptionURLParams } from '@/types/appTypes';
+import { RegistrationParamValues } from '@/types/appTypes';
 import { PriceIds } from '@/types/simplifyApi';
 import {
   DASHBOARD_ROUTE,
@@ -59,7 +59,7 @@ function RegistrationForm() {
 
       if (
         subscriptionType &&
-        subscriptionType === SubscriptionURLParams.PREMIUM
+        subscriptionType === RegistrationParamValues.PREMIUM
       ) {
         await SimplifyApi().createCheckoutSession({
           priceId: PriceIds.STANDALONE_MONTHLY,
