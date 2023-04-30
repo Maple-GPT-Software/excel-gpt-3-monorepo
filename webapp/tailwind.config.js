@@ -1,5 +1,4 @@
 const colors = require('tailwindcss/colors');
-const { replacer } = require('easy-tailwind');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -11,34 +10,15 @@ module.exports = {
       './features/**/*.{js,ts,jsx,tsx}',
       './mdx-components.tsx',
     ],
-    transform: {
-      DEFAULT: replacer,
-    },
   },
   darkMode: 'class',
   theme: {
     container: {
       center: true,
-      padding: '1rem',
-    },
-    colors: {
-      current: 'currentColor',
-      transparent: 'transparent',
-      white: '#FFFFFF',
-      dark: '#1D2144',
-      yellow: colors.yellow,
-      red: colors.red,
-      slate: colors.slate,
-      green: colors.green,
-      black: colors.black,
-    },
-    screens: {
-      xs: '450px',
-      sm: '575px',
-      md: '768px',
-      lg: '992px',
-      xl: '1200px',
-      '2xl': '1400px',
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
     },
     extend: {
       boxShadow: {

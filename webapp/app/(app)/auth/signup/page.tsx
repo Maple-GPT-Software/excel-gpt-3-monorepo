@@ -71,7 +71,7 @@ const SignupPage = () => {
         <div className="container">
           <div className="-mx-4 flex flex-wrap">
             <div className="-mt-8 w-full px-4">
-              <div className="mx-auto max-w-[500px] rounded-md bg-green-600  bg-opacity-5 py-10 px-6 font-thin shadow-aesthetic dark:bg-dark sm:p-[60px]">
+              <div className="dark:bg-dark mx-auto max-w-[500px] rounded-md  bg-green-600 bg-opacity-5 py-10 px-6 font-thin shadow-aesthetic sm:p-[60px]">
                 <h3 className="mb-14 text-center text-2xl  text-black dark:text-white sm:text-3xl">
                   Create your account
                 </h3>
@@ -96,14 +96,14 @@ const SignupPage = () => {
                 </button>
                 <div className="text-body-color flex cursor-pointer select-none text-center text-sm font-medium">
                   <span>
-                    By creating account means you agree to the
+                    By signing up, I agree to the ExcelSimplify{' '}
                     <Link
                       href={TERMS_AND_CONDITIONS}
                       className="text-green-600 hover:underline"
                     >
                       Terms and Conditions
                     </Link>
-                    , and our{' '}
+                    , and{' '}
                     <Link
                       href={PRIVATE_POLICIES}
                       className="text-green-600 hover:underline"

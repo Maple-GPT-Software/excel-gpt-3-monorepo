@@ -1,8 +1,8 @@
 'use client';
 
-import { AuthUserContext } from './authUserContext';
+import { useAuthContext } from './AuthProvider';
 import { useRouter } from 'next/router';
-import { ReactNode, useContext } from 'react';
+import { ReactNode } from 'react';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -10,19 +10,19 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const route = useRouter();
-  const authContext = useContext(AuthUserContext);
+  const authContext = useAuthContext();
 
   if (
-    authContext.isUserAuthenticated &&
+    authContext.hasFirebasedAuthenticated &&
     window.location.pathname === '/signin'
   ) {
     route.push('/dashboard');
   } else if (
-    authContext.isUserAuthenticated &&
+    authContext.hasFirebasedAuthenticated &&
     window.location.pathname === '/signup'
   ) {
     route.push('/registration');
-  } else if (!authContext.isUserAuthenticated) {
+  } else if (!authContext.hasFirebasedAuthenticated) {
     route.push('/signin');
   }
 

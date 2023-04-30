@@ -3,8 +3,8 @@
 import MDIIcon from './MDIIcon';
 import { mdiClose } from '@mdi/js';
 import * as DialogPrimitive from '@radix-ui/react-dialog/dist';
-import { e } from 'easy-tailwind';
 import * as React from 'react';
+import { cn } from '@/utils/cn';
 
 const Dialog = DialogPrimitive.Root;
 
@@ -15,7 +15,7 @@ const DialogPortal = ({
   children,
   ...props
 }: DialogPrimitive.DialogPortalProps) => (
-  <DialogPrimitive.Portal className={e(className)} {...props}>
+  <DialogPrimitive.Portal className={cn(className)} {...props}>
     <div className="fixed inset-0 z-50 flex items-start justify-center sm:items-center">
       {children}
     </div>
@@ -28,7 +28,7 @@ const DialogOverlay = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
 >(({ className, children, ...props }, ref) => (
   <DialogPrimitive.Overlay
-    className={e(
+    className={cn(
       'data-[state=closed]:animate-out data-[state=open]:fade-in data-[state=closed]:fade-out fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-all duration-100',
       className
     )}
@@ -51,7 +51,7 @@ const DialogContent = React.forwardRef<
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
-      className={e(
+      className={cn(
         className,
         'animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0 fixed z-50 grid gap-4 rounded-b-lg bg-white p-6 outline-none sm:rounded-lg',
         'dark:bg-slate-900'
@@ -75,7 +75,10 @@ const DialogHeader = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={e('flex flex-col space-y-2 text-center sm:text-left', className)}
+    className={cn(
+      'flex flex-col space-y-2 text-center sm:text-left',
+      className
+    )}
     {...props}
   />
 );
@@ -86,7 +89,7 @@ const DialogFooter = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={e(
+    className={cn(
       'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
       className
     )}
@@ -101,7 +104,7 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={e(
+    className={cn(
       'text-lg font-semibold text-slate-900',
       'dark:text-slate-50',
       className
@@ -117,7 +120,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={e('text-sm text-slate-500', 'dark:text-slate-400', className)}
+    className={cn('text-sm text-slate-500', 'dark:text-slate-400', className)}
     {...props}
   />
 ));

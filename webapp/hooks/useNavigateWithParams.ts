@@ -1,10 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
-export type Params = Partial<{
-  [key in AppSearchParams]: string;
-}>;
-
 interface Options {
   preserveCurrentParms?: boolean;
   /** navigate without pushing to history stack */
@@ -12,17 +8,17 @@ interface Options {
 }
 
 /** client ride hook for routing to a new path with search params */
-export const useNavigateWithParams = (options?: Options) => {
+export const useNavigateWithParams = <T>(options?: Options) => {
   const router = useRouter();
 
   const createQueryString = useCallback(
-    (newParams?: Params) => {
+    (newParams?: T) => {
       const params = new URLSearchParams(
         options?.preserveCurrentParms !== undefined ? location.search : ''
       );
 
       if (newParams !== undefined) {
-        for (const key of Object.keys(newParams)) {
+        for (const key of Object.keys(newParams as any)) {
           // @ts-expect-error newParams[key] will always be a string
           params.set(key, newParams[key]);
         }
@@ -34,7 +30,7 @@ export const useNavigateWithParams = (options?: Options) => {
   );
 
   const navigateWithParams = useCallback(
-    (location: string, newParams?: Params) => {
+    (location: string, newParams?: T) => {
       const searchParams = createQueryString(newParams);
 
       if (options?.replace === true) {
@@ -48,8 +44,3 @@ export const useNavigateWithParams = (options?: Options) => {
 
   return navigateWithParams;
 };
-
-export enum AppSearchParams {
-  SUBSCRIPTION = 'subscription',
-  REFERRER = 'referrer',
-}

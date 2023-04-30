@@ -6,10 +6,12 @@ function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div>
       <nav className="align-items-center flex h-16 justify-between p-8">
-        <Link href={HOME_ROUTE}>Excel Simplify</Link>
+        <Link className="font-bold text-green-600" href={HOME_ROUTE}>
+          ExcelSimplify
+        </Link>
         <div>
           <Link
-            className="py-2 px-6 text-base text-dark hover:opacity-70"
+            className="text-dark py-2 px-6 text-base hover:opacity-70"
             href={SIGN_IN_ROUTE}
           >
             Sign in
