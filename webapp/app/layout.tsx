@@ -13,10 +13,17 @@ const montserrat = Montserrat({
 // HTML head metadata https://beta.nextjs.org/docs/api-reference/metadata
 export const metadata = {
   title: 'Excel Simplify',
-  description: 'Google Sheets and Microsft Excel productivity tool',
+  description: 'Chat GPT for Google Sheets and Microsft Excel',
+  keywords: [
+    'Goolgle Sheets',
+    'Microsoft Excel',
+    'Chat GPT',
+    'Productivity Tool',
+  ],
   icons: {
     icon: '/favicon.ico',
   },
+  creator: 'Maple GPT Software Services',
 };
 
 interface RootLayoutProps {

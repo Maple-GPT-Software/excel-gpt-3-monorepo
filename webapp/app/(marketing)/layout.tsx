@@ -7,7 +7,7 @@ export default function layout({ children }: { children: ReactNode }) {
   return (
     <>
       <PublicNav />
-      <div style={{ height: '100vh', width: '100vw' }}>{children}</div>
+      <main className="h-screen w-screen pt-14">{children}</main>
       <PublicFooter />
     </>
   );

@@ -1,6 +1,7 @@
 // Public Routes
 export const HOME_ROUTE = '/';
 export const PRICING_ROUTE = '/pricing';
+export const HOME_FEAUTRE_FASH = '/#features';
 
 // Auth Routes
 export const SIGN_IN_ROUTE = '/auth/signin';
