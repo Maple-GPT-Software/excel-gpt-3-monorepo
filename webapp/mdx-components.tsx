@@ -57,6 +57,17 @@ const Bold: FunctionComponent<
   return <b className="font-bold">{children}</b>;
 };
 
+const Link: FunctionComponent<
+  DetailedHTMLProps<HTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>
+  // @ts-expect-error href is valid
+> = ({ children, href }) => {
+  return (
+    <a className="cursor-pointer text-green-600 underline" href={href}>
+      {children}
+    </a>
+  );
+};
+
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     h1: Heading1,
@@ -67,6 +78,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ol: OrderedList,
     li: ListItem,
     b: Bold,
+    a: Link,
     ...components,
   };
 }
