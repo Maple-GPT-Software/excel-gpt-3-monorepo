@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/Input';
 import MDIIcon from '@/components/ui/MDIIcon';
 import { RegistrationParamKeys } from '@/types/appTypes';
 import { RegistrationParamValues } from '@/types/appTypes';
-import { PriceIds } from '@/types/simplifyApi';
 import {
   DASHBOARD_ROUTE,
   PRIVATE_POLICIES,
@@ -62,7 +61,7 @@ function RegistrationForm() {
         subscriptionType === RegistrationParamValues.PREMIUM
       ) {
         await SimplifyApi().createCheckoutSession({
-          priceId: PriceIds.STANDALONE_MONTHLY,
+          priceId: settings.stripePriceIds.premiumMonthly,
           successUrl: `${settings.webappBaseUrl}/${DASHBOARD_ROUTE}`,
           // TODO: signup abandoned fallback route that signs user up for createFreeSubscription
           cancelUrl: `${settings.webappBaseUrl}/${SIGN_UP_ROUTE}`,

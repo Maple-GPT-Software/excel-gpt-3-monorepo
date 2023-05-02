@@ -15,8 +15,7 @@ interface ISettings {
 let PREMIUM_MONTHLY = 'price_1MdLWWGB7M3KTCGBlQufaDuk';
 
 if (isProduction) {
-  // TODO: double check this
-  PREMIUM_MONTHLY = 'price_1MpNm7GB7M3KTCGBz7tXss9j';
+  PREMIUM_MONTHLY = 'price_1N39HUGB7M3KTCGByUtRqY4T';
 }
 
 // FUTURE: other price ids
