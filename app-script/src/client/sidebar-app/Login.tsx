@@ -55,7 +55,7 @@ function Login({ authErrorMessage }: { authErrorMessage: string }) {
       </div>
 
       {/* TODO: Real links */}
-      <p style={{ textAlign: 'center' }}>Private policy stuff</p>
+      <p style={{ textAlign: 'center' }}>Private policy</p>
     </div>
   );
 }
