@@ -48,14 +48,19 @@ function Login({ authErrorMessage }: { authErrorMessage: string }) {
         <p className="auth-link">
           {/* TODO: our domain */}
           No account?{' '}
-          <a href="https://google.com" target="_blank">
+          <a href="https://excelsimplify.com/auth/signup" target="_blank">
             Create one
           </a>
         </p>
       </div>
 
-      {/* TODO: Real links */}
-      <p style={{ textAlign: 'center' }}>Private policy</p>
+      <a
+        href="https://www.excelsimplify.com/policies/private-policy"
+        target="_blank"
+        style={{ textAlign: 'center', color: 'black' }}
+      >
+        Private policy
+      </a>
     </div>
   );
 }
