@@ -3,7 +3,6 @@ import httpStatus from 'http-status';
 import { cancelSubscriptionById, createCustomerWithFreeTrial, createSubscriptionSession } from '../services/stripe.service';
 import catchAsync from '../utils/catchAsync';
 import { User } from '../models/user.model';
-import ApiError from '../utils/ApiError';
 
 /** users are signed up with a trial account by default */
 export const createTrial = catchAsync(async (req: Request, res: Response) => {

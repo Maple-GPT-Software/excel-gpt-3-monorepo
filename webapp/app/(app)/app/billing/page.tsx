@@ -1,5 +1,7 @@
 'use client';
 
+import { premiumFeatureItems } from '@/config/marketing';
+import { mdiCheck } from '@mdi/js';
 import { useQuery } from '@tanstack/react-query';
 import { differenceInDays } from 'date-fns';
 import React, { useMemo } from 'react';
@@ -8,6 +10,7 @@ import { useAuthenticatedContext } from '@/contexts/AuthProvider';
 import { cn } from '@/utils/cn';
 import { Button, buttonVariants } from '@/components/ui/Button';
 import CenteredSpinnner from '@/components/ui/CenteredSpinnner';
+import MDIIcon from '@/components/ui/MDIIcon';
 import { SimplifyUser } from '@/types/simplifyApi';
 import { BILLING_ROUTE, DASHBOARD_ROUTE } from '@/constants';
 import settings from '@/settings';
@@ -113,6 +116,16 @@ function PremiumSubscriptionCard({
         <span className="text-bold text-green-600">{daysRemaining}</span> days
         until next bill.
       </p>
+      <div className="mt-8 grid grid-cols-3 gap-4">
+        {premiumFeatureItems.map(item => {
+          return (
+            <div className="flex gap-2" key={item}>
+              <MDIIcon path={mdiCheck} size={0.75} />
+              <p>{item}</p>
+            </div>
+          );
+        })}
+      </div>
       <a
         className={cn(buttonVariants(), 'mt-8')}
         href={settings.stripeCustomerPortalUrl}
