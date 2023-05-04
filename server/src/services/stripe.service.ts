@@ -51,6 +51,7 @@ export const createSubscriptionSession = async (stripeCustomerId: string, option
       success_url: successUrl,
       cancel_url: cancelUrl,
       customer: stripeCustomerId,
+      billing_address_collection: 'required',
       line_items: [
         {
           price: priceId,

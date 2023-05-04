@@ -20,7 +20,6 @@ export const createTrial = catchAsync(async (req: Request, res: Response) => {
     return;
   }
 
-  console.log(user);
   if (user?.stripeCustomerId === undefined) {
     res.status(httpStatus.INTERNAL_SERVER_ERROR).send('#createTrial > Internal server error');
     return;
