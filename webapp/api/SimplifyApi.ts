@@ -1,6 +1,5 @@
 import { AuthenticatedRequestor } from './AuthenticatedRequestor';
 import AuthService from '@/models/AuthService';
-import { PriceIds } from '@/types/simplifyApi';
 import type { SimplifyUser } from '@/types/simplifyApi';
 import settings from '@/settings';
 
@@ -55,7 +54,7 @@ class SimplifyApiClient {
   }
 
   async createCheckoutSession(data: {
-    priceId: PriceIds;
+    priceId: string;
     successUrl: string;
     cancelUrl: string;
   }) {

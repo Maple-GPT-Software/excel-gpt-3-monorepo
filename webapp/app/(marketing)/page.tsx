@@ -91,7 +91,7 @@ export default function Home() {
                 'bg-white text-slate-800'
               )}
             >
-              Free Trial
+              Start Free Trial
             </Link>
           </div>
         </div>

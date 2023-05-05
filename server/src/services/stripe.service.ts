@@ -31,7 +31,7 @@ export const createCustomerWithFreeTrial = async (stripeCustomerId: string) => {
     stripe.subscriptions.create({
       customer: stripeCustomerId,
       items: [{ price: settings.stripePriceIds.premiumMonthly }],
-      trial_period_days: 7,
+      trial_period_days: 5,
       cancel_at_period_end: true,
       proration_behavior: 'none',
     });
@@ -51,6 +51,7 @@ export const createSubscriptionSession = async (stripeCustomerId: string, option
       success_url: successUrl,
       cancel_url: cancelUrl,
       customer: stripeCustomerId,
+      billing_address_collection: 'required',
       line_items: [
         {
           price: priceId,

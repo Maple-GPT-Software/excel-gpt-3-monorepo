@@ -1,3 +1,4 @@
+import { freeTrialFeatureItems, premiumFeatureItems } from '@/config/marketing';
 import { mdiCurrencyUsd } from '@mdi/js';
 import { mdiCheck } from '@mdi/js';
 import Link from 'next/link';
@@ -24,7 +25,8 @@ const PricePage = () => {
           <div className="rounded-lg border border-solid border-slate-800 px-8 py-12">
             <h3 className="text-2xl font-medium">Free Trial</h3>
             <p className="mt-4">
-              Start your 7-day Free Trial today. No credit card required
+              Start your <span className="font-bold">5-day</span> Free Trial
+              today. No credit card required
             </p>
             <div className="my-8 flex text-3xl font-medium">
               <p>US</p>
@@ -40,39 +42,26 @@ const PricePage = () => {
               Get Started
             </Link>
             <ul className="mt-8 flex flex-col gap-4 text-slate-600">
-              <li className="flex gap-2">
-                <MDIIcon path={mdiCheck} />
-                Google Sheet integration
-              </li>
-              <li className="flex gap-2">
-                <MDIIcon path={mdiCheck} />
-                10 requests per day
-              </li>
-              <li className="flex gap-2">
-                <MDIIcon path={mdiCheck} />5 conversations
-              </li>
-              <li className="flex gap-2">
-                <MDIIcon path={mdiCheck} />
-                Get formulas
-              </li>
-              <li className="flex gap-2">
-                <MDIIcon path={mdiCheck} />
-                Get formula explanations
-              </li>
-              <li className="flex gap-2">
-                <MDIIcon path={mdiCheck} />
-                Get instructions for tasks
-              </li>
+              {freeTrialFeatureItems.map(item => {
+                return (
+                  <li className="flex gap-2" key={item}>
+                    <MDIIcon path={mdiCheck} size={0.75} />
+                    {item}
+                  </li>
+                );
+              })}
             </ul>
           </div>
+          {/* premium subscription card */}
           <div className="rounded-lg border border-solid border-green-600 p-2 px-8 py-12">
             <h3 className="text-2xl font-medium text-green-600">Premium</h3>
             <p className="mt-4">
               For individuals that love saving hours of work.
             </p>
-            <div className="my-8 flex text-3xl font-medium">
+            <div className="my-8 flex items-end text-3xl font-medium">
               <p>US</p>
-              <MDIIcon path={mdiCurrencyUsd} size={1.5} />5
+              <MDIIcon path={mdiCurrencyUsd} size={1.5} />5 &nbsp;
+              <span className="text-sm font-thin"> billed monthly</span>
             </div>
             <Link
               href={marketingLinksFactory.premiumSignup}
@@ -84,30 +73,14 @@ const PricePage = () => {
               Get Started
             </Link>
             <ul className="my-8 flex flex-col gap-4">
-              <li className="flex gap-2">
-                <MDIIcon path={mdiCheck} />
-                Google Sheet integration
-              </li>
-              <li className="flex gap-2">
-                <MDIIcon path={mdiCheck} />
-                80 messages per day
-              </li>
-              <li className="flex gap-2">
-                <MDIIcon path={mdiCheck} />
-                Unlimited conversations
-              </li>
-              <li className="flex gap-2">
-                <MDIIcon path={mdiCheck} />
-                Get formulas
-              </li>
-              <li className="flex gap-2">
-                <MDIIcon path={mdiCheck} />
-                Get formula explanations
-              </li>
-              <li className="flex gap-2">
-                <MDIIcon path={mdiCheck} />
-                Get instructions for tasks
-              </li>
+              {premiumFeatureItems.map(item => {
+                return (
+                  <li className="flex gap-2" key={item}>
+                    <MDIIcon path={mdiCheck} size={0.75} />
+                    {item}
+                  </li>
+                );
+              })}
             </ul>
           </div>
           <div className="rounded-lg border border-solid border-cyan-600 p-2 py-12 px-8">
