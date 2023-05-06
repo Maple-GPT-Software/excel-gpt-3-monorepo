@@ -54,13 +54,29 @@ function Login({ authErrorMessage }: { authErrorMessage: string }) {
         </p>
       </div>
 
-      <a
-        href="https://www.excelsimplify.com/policies/private-policy"
-        target="_blank"
-        style={{ textAlign: 'center', color: 'black' }}
-      >
-        Private policy
-      </a>
+      <div style={{ display: 'flex' }}>
+        <a
+          href="https://www.excelsimplify.com/policies/private-policy"
+          target="_blank"
+          style={{ textAlign: 'center', color: 'black' }}
+        >
+          Private Policy
+        </a>
+        <a
+          href="https://www.excelsimplify.com/policies/terms-and-conditions"
+          target="_blank"
+          style={{ textAlign: 'center', color: 'black' }}
+        >
+          Terms & Conditions
+        </a>
+        <a
+          href="https://www.excelsimplify.com/contact-us"
+          target="_blank"
+          style={{ textAlign: 'center', color: 'black' }}
+        >
+          Need help?
+        </a>
+      </div>
     </div>
   );
 }

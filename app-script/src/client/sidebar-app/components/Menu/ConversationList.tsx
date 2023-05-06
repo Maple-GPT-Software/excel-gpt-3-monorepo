@@ -1,7 +1,8 @@
 import React, { useMemo, useRef, useState } from 'react';
-import useSWR from 'swr';
-import { useAuthenticatedContext } from '../../AuthProvider';
-import SimplifyApi, { DConversation } from '../../api/SimplifyApi';
+import SimplifyApi, {
+  DConversation,
+  SimplifyUserProfile,
+} from '../../api/SimplifyApi';
 import conversationKeyFactory from './conversationQueryKeys';
 import { useSWRConfig } from 'swr';
 
@@ -19,6 +20,7 @@ interface ConversationListProps {
   toggleConversationSavedHandler: (
     conversation: DConversation | undefined
   ) => Promise<void>;
+  userProfile: SimplifyUserProfile;
 }
 
 function ConversationList({
@@ -29,6 +31,7 @@ function ConversationList({
   conversations,
   updateSelectedId,
   toggleConversationSavedHandler,
+  userProfile,
 }: ConversationListProps) {
   const conversationListRef = useRef<HTMLDivElement>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -36,7 +39,6 @@ function ConversationList({
 
   const { mutate } = useSWRConfig();
 
-  // TODO: deleting conversations bug
   async function deleteConversationHandler(conversationId: string) {
     mutate(
       conversationKeyFactory.all,
@@ -70,16 +72,27 @@ function ConversationList({
   const renderConversationList =
     filteredConversations && filteredConversations.length !== 0;
 
+  const hasTrialExpired =
+    userProfile.stripeStatus === 'trialing' && conversations.length >= 5;
+
   return (
     <div className="conversation-list" ref={conversationListRef}>
       <div className="conversation-list-actions">
         <button
           className="new-conversation-button"
           onClick={onCreateConversationClick}
+          disabled={
+            userProfile.stripeStatus === 'trialing' && conversations.length >= 5
+          }
+          title={
+            hasTrialExpired
+              ? 'You can only have 5 conversation while trialing'
+              : 'Create new conversation'
+          }
         >
           + New Conversation
         </button>
-        <div style={{ margin: '6px 0' }}>
+        <div style={{ margin: '12px 0' }}>
           <label htmlFor="viewSavedOnly">
             <input
               onClick={() => setViewSaved((prev) => !prev)}

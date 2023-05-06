@@ -25,6 +25,11 @@
   background-color: #3f3f469e;
 }
 
+.new-conversation-button:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
 .conversation-list .divisor {
   margin-top: 12px;
   margin-bottom: 12px;

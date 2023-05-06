@@ -90,7 +90,7 @@ function Menu() {
     );
   }
 
-  const trialExpiration = getSubscriptionDaysRemaining(
+  const subscriptionDaysLeft = getSubscriptionDaysRemaining(
     userProfile.stripeCurrentPeriodEnd
   );
 
@@ -191,6 +191,7 @@ function Menu() {
               conversations={conversations || []}
               updateSelectedId={updateSelectedId}
               toggleConversationSavedHandler={toggleConversationSavedHandler}
+              userProfile={userProfile}
             />
           )}
           {menuMode === 'CREATE_CONVERSATION' && (
@@ -212,18 +213,32 @@ function Menu() {
 
         {menuMode === 'DEFAULT' && (
           <div className="menu-footer">
-            {userProfile.stripeStatus === 'trialing' && (
+            {userProfile.stripeStatus === 'trialing' &&
+              subscriptionDaysLeft > 0 && (
+                <div className="trial-warning">
+                  <span className="trial-warning-text">
+                    Trial expires in {subscriptionDaysLeft} days
+                  </span>
+                  <a
+                    className="trial-warning-link"
+                    href="https://www.excelsimplify.com/app/billing"
+                    target="_blank"
+                  >
+                    Upgrade
+                  </a>
+                </div>
+              )}
+            {subscriptionDaysLeft < 0 && (
               <div className="trial-warning">
                 <span className="trial-warning-text">
-                  Trial expires in {trialExpiration} days
+                  Your subscription has expired
                 </span>
-                {/* TODO: open signin in webapp */}
                 <a
                   className="trial-warning-link"
-                  href="https://google.com"
+                  href="https://www.excelsimplify.com/app/billing"
                   target="_blank"
                 >
-                  Upgrade
+                  Renew Subscription
                 </a>
               </div>
             )}
@@ -249,11 +264,7 @@ const DAY_IN_SECONDS = 24 * 60 * 60;
 function getSubscriptionDaysRemaining(periodEnd: number) {
   const diffInDays = (periodEnd - getCurrentUnixSeconds()) / DAY_IN_SECONDS;
 
-  if (diffInDays > 0) {
-    return Math.floor(diffInDays);
-  }
-
-  return 0;
+  return Math.floor(diffInDays);
 }
 
 /**

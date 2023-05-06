@@ -79,6 +79,8 @@
   text-decoration: none;
   border-radius: 6px;
   font-size: 12px;
+  display: flex;
+  align-items: center;
 }
 
 .button-logout {
