@@ -1,8 +1,4 @@
-import {
-  onOpen,
-  openHelpDialog,
-  openSidebarApplication,
-} from './ui';
+import { onOpen, openSidebarApplication } from './ui';
 
 import {
   getSheetsData,
@@ -15,7 +11,6 @@ import {
 // Public functions must be exported as named exports
 export {
   onOpen,
-  openHelpDialog,
   openSidebarApplication,
   getSheetsData,
   writeFormulaToCell,
