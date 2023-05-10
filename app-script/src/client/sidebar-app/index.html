@@ -78,6 +78,7 @@
       const auth = getAuth(app);
       const googleProvider = new GoogleAuthProvider();
 
+      googleProvider.addScope('https://www.googleapis.com/auth/userinfo.email');
       googleProvider.addScope('https://www.googleapis.com/auth/spreadsheets');
       googleProvider.addScope(
         'https://www.googleapis.com/auth/script.external_request'
