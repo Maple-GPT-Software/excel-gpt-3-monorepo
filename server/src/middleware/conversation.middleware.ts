@@ -3,6 +3,7 @@ import httpStatus from 'http-status';
 
 import { Conversation, DConversationObject } from '../models/conversation.model';
 import ApiError from '../utils/ApiError';
+import logger from '../config/logger';
 
 /** middleware that adds the conversation as a property of request */
 export const addConversationToRequest: RequestHandler = async (req, res, next) => {
@@ -26,6 +27,7 @@ export const addConversationToRequest: RequestHandler = async (req, res, next) =
 
     next();
   } catch (error) {
+    logger.error('#addConversationToRequest error', error);
     next(new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to retrieve conversaton'));
   }
 };
@@ -50,6 +52,7 @@ export const canAccessConversation: RequestHandler = async (req, res, next) => {
 
     next();
   } catch (error) {
+    logger.error('#canAccessConversation error', error);
     next(new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to validate conversaton access'));
   }
 };

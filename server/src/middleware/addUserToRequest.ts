@@ -3,6 +3,7 @@ import httpStatus from 'http-status';
 
 import { DUserObject, User } from '../models/user.model';
 import ApiError from '../utils/ApiError';
+import logger from '../config/logger';
 
 export const addUserToRequest: RequestHandler = async (req, res, next) => {
   try {
@@ -19,6 +20,7 @@ export const addUserToRequest: RequestHandler = async (req, res, next) => {
 
     next();
   } catch (error) {
+    logger.error('#addUserToRequest erorr', error);
     next(new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to retrieve your account'));
   }
 };

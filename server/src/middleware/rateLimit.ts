@@ -1,6 +1,7 @@
 import { Response, Request } from 'express';
 import rateLimit from 'express-rate-limit';
 import httpStatus from 'http-status';
+import logger from '../config/logger';
 
 /** 24 hours */
 const DAILY_WINDOW = 24 * 60 * 60 * 1000;
@@ -21,13 +22,16 @@ export const dailyMessagesLimiter = rateLimit({
   message: async (request: Request, response: Response) => {
     const { hasPaidSubscription } = request;
     if (hasPaidSubscription) {
+      logger.info('#dailyMessagesLimiter - hasPaidSubscription - too many messages');
       response.status(httpStatus.TOO_MANY_REQUESTS).send({ message: `You've made too many requests today.` });
     } else {
+      logger.info('#dailyMessagesLimiter - freeTrial - too many messages');
       response
         .status(httpStatus.TOO_MANY_REQUESTS)
         .send({ message: 'You can only make 10 requests per day while trialing' });
     }
   },
+
   /**
    * By default express-rate-limit uses IP address to keep track of daily reqs per window
    * but we can use email-YYYY-MM-DD as key to identify user to mitigate the use of VPN to get around rate limiting

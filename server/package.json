@@ -26,6 +26,7 @@
   "author": "Excel Simplify",
   "license": "ISC",
   "dependencies": {
+    "@axiomhq/axiom-node": "^0.12.0",
     "@sendgrid/mail": "^7.7.0",
     "cache-manager": "^5.2.0",
     "compression": "^1.7.4",
