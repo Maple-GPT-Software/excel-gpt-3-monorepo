@@ -4,6 +4,7 @@ import httpStatus from 'http-status';
 
 import mongoose from 'mongoose';
 
+import { sendSignedUpEmail } from '../services/sendgrid.service';
 import * as stripeService from '../services/stripe.service';
 import { TERMS_AND_CONDITION_VERSION } from '../constants';
 import * as userService from '../services/user.service';
@@ -33,6 +34,8 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
   const customer = await stripeService.createCustomerAccount(email);
 
   await User.findByIdAndUpdate(userId, { stripeCustomerId: customer.id });
+
+  await sendSignedUpEmail(email);
 
   res.status(httpStatus.CREATED).send({ user });
 });
