@@ -4,7 +4,7 @@ import { mdiCheck } from '@mdi/js';
 import Link from 'next/link';
 import { cn } from '@/utils/cn';
 import marketingLinksFactory from '@/utils/marketingLinkFactory';
-import { Button, buttonVariants } from '@/components/ui/Button';
+import { buttonVariants } from '@/components/ui/Button';
 import MDIIcon from '@/components/ui/MDIIcon';
 
 const PricePage = () => {
@@ -89,12 +89,17 @@ const PricePage = () => {
               For teams that need centralized billing and control. Please
               contact our sales team to discuss your needs.
             </p>
-            <Button
-              variant="outline"
-              className={cn('mt-4 w-full hover:bg-cyan-600 md:mt-[3.25rem]')}
+            <Link
+              className={cn(
+                buttonVariants({ variant: 'outline', size: 'lg' }),
+                'dmt-4 w-full border-solid border-cyan-600 hover:bg-cyan-600 hover:text-white md:mt-[3.25rem]'
+              )}
+              href="https://docs.google.com/forms/d/e/1FAIpQLScqfwueOHIXGFRzZNeYymmqrVlqHKcL4MJ_XcfNgyw_QxeVrQ/viewform?usp=sf_link"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Contact Sales
-            </Button>
+              Contact Form
+            </Link>
           </div>
         </div>
       </div>
