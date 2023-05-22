@@ -28,7 +28,7 @@ function ConversationCheck() {
       SimplifyApi(accessToken)
         .createNewConversation({
           name: 'new conversation',
-          promptType: DConversationPromptType.googleAppScriptChat,
+          promptType: DConversationPromptType.googleSheetChat,
           temperature: 0.4,
           // so user doesn't see empty saved conversaiton list
           isBookmarked: true,
