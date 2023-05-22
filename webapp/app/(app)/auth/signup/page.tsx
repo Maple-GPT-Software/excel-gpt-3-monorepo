@@ -5,11 +5,16 @@ import { FirebaseError } from 'firebase/app';
 import { AuthErrorCodes } from 'firebase/auth';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
 import SimplifyApi from '@/api/SimplifyApi';
 import { useAuthContext } from '@/contexts/AuthProvider';
 import { useNavigateWithParams } from '@/hooks/useNavigateWithParams';
 import { signInWithGoogle } from '@/services/firebase';
+import {
+  RegistrationParamKeys,
+  RegistrationParamValues,
+} from '@/types/appTypes';
 import {
   REGISTRATION_ROUTE,
   DASHBOARD_ROUTE,
@@ -21,6 +26,7 @@ import {
 const SignupPage = () => {
   const { setSimplifyUser } = useAuthContext();
   const [errorMessage, setErrorMessage] = useState('');
+  const searchParams = useSearchParams();
   const navigateWithParams = useNavigateWithParams({
     preserveCurrentParms: true,
     replace: true,
@@ -62,17 +68,31 @@ const SignupPage = () => {
     }
   };
 
+  const subscriptionType = searchParams?.get(
+    RegistrationParamKeys.SUBSCRIPTION
+  );
+
   return (
     <>
       <section
         id="signup"
-        className="relative z-10 overflow-hidden pt-36 pb-16 md:pb-20 lg:pt-[180px] lg:pb-28"
+        className="relative z-10 flex h-full w-full flex-col items-center justify-center overflow-hidden"
       >
+        {(!subscriptionType ||
+          subscriptionType !== RegistrationParamValues.PREMIUM) && (
+          <div className="mb-[5rem] text-center">
+            <h2 className="text-3xl font-normal">Start your free trial</h2>
+            <p>
+              No Credit card required.
+              <span className="text-green-600"> 5 days free</span>
+            </p>
+          </div>
+        )}
         <div className="container">
-          <div className="-mx-4 flex flex-wrap">
+          <div className="flex flex-wrap">
             <div className="-mt-8 w-full px-4">
-              <div className="dark:bg-dark mx-auto max-w-[500px] rounded-md  bg-green-600 bg-opacity-5 py-10 px-6 font-thin shadow-aesthetic sm:p-[60px]">
-                <h3 className="mb-14 text-center text-2xl  text-black dark:text-white sm:text-3xl">
+              <div className="dark:bg-dark mx-auto max-w-[500px] rounded-md  bg-green-600 bg-opacity-5 p-6 font-thin shadow-aesthetic sm:p-[40px]">
+                <h3 className="mb-8 text-center text-2xl  text-black dark:text-white sm:text-3xl">
                   Create your account
                 </h3>
                 {errorMessage !== '' && (

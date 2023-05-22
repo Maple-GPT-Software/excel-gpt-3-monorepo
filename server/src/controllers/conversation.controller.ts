@@ -7,6 +7,7 @@ import { Message } from '../models/message.model';
 import { SYSTEM_PROMPT_MAP } from '../constants';
 import catchAsync from '../utils/catchAsync';
 import ApiError from '../utils/ApiError';
+import logger from '../config/logger';
 
 export const getConversations = catchAsync(async (req: Request, res: Response) => {
   const { uid: userId } = req.decodedFirebaseToken;
@@ -15,10 +16,10 @@ export const getConversations = catchAsync(async (req: Request, res: Response) =
     const conversations = await Conversation.find({ userId }).sort({ updatedAt: -1 });
     res.status(httpStatus.OK).send(conversations);
   } catch (error) {
-    throw new ApiError(
-      httpStatus.INTERNAL_SERVER_ERROR,
-      'conversation.controller > #createConversationError: error while loading your conversations'
-    );
+    logger.error('conversation.controller > #getConversations', error, {
+      userId,
+    });
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Server error while loading your conversations');
   }
 });
 
@@ -40,7 +41,11 @@ export const getConversationMessages = catchAsync(async (req: Request, res: Resp
 
     res.status(httpStatus.OK).send(messages);
   } catch (error) {
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+    logger.error('conversation.controller  > #getConversationMessages', error, {
+      userId,
+      conversationId,
+    });
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Server error retrieving messages');
   }
 });
 
@@ -66,10 +71,12 @@ export const createConversation = catchAsync(async (req: Request, res: Response)
 
     res.status(200).send(conversation);
   } catch (error) {
-    throw new ApiError(
-      httpStatus.INTERNAL_SERVER_ERROR,
-      'conversation.controller > #createConversationError: error while creating new conversation'
-    );
+    logger.error('conversation.controller > #createConversation', error, {
+      userId,
+      source,
+      promptType,
+    });
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Server error while creating new conversation');
   }
 });
 
@@ -107,10 +114,9 @@ export const updateConversation = catchAsync(async (req: Request, res: Response)
 
     res.status(httpStatus.OK).send(updatedConversationDoc);
   } catch (error) {
-    // TODO: Axiom log errors for debugging
-    throw new ApiError(
-      httpStatus.INTERNAL_SERVER_ERROR,
-      'conversation.controller > #updateConversation: error while updating conversation'
-    );
+    logger.error('conversation.controller > #updateConversation', error, {
+      conversationId,
+    });
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Server while updating conversation');
   }
 });

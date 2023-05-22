@@ -30,6 +30,8 @@ const envVarsSchema = Joi.object()
     STRIPE_TEST_ENDPOINT_SECRET: Joi.string().optional(),
     STRIPE_PROD_SECRET_KEY: Joi.string().required(),
     STRIPE_PROD_ENDPOINT_SECRET: Joi.string().required(),
+    AXIOM: Joi.string().required(),
+    SENDGRID: Joi.string().required(),
   })
   .unknown();
 
@@ -63,6 +65,8 @@ const {
   STRIPE_TEST_SECRET_KEY,
   STRIPE_PROD_ENDPOINT_SECRET,
   STRIPE_TEST_ENDPOINT_SECRET,
+  AXIOM,
+  SENDGRID,
 } = envVars;
 
 export default {
@@ -92,4 +96,6 @@ export default {
   } as any,
   stripeApi: isProduction ? STRIPE_PROD_SECRET_KEY : STRIPE_TEST_SECRET_KEY,
   stripeEndpointSecret: isProduction ? STRIPE_PROD_ENDPOINT_SECRET : STRIPE_TEST_ENDPOINT_SECRET,
+  axiom: AXIOM,
+  sendgrid: SENDGRID,
 };

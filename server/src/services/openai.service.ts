@@ -66,8 +66,8 @@ export async function getChatCompletion(conversation: DConversationObject, promp
       usage,
     };
   } catch (error) {
-    logger.http('#getCompletion ', error);
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'openai.service > #getChatCompletion : Interval server error');
+    logger.error('openai.service > #getCompletion ', error, conversation);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Interval server error while creating AI message');
   }
 }
 

@@ -1,6 +1,8 @@
+import { WinstonTransport as AxiomTransport } from '@axiomhq/axiom-node';
 import winston from 'winston';
-
 import config from './config';
+
+const { errors, json, combine } = winston.format;
 
 const enumerateErrorFormat = winston.format((info) => {
   if (info instanceof Error) {
@@ -11,16 +13,20 @@ const enumerateErrorFormat = winston.format((info) => {
 
 const logger = winston.createLogger({
   level: config.env === 'development' ? 'debug' : 'info',
-  format: winston.format.combine(
+  format: combine(
+    errors({ stack: true }),
+    json(),
     enumerateErrorFormat(),
     config.env === 'development' ? winston.format.colorize() : winston.format.uncolorize(),
     winston.format.splat(),
     winston.format.printf(({ level, message }) => `${level}: ${message}`)
   ),
-  // TODO: AXIOM logging
+  defaultMeta: { service: 'excelsimplify-server' },
   transports: [
-    new winston.transports.Console({
-      stderrLevels: ['error'],
+    new AxiomTransport({
+      dataset: 'excel-simplify-prod',
+      orgId: 'maple-gpt-6tvb',
+      token: config.axiom,
     }),
   ],
 });
